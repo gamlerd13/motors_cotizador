@@ -9,7 +9,7 @@ interface ButtonSubmitProps {
 
 export default function ButtonSubmit({ text, action }: ButtonSubmitProps) {
   return (
-    <Button onClick={action} color="default" type="submit">
+    <Button onClick={action} color="success" type="submit">
       {text ? text : "Enviar"}
     </Button>
   );

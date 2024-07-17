@@ -14,6 +14,7 @@ import {
   NavbarMenuItem,
   Button,
 } from "@nextui-org/react";
+import Image from "next/image";
 // import { AcmeLogo } from "./AcmeLogo.jsx";
 
 export default function NavBar() {
@@ -28,23 +29,13 @@ export default function NavBar() {
     },
     {
       id: 2,
-      name: "Alumno",
-      url: "/alumno",
+      name: "Cotizar",
+      url: "/cotizar",
     },
     {
       id: 3,
       name: "Pago",
       url: "/pago",
-    },
-    {
-      id: 4,
-      name: "Concepto de Pago",
-      url: "/pago/concepto",
-    },
-    {
-      id: 5,
-      name: "reportes",
-      url: "/reportes",
     },
   ];
 
@@ -55,16 +46,19 @@ export default function NavBar() {
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
           className="sm:hidden"
         />
-        <NavbarBrand>
-          {/* <AcmeLogo /> */}
-          <p className="font-bold text-inherit">Logo Colegio</p>
-        </NavbarBrand>
+        <Link color="foreground" href="/">
+          <NavbarBrand>
+            {/* <AcmeLogo /> */}
+            <Image alt="logo" height={40} src="/logo.png" width={40} />
+            <p className="font-bold text-inherit">Movento S.A.C</p>
+          </NavbarBrand>
+        </Link>
       </NavbarContent>
 
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
-        <NavbarItem isActive={pathname == "/alumno"}>
-          <Link color="foreground" href="/alumno">
-            Alumnos
+        <NavbarItem isActive={pathname == "/cotizar"}>
+          <Link color="foreground" href="/cotizar">
+            Cotizar
           </Link>
         </NavbarItem>
         <NavbarItem isActive={pathname == "/pago"}>
@@ -99,10 +93,12 @@ export default function NavBar() {
                 index === 2
                   ? "primary"
                   : index === menuItems.length - 1
-                    ? "danger"
-                    : "foreground"
+                  ? "danger"
+                  : "foreground"
               }
-              className={`w-full text-default-400 ${pathname == item.url && "font-semibold text-blue-500"}`}
+              className={`w-full text-default-400 ${
+                pathname == item.url && "font-semibold text-blue-500"
+              }`}
               href={item.url}
             >
               {item.name}

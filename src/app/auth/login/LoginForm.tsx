@@ -1,6 +1,6 @@
 "use client";
 import { useState, FormEvent } from "react";
-import { Input } from "@nextui-org/react";
+import { Input } from "@nextui-org/input";
 import { useRouter } from "next/navigation";
 import ButtonSubmit from "@/components/Button";
 import { signIn } from "next-auth/react";
