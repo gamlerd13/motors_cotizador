@@ -16,3 +16,26 @@ model User {
   email    String?
   password String
 }
+
+enum CotizacionStatus {
+  DRAFT // Borrador
+  SENT // Enviada
+  ACCEPTED // Aceptada
+  REJECTED // Rechazada
+  EXPIRED // Expirada
+}
+
+model Client {
+  id        Int      @id @default(autoincrement())
+  name      String
+  contact   String
+  reference String
+  createAt  DateTime @default(now())
+  //agregar la relacion de cotizacion
+}
+
+// model Cotizacion {
+//   id     Int              @id @default(autoincrement())
+//   status CotizacionStatus @default(DRAFT)
+//   code   String
+// }
