@@ -1,0 +1,96 @@
+### Clients
+GET http://localhost:3000/api/client
+Content-Type: application/json
+
+### Cotizaciones
+GET http://localhost:3000/api/cotizacion
+Content-Type: application/json
+
+### Esto es de como se debe enviar desde la interfaz
+POST http://localhost:3000/api/cotizacion
+Content-Type: application/json
+
+{
+  "client": "",
+  "clientName": "",
+  "clientContact": "Diana Prince",
+  "clientRuc": "33445566778",
+  "clientReference": "Referencia D",
+  "date": "",
+  "deliverTime": "2 días hábiles",
+  "paymentCondition": "30 días neto",
+  "totalPrice": 3210.45,
+  "1_id": "40",
+  "1_description": "Bomba",
+  "1_model": "BM-700",
+  "1_amount": "5",
+  "1_unitprice": "300",
+  "1_totalprice": "1500",
+  "2_id": "41",
+  "2_description": "Filtro",
+  "2_model": "FT-100",
+  "2_amount": "30",
+  "2_unitprice": "10",
+  "2_totalprice": "300"
+}
+
+
+
+# {
+#   "client": "4",
+#   "clientName": "Empresa mota S.A.",
+#   "clientContact": "John Doe",
+#   "clientRuc": "12345678901",
+#   "clientReference": "Referencia Interna",
+#   "date": "",
+#   "deliverTime": "5 días hábiles",
+#   "paymentCondition": "30 días neto",
+#   "totalPrice": 5000.01,
+#   "1_id": "1",
+#   "1_description": "Motor electrico",
+#   "1_model": "Modelo bike",
+#   "1_amount": "2",
+#   "1_unitprice": "233",
+#   "1_totalprice": "466",
+#   "2_id": "2",
+#   "2_description": "Caja de cambios ",
+#   "2_model": "cas",
+#   "2_amount": "12",
+#   "2_unitprice": "23",
+#   "2_totalprice": "276"
+# }
+
+###
+POST http://localhost:3000/api/cotizacion
+Content-Type: application/json
+
+{
+"client": "3",
+  "clientName": "Empresa Ejemplo S.A.",
+  "clientContact": "John Doe",
+  "clientRuc": "12345678901",
+  "clientReference": "Referencia Interna",
+  "date": "",
+  "deliverTime": "5 días hábiles",
+  "paymentCondition": "30 días neto",
+  "totalPrice": 5000.01,
+  "items": [
+     {
+      "key": 1,
+      "description": "Motor electrico",
+      "model": "Modelo bike",
+      "amount": 2,
+      "unitPrice": 233,
+      "totalPrice": 466
+    },
+    {
+      "key": 2,
+      "description": "Caja de cambios ",
+      "model": "cas",
+      "amount": 12,
+      "unitPrice": 23,
+      "totalPrice": 276
+    }
+  ]
+}
+ 

@@ -1,8 +1,13 @@
-import { Cotizacion, ProductItemPost } from "@/models/cotizacion";
+"use client";
+import { CotizacionGet, statusLabels } from "@/models/cotizacion";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { CotizacionStatus } from "@prisma/client";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export const usePostCotizacion = () => {
+  const router = useRouter();
   const [responseNewCotizacion, setResponseNewCotizacion] = useState<
     string | null
   >(null);
@@ -19,7 +24,9 @@ export const usePostCotizacion = () => {
       );
       console.log("respueste de la api: ", response);
       if (response.status == 201) {
+        toast.success("Se creó una cotizacion exitosamente");
         setResponseNewCotizacion(response.data);
+        router.push("/cotizaciones");
       }
     } catch (error) {
       console.error("Hubo un error en useClient, getClient");
@@ -29,5 +36,59 @@ export const usePostCotizacion = () => {
   return {
     responseNewCotizacion,
     addNewCotizacion,
+  };
+};
+
+export const useGetUpdateCotizacion = () => {
+  const [cotizacionList, setCotizacionList] = useState<CotizacionGet[] | null>(
+    null
+  );
+  const [isLoading, setIsLoading] = useState(true);
+
+  const getCotizaciones = async () => {
+    try {
+      const response = await axios.get("api/cotizacion");
+
+      if (response.status == 200) {
+        setCotizacionList(response.data);
+      }
+    } catch (error) {
+      console.error("Hubo un error en useGetUpdateCotizacion, getCotizaciones");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const updateCotizacion = async (
+    cotizacionId: number,
+    typeEnding: CotizacionStatus
+  ) => {
+    try {
+      console.log(typeEnding);
+
+      const response = await axios.put(
+        `api/cotizacion/${cotizacionId}`,
+        JSON.stringify(typeEnding)
+      );
+      console.log("respueste de la api: ", response);
+      if (response.status == 201) {
+        toast.success(
+          `Se finalizó el estado de la cotización ${statusLabels[typeEnding]}`
+        );
+        getCotizaciones();
+      }
+    } catch (error) {
+      console.error("Hubo un error en updateCotizacion, updateCotizacion");
+    }
+  };
+
+  useEffect(() => {
+    getCotizaciones();
+  }, []);
+
+  return {
+    cotizacionList,
+    isLoading,
+    updateCotizacion,
   };
 };

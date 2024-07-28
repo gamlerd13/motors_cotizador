@@ -34,8 +34,13 @@ export default function NavBar() {
     },
     {
       id: 3,
-      name: "Pago",
-      url: "/pago",
+      name: "Cotizaciones",
+      url: "/cotizaciones",
+    },
+    {
+      id: 4,
+      name: "Clientes",
+      url: "/clientes",
     },
   ];
 
@@ -61,25 +66,20 @@ export default function NavBar() {
             Cotizar
           </Link>
         </NavbarItem>
-        <NavbarItem isActive={pathname == "/pago"}>
-          <Link href="/pago" aria-current="page">
-            Pagos
+        <NavbarItem isActive={pathname == "/cotizaciones"}>
+          <Link href="/cotizaciones" aria-current="page">
+            Cotizaciones
           </Link>
         </NavbarItem>
-        <NavbarItem isActive={pathname == "/pago/concepto"}>
-          <Link href="/pago/concepto" aria-current="page">
-            Concepto Pago
-          </Link>
-        </NavbarItem>
-        <NavbarItem isActive={pathname == "/reportes"}>
-          <Link color="foreground" href="/reportes">
-            reportes
+        <NavbarItem isActive={pathname == "/clientes"}>
+          <Link href="/clientes" aria-current="page">
+            Clientes
           </Link>
         </NavbarItem>
       </NavbarContent>
       <NavbarContent justify="end">
         <NavbarItem>
-          <Button onClick={() => signOut()} color="default" variant="flat">
+          <Button onClick={() => signOut()} color="danger" variant="flat">
             Salir
             <IoIosLogOut />
           </Button>
@@ -109,4 +109,3 @@ export default function NavBar() {
     </Navbar>
   );
 }
-// TODO: setup logout

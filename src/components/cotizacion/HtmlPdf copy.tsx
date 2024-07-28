@@ -89,7 +89,45 @@ function HtmlPdf() {
         </div>
 
         <div className="my-4">
-          <TableItems items={items} totalPrice={totalPrice} />
+          <table className="w-full font-extralight ">
+            <thead>
+              <tr className="bg-blue-950 text-white">
+                <th className="py-4">Item</th>
+                <th>Descripción</th>
+                <th>Cant.</th>
+                <th>Precio total S/.</th>
+              </tr>
+            </thead>
+            <tbody className="border-1 border-black">
+              {/* Aca el map */}
+              {items.map((item) => (
+                <tr className="border-1 border-black" key={item.key}>
+                  <td className="border-1 border-black text-center">
+                    {item.key}
+                  </td>
+                  <td className="px-2 border-1 border-black">
+                    <div className="flex flex-col">
+                      <span className="font-medium">{item.description}</span>
+                      <span>Modelo: {item.model}</span>
+                    </div>
+                  </td>
+                  <td className="px-2 border-1 border-black">{item.amount}</td>
+                  <td className="px-2 border-1 border-black">
+                    {item.totalPrice}
+                  </td>
+                </tr>
+              ))}
+              <tr className="border-1 border-black">
+                <td></td>
+                <td colSpan={2} className="">
+                  PRECIO DE VENTA TOTAL (NO INCLUYE I.G.V.)
+                </td>
+                <td className="border-1 border-black font-medium">
+                  S/. {totalPrice}
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
 
         <div className="my-4">
@@ -121,52 +159,6 @@ function HtmlPdf() {
         </div>
       </div>
     </div>
-  );
-}
-
-function TableItems({
-  items,
-  totalPrice,
-}: {
-  items: ProductItemType[];
-  totalPrice: number;
-}) {
-  return (
-    <table className="w-full font-extralight ">
-      <thead>
-        <tr className="bg-blue-950 text-white">
-          <th className="py-4">Item</th>
-          <th>Descripción</th>
-          <th>Cant.</th>
-          <th>Precio total S/.</th>
-        </tr>
-      </thead>
-      <tbody className="border-1 border-black">
-        {/* Aca el map */}
-        {items.map((item) => (
-          <tr className="border-1 border-black" key={item.key}>
-            <td className="border-1 border-black text-center">{item.key}</td>
-            <td className="px-2 border-1 border-black">
-              <div className="flex flex-col">
-                <span className="font-medium">{item.description}</span>
-                <span>Modelo: {item.model}</span>
-              </div>
-            </td>
-            <td className="px-2 border-1 border-black">{item.amount}</td>
-            <td className="px-2 border-1 border-black">{item.totalPrice}</td>
-          </tr>
-        ))}
-        <tr className="border-1 border-black">
-          <td></td>
-          <td colSpan={2} className="">
-            PRECIO DE VENTA TOTAL (NO INCLUYE I.G.V.)
-          </td>
-          <td className="border-1 border-black font-medium">
-            S/. {totalPrice}
-          </td>
-        </tr>
-      </tbody>
-    </table>
   );
 }
 

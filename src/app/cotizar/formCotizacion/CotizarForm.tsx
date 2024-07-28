@@ -12,10 +12,18 @@ import { useGetClientList } from "@/app/hooks/clients/useClient";
 import { usePostCotizacion } from "@/app/hooks/cotizacion/useCotizacion";
 import { ProductItemType } from "@/models/cotizacion";
 
+interface ClientForm {
+  clientName: string;
+  clientContact: string;
+  clientRuc: string;
+  clientReference: string;
+}
+
 function CotizarForm() {
   const { Items, addItem, updateItem, removeItem, prices, setPrices } =
     useItems();
   const { clientList } = useGetClientList();
+  console.log(clientList);
   const { responseNewCotizacion, addNewCotizacion } = usePostCotizacion();
 
   const initialClientValues = {
@@ -23,7 +31,7 @@ function CotizarForm() {
     clientContact: "",
     clientReference: "",
   };
-  const [clientValues, setClientValues] = useState(initialClientValues);
+  const [clientValues, setClientValues] = useState<ClientForm | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,17 +48,18 @@ function CotizarForm() {
     const client = clientList?.find((client) => client.id == parseInt(e));
 
     if (!client) {
-      setClientValues(initialClientValues);
+      setClientValues(null);
     } else {
       setClientValues({
         ...clientValues,
         clientName: client.name,
         clientContact: client.contact,
         clientReference: client.reference,
+        clientRuc: client.ruc,
       });
     }
   };
-
+  console.log(clientValues);
   const totalPrice = prices.reduce((accumulator, currentValue) => {
     return currentValue.total + accumulator;
   }, 0);
@@ -75,52 +84,98 @@ function CotizarForm() {
               ))}
             </Select>
           )}
-          <Button size="sm" type="button" onClick={() => addItem()}>
-            Agregar
-            <CiCirclePlus className="text-xl" />
-          </Button>
         </div>
       </div>
       <hr />
 
       <div className="w-full grid gap-y-2 mt-4">
-        <div className="grid md:grid-cols-2 gap-2">
-          <Input
-            size="sm"
-            className="md:col-span-1"
-            type="text"
-            name="clientName"
-            value={clientValues.clientName}
-            label="Razón Social"
-          />
-          <Input
-            size="sm"
-            className="md:col-span-1"
-            type="text"
-            name="clientContact"
-            value={clientValues.clientContact}
-            placeholder="ejemplo: rolando gaspar"
-            label="Contacto "
-          />
-        </div>
+        {clientValues ? (
+          <>
+            <div className="grid md:grid-cols-2 gap-2">
+              <Input
+                size="sm"
+                className="md:col-span-1"
+                type="text"
+                name="clientName"
+                value={clientValues.clientName}
+                label="Razón Social"
+              />
+              <Input
+                size="sm"
+                className="md:col-span-1"
+                type="text"
+                name="clientContact"
+                value={clientValues.clientContact}
+                label="Contacto"
+              />
+            </div>
 
-        <div className="w-full grid md:grid-cols-2 gap-2 text-[20px]">
-          <Input
-            size="sm"
-            className="md:col-span-1 "
-            type="text"
-            name="clientReference"
-            value={clientValues.clientReference}
-            label="Referencia"
-          />
-          <DateInput
-            size="sm"
-            name="date"
-            label={"Fecha"}
-            placeholderValue={new CalendarDate(1995, 11, 6)}
-            className="md:col-span-1"
-          />
-        </div>
+            <div className="w-full grid md:grid-cols-2 gap-2 text-[20px]">
+              <Input
+                size="sm"
+                className="md:col-span-1 "
+                type="text"
+                name="clientReference"
+                value={clientValues.clientReference}
+                label="Referencia"
+              />
+
+              <Input
+                size="sm"
+                className="md:col-span-1 "
+                type="text"
+                name="clientRuc"
+                value={clientValues.clientRuc}
+                label="Ruc"
+              />
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="grid md:grid-cols-2 gap-2">
+              <Input
+                size="sm"
+                className="md:col-span-1"
+                type="text"
+                name="clientName"
+                label="Razón Social"
+              />
+              <Input
+                size="sm"
+                className="md:col-span-1"
+                type="text"
+                name="clientContact"
+                label="Contacto"
+              />
+            </div>
+
+            <div className="w-full grid md:grid-cols-2 gap-2 text-[20px]">
+              <Input
+                size="sm"
+                className="md:col-span-1 "
+                type="text"
+                name="clientReference"
+                label="Referencia"
+              />
+
+              <Input
+                size="sm"
+                className="md:col-span-1 "
+                type="text"
+                name="clientRuc"
+                label="Ruc"
+              />
+            </div>
+          </>
+        )}
+
+        <DateInput
+          size="sm"
+          name="date"
+          label={"Fecha (Fecha actual por defecto)"}
+          placeholderValue={new CalendarDate(2024, 12, 12)}
+          className="md:col-span-1"
+        />
       </div>
 
       <div className="w-full mt-4">

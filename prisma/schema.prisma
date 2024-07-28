@@ -26,16 +26,36 @@ enum CotizacionStatus {
 }
 
 model Client {
-  id        Int      @id @default(autoincrement())
-  name      String
-  contact   String
-  reference String
-  createAt  DateTime @default(now())
+  id         Int          @id @default(autoincrement())
+  name       String
+  contact    String
+  ruc        String       @unique
+  reference  String
+  createAt   DateTime     @default(now())
   //agregar la relacion de cotizacion
+  Cotizacion Cotizacion[]
 }
 
-// model Cotizacion {
-//   id     Int              @id @default(autoincrement())
-//   status CotizacionStatus @default(DRAFT)
-//   code   String
-// }
+model Cotizacion {
+  id              Int              @id @default(autoincrement())
+  status          CotizacionStatus @default(DRAFT)
+  code            String
+  clientId        Int?
+  client          Client?          @relation(fields: [clientId], references: [id])
+  //Client ---
+  clientName      String
+  clientContact   String
+  clientRuc       String
+  clientReference String
+
+  date             DateTime
+  deliverTime      String
+  paymentCondition String
+  totalPrice       Decimal
+  items            Json
+}
+
+model CodeCotizacion {
+  id       Int @id @default(autoincrement())
+  nextCode Int
+}
