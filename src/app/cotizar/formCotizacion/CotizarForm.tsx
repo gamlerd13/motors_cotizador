@@ -59,10 +59,12 @@ function CotizarForm() {
       });
     }
   };
-  console.log(clientValues);
-  const totalPrice = prices.reduce((accumulator, currentValue) => {
-    return currentValue.total + accumulator;
-  }, 0);
+
+  const totalPrice = prices
+    .reduce((accumulator, currentValue) => {
+      return currentValue.total + accumulator;
+    }, 0)
+    .toFixed(2);
 
   return (
     <form onSubmit={handleSubmit}>
@@ -196,8 +198,6 @@ function CotizarForm() {
             {Items.length &&
               Items.map((item, index) => (
                 <ProductItem
-                  // valueItems={valueItems}
-                  // setValueItems={valueItems}
                   updateItem={updateItem}
                   setPrices={setPrices}
                   item={item}

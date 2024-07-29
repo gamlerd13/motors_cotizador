@@ -1,4 +1,4 @@
-import { Cotizacion, ProductItemPost } from "@/models/cotizacion";
+import { CotizacionType, ProductItemPost } from "@/models/cotizacion";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/libs/db";
 import { CotizacionStatus } from "@prisma/client";

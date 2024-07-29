@@ -50,6 +50,7 @@ export const useGetUpdateCotizacion = () => {
       const response = await axios.get("api/cotizacion");
 
       if (response.status == 200) {
+        console.log(response.data);
         setCotizacionList(response.data);
       }
     } catch (error) {

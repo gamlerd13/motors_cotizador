@@ -40,7 +40,7 @@ export default function ProductItem({
       );
     };
     updatePrices(item.key);
-  }, [itemAmount, unitPrice]);
+  }, [itemAmount, unitPrice, item.key, setPrices]);
 
   return (
     <div className="w-full">
@@ -64,6 +64,7 @@ export default function ProductItem({
             type="text"
             name={`${item.key}_description`}
             label="Descripción"
+            required
           />
           <Input
             size="sm"
@@ -76,6 +77,7 @@ export default function ProductItem({
         <div className="flex flex-grow gap-2 min-w-[345px]">
           <Input
             size="sm"
+            required
             className="flex-none w-[90px]"
             type="number"
             name={`${index}_amount`}
@@ -101,7 +103,7 @@ export default function ProductItem({
           <Input
             size="sm"
             type="hidden"
-            value={(itemAmount * unitPrice).toString()}
+            value={(itemAmount * unitPrice).toFixed(2).toString()}
             name={`${index}_totalprice`}
             onChange={(e) => console.log(e.target.value)}
           />
@@ -109,7 +111,7 @@ export default function ProductItem({
             size="sm"
             type="number"
             label="P. Total"
-            value={(itemAmount * unitPrice).toString()}
+            value={(itemAmount * unitPrice).toFixed(2).toString()}
             disabled
           />
         </div>

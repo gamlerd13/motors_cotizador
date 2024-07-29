@@ -1,5 +1,5 @@
 import { CotizacionStatus } from "@prisma/client";
-import { Client } from "./client";
+import { Client, ClientCreate } from "./client";
 
 export interface ProductItemType {
   key: number;
@@ -14,7 +14,7 @@ export type ProductItemPost = ProductItemType & {
   [key: string]: any;
 };
 
-export interface Cotizacion {
+export interface CotizacionType {
   id?: number; //por si hay que cotizar desde backend
   client: string;
   // undefined client
@@ -28,7 +28,7 @@ export interface Cotizacion {
   // items: ProductItemType[];
   deliverTime: string;
   paymentCondition: string;
-  totalPrice: number;
+  totalPrice: string;
   [key: string]: any;
 }
 
@@ -58,7 +58,31 @@ export interface CotizacionGet {
 
   date: string;
 
-  items: ProductItemType[]; //Aun por definir, en la lista aun no lo voy a usar
+  items: ProductItemType[];
+  deliverTime: string;
+  paymentCondition: string;
+  totalPrice: number;
+}
+
+export interface CotizacionPost {
+  client?: {
+    create: {
+      name: string;
+      contact: string;
+      ruc: string;
+      reference: string;
+      createAt: Date;
+    };
+  };
+  clientId?: number;
+  code: string;
+  clientName: string;
+  status: CotizacionStatus;
+  clientContact: string;
+  clientReference: string;
+  clientRuc: string;
+  date: Date;
+  items: ProductItemType[] | string;
   deliverTime: string;
   paymentCondition: string;
   totalPrice: number;

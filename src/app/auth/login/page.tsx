@@ -11,12 +11,10 @@ export default function App() {
         <div className="w-full lg:w-1/2 py-4 sm:px-16 px-4 flex justify-center items-center">
           <div className="">
             <div className="pt-5 sm:px-5 text-center">
-              <h1 className="text-2xl font-medium">Lorem, ipsum.</h1>
+              <h1 className="text-2xl font-medium">Sistema Cotizador</h1>
               <span className="h-32">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat,
-                distinctio voluptate autem eius vitae ea nam quisquam doloremque
-                porro sapiente minus nulla esse molestiae, omnis eos blanditiis
-                quis beatae fugit.
+                Sistema de cotización para permite gestionar clientes, generar
+                cotizaciones detalladas y rastrear el estado.
               </span>
             </div>
             <div className="w-full text-end">
@@ -47,7 +45,7 @@ export default function App() {
             </div>
 
             <div className="flex flex-col">
-              <p className="text-md">Lorem ...</p>
+              <p className="text-md">Movento S.A.C</p>
               <p className="text-small text-default-500">Login</p>
             </div>
           </CardHeader>

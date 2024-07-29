@@ -1,22 +1,17 @@
-"use client";
-
-import Image from "next/image";
-import NavBar from "@/components/NavBar";
-import HtmlPdf from "@/components/cotizacion/HtmlPdf";
-import { Button } from "@nextui-org/button";
-import LandingHome from "./LandingHome";
-import TitlePage from "@/components/TitlePage";
 import Footer from "@/components/Footer";
+import NavBar from "@/components/NavBar";
+import TitlePage from "@/components/TitlePage";
+import React from "react";
 
-export default function Home() {
+function page() {
   return (
     <div className="h-screen flex flex-col justify-between">
       <main>
         <NavBar />
         <div className="w-full flex justify-center">
           <div className="p-4 sm:w-9/12">
-            <TitlePage title="Home" />
-            <LandingHome />
+            <TitlePage title="Clientes" />
+            {/* <LandingHome /> */}
           </div>
         </div>
       </main>
@@ -27,3 +22,5 @@ export default function Home() {
     </div>
   );
 }
+
+export default page;

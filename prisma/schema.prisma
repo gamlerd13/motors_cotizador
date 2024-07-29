@@ -29,7 +29,7 @@ model Client {
   id         Int          @id @default(autoincrement())
   name       String
   contact    String
-  ruc        String       @unique
+  ruc        String
   reference  String
   createAt   DateTime     @default(now())
   //agregar la relacion de cotizacion
@@ -51,7 +51,7 @@ model Cotizacion {
   date             DateTime
   deliverTime      String
   paymentCondition String
-  totalPrice       Decimal
+  totalPrice       Float
   items            Json
 }
 

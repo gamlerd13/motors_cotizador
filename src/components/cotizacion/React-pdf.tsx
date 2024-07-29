@@ -70,7 +70,8 @@ const ReactPdfComponent = ({ cotizacion }: { cotizacion: CotizacionGet }) => {
     totalPrice,
     items,
   } = cotizacion;
-  console.log(cotizacion);
+
+  console.log(items);
 
   return (
     <Document style={styles.all}>

@@ -1,8 +1,12 @@
-import { generatePdf } from "@/components/cotizacion/getHtml";
-import { Cotizacion, ProductItemPost } from "@/models/cotizacion";
+import {
+  CotizacionType,
+  CotizacionPost,
+  ProductItemPost,
+} from "@/models/cotizacion";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/libs/db";
-import { CotizacionStatus } from "@prisma/client";
+import { CotizacionStatus, Cotizacion } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 export interface ProductItemType {
   key: number;
   description: string;
@@ -27,7 +31,7 @@ export interface PdfCotizacion {
 
 export async function POST(req: NextRequest, res: NextResponse) {
   try {
-    const body: Cotizacion = await req.json();
+    const body: CotizacionType = await req.json();
     console.log(body);
     const {
       client,
@@ -65,76 +69,76 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
     const dateString = date === "" ? new Date() : new Date(date);
 
-    const data = {
-      status: CotizacionStatus.SENT,
-      code: newCode,
-      clientName: clientName.trim(),
-      clientContact: clientContact.trim(),
-      clientRuc: clientRuc.trim(),
-      clientReference: clientReference.trim(),
-      date: dateString,
-      deliverTime: deliverTime,
-      paymentCondition: paymentCondition,
-      totalPrice: totalPrice,
-      items: items,
-    };
+    // const data: Cotizacion = {
+    //   status: CotizacionStatus.SENT,
+    //   code: newCode,
+    //   clientName: clientName.trim(),
+    //   clientContact: clientContact.trim(),
+    //   clientRuc: clientRuc.trim(),
+    //   clientReference: clientReference.trim(),
+    //   date: dateString,
+    //   deliverTime: deliverTime,
+    //   paymentCondition: paymentCondition,
+    //   totalPrice: parseFloat(totalPrice),
+    //   items: JSON.stringify(items),
+    // };
 
+    let newCotizacionConditional = null;
     //create client
     if (client == "") {
       if (clientName.trim() != "")
-        data.client = {
-          create: {
-            name: clientName.trim(),
-            contact: clientContact.trim(),
-            ruc: clientRuc.trim(),
-            reference: clientReference.trim(),
-            createAt: new Date(),
+        newCotizacionConditional = await prisma.cotizacion.create({
+          data: {
+            status: CotizacionStatus.SENT,
+            code: newCode,
+
+            date: dateString,
+            deliverTime: deliverTime,
+            paymentCondition: paymentCondition,
+            totalPrice: parseFloat(totalPrice),
+            client: {
+              create: {
+                name: clientName.trim(),
+                contact: clientContact.trim(),
+                ruc: clientRuc.trim(),
+                reference: clientReference.trim(),
+                createAt: new Date(),
+              },
+            },
+
+            clientName: "",
+            clientContact: "",
+            clientRuc: "",
+            clientReference: "",
+            items: JSON.stringify(items),
           },
-        };
-      data.clientName = "";
-      data.clientContact = "";
-      data.clientRuc = "";
-      data.clientReference = "";
+        });
     } else {
-      if (typeof parseInt(client) == "number") data.clientId = parseInt(client);
+      if (typeof parseInt(client) == "number") {
+        newCotizacionConditional = await prisma.cotizacion.create({
+          data: {
+            status: CotizacionStatus.SENT,
+            code: newCode,
+            clientName: clientName.trim(),
+            clientContact: clientContact.trim(),
+            clientRuc: clientRuc.trim(),
+            clientReference: clientReference.trim(),
+            date: dateString,
+            deliverTime: deliverTime,
+            paymentCondition: paymentCondition,
+            totalPrice: parseFloat(totalPrice),
+            items: JSON.stringify(items),
+            clientId: parseInt(client),
+          },
+        });
+      }
     }
 
-    console.log(items);
-
-    // Guardar en base  de datos
-    const newCotizacion = await prisma.cotizacion.create({
-      data,
-    });
-    // const newCotizacion = "asdf";
-    // return NextResponse.json(data, { status: 201 });
-
-    // const pdf = await generatePdf({ number: "sdf", description: "sdf" });
-    // console.log(pdf);
-
-    // // Devolver el PDF
-    // const pdfBuffer = pdf;
-
-    // // Configurar las cabeceras para la respuesta PDF
-    // const headers = new Headers({
-    //   "Content-Type": "application/pdf",
-    //   "Content-Disposition": 'attachment; filename="invoice.pdf"',
-    // });
-
-    // // Devolver el buffer como respuesta
-    // return new NextResponse(pdfBuffer, {
-    //   headers,
-    // });
-
     // const newCotizacion = await prisma.cotizacion.create({
-    //   data: {
-    //     alumnoId,
-    //     paymentConceptId,
-    //     paymentMethod,
-    //     total,
-    //   },
+    //   data: data,
     // });
-    if (!newCotizacion) {
-      console.log("va  a haber un error");
+
+    if (!newCotizacionConditional) {
       throw new Error("No se pudo crear el pago");
     }
 
@@ -153,7 +157,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
       });
     }
 
-    return NextResponse.json(newCotizacion, { status: 201 });
+    return NextResponse.json(newCotizacionConditional, { status: 201 });
   } catch (error) {
     const message =
       error instanceof Error ? error.message : "Error desconocido";
@@ -167,12 +171,24 @@ export async function GET() {
       include: {
         client: true,
       },
+
       orderBy: {
         date: "desc",
       },
     });
 
-    return NextResponse.json(cotizaciones, { status: 200 });
+    const cotizacionesMap = await cotizaciones.map((coti) => {
+      const { items, ...todoDemas } = coti;
+
+      return {
+        ...todoDemas,
+        items: JSON.parse(items as string),
+      };
+    });
+
+    console.log(await cotizacionesMap);
+
+    return NextResponse.json(cotizacionesMap, { status: 200 });
   } catch (error) {
     console.error("Error fetching data:", error);
     return NextResponse.error();
