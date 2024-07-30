@@ -108,12 +108,14 @@ function CotizacionesTable({
       </Modal>
 
       <Table
-        aria-label="Example table with client side sorting"
-        //   sortDescriptor={list.sortDescriptor}
-        //   onSortChange={list.sort}
+        aria-label="Example table with dynamic content"
+        className=""
         classNames={{
-          table: "min-h-[300px]",
+          base: "max-h-[520px] overflow-scroll",
+          table: "min-h-[200px]",
         }}
+        isCompact
+        removeWrapper
       >
         <TableHeader>
           <TableColumn>Código</TableColumn>

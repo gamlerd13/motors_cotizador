@@ -32,9 +32,9 @@ export interface PdfCotizacion {
 export async function POST(req: NextRequest, res: NextResponse) {
   try {
     const body: CotizacionType = await req.json();
-    console.log(body);
+    console.log("Body start", body);
     const {
-      client,
+      client: clientBody,
       clientName,
       clientContact,
       clientRuc,
@@ -85,54 +85,100 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
     let newCotizacionConditional = null;
     //create client
-    if (client == "") {
-      if (clientName.trim() != "")
-        newCotizacionConditional = await prisma.cotizacion.create({
-          data: {
-            status: CotizacionStatus.SENT,
-            code: newCode,
+    const commonData = {
+      status: CotizacionStatus.SENT,
+      code: newCode, // Asume que tienes una función para generar el nuevo código
+      date: dateString,
+      deliverTime: deliverTime,
+      paymentCondition: paymentCondition,
+      totalPrice: parseFloat(totalPrice),
+      items: JSON.stringify(items),
+    };
 
-            date: dateString,
-            deliverTime: deliverTime,
-            paymentCondition: paymentCondition,
-            totalPrice: parseFloat(totalPrice),
-            client: {
-              create: {
-                name: clientName.trim(),
-                contact: clientContact.trim(),
-                ruc: clientRuc.trim(),
-                reference: clientReference.trim(),
-                createAt: new Date(),
-              },
-            },
-
-            clientName: "",
-            clientContact: "",
-            clientRuc: "",
-            clientReference: "",
-            items: JSON.stringify(items),
-          },
-        });
-    } else {
-      if (typeof parseInt(client) == "number") {
-        newCotizacionConditional = await prisma.cotizacion.create({
-          data: {
-            status: CotizacionStatus.SENT,
-            code: newCode,
-            clientName: clientName.trim(),
-            clientContact: clientContact.trim(),
-            clientRuc: clientRuc.trim(),
-            clientReference: clientReference.trim(),
-            date: dateString,
-            deliverTime: deliverTime,
-            paymentCondition: paymentCondition,
-            totalPrice: parseFloat(totalPrice),
-            items: JSON.stringify(items),
-            clientId: parseInt(client),
-          },
-        });
-      }
+    const cli = {
+      client: {
+        create: {
+          name: clientName.trim(),
+          contact: clientContact.trim(),
+          ruc: clientRuc.trim(),
+          reference: clientReference.trim(),
+          createAt: new Date(),
+        },
+      },
+    };
+    if (clientBody === "") {
+      const client = clientName.trim() !== "" ? cli.client : undefined;
+      newCotizacionConditional = await prisma.cotizacion.create({
+        data: {
+          ...commonData,
+          client,
+          clientName: "",
+          clientContact: "",
+          clientRuc: "",
+          clientReference: "",
+        },
+      });
+    } else if (!isNaN(parseInt(clientBody))) {
+      newCotizacionConditional = await prisma.cotizacion.create({
+        data: {
+          ...commonData,
+          clientName: clientName.trim(),
+          clientContact: clientContact.trim(),
+          clientRuc: clientRuc.trim(),
+          clientReference: clientReference.trim(),
+          clientId: parseInt(clientBody),
+        },
+      });
     }
+
+    // if (client == "") {
+    //   if (clientName.trim() != "")
+    //     newCotizacionConditional = await prisma.cotizacion.create({
+    //       data: {
+    //         status: CotizacionStatus.SENT,
+    //         code: newCode,
+
+    //         date: dateString,
+    //         deliverTime: deliverTime,
+    //         paymentCondition: paymentCondition,
+    //         totalPrice: parseFloat(totalPrice),
+    //         client: {
+    //           create: {
+    //             name: clientName.trim(),
+    //             contact: clientContact.trim(),
+    //             ruc: clientRuc.trim(),
+    //             reference: clientReference.trim(),
+    //             createAt: new Date(),
+    //           },
+    //         },
+
+    //         clientName: "",
+    //         clientContact: "",
+    //         clientRuc: "",
+    //         clientReference: "",
+    //         items: JSON.stringify(items),
+    //       },
+    //     });
+    // } else {
+    //   if (typeof parseInt(client) == "number") {
+    //     newCotizacionConditional = await prisma.cotizacion.create({
+    //       data: {
+    //         status: CotizacionStatus.SENT,
+    //         code: newCode,
+    //         clientName: clientName.trim(),
+    //         clientContact: clientContact.trim(),
+    //         clientRuc: clientRuc.trim(),
+    //         clientReference: clientReference.trim(),
+    //         date: dateString,
+    //         deliverTime: deliverTime,
+    //         paymentCondition: paymentCondition,
+    //         totalPrice: parseFloat(totalPrice),
+    //         items: JSON.stringify(items),
+    //         clientId: parseInt(client),
+    //       },
+    //     });
+    //   }
+    // }
 
     // const newCotizacion = await prisma.cotizacion.create({
     //   data: data,

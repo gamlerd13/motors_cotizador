@@ -11,6 +11,7 @@ import { Select, SelectItem } from "@nextui-org/react";
 import { useGetClientList } from "@/app/hooks/clients/useClient";
 import { usePostCotizacion } from "@/app/hooks/cotizacion/useCotizacion";
 import { ProductItemType } from "@/models/cotizacion";
+import { useCodeCotizacion } from "@/app/hooks/cotizacion/useCodeCotizacion";
 
 interface ClientForm {
   clientName: string;
@@ -23,7 +24,9 @@ function CotizarForm() {
   const { Items, addItem, updateItem, removeItem, prices, setPrices } =
     useItems();
   const { clientList } = useGetClientList();
+  const { lastCodeCotizacion } = useCodeCotizacion();
   if (clientList) console.log(clientList);
+  if (lastCodeCotizacion) console.log(lastCodeCotizacion);
 
   const { responseNewCotizacion, addNewCotizacion } = usePostCotizacion();
 
@@ -92,6 +95,17 @@ function CotizarForm() {
       <hr />
 
       <div className="w-full grid gap-y-2 mt-4">
+        {lastCodeCotizacion && (
+          <Input
+            size="sm"
+            className="md:col-span-1 font-bold"
+            type="text"
+            value={lastCodeCotizacion}
+            label="Código"
+            disabled
+          />
+        )}
+
         {clientValues ? (
           <>
             <div className="grid md:grid-cols-2 gap-2">

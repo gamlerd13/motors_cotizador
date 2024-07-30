@@ -6,6 +6,7 @@ import { NextFetchEvent, NextRequest, NextResponse } from "next/server";
 const publicPaths = [
   /^\/api\/cotizacion$/,
   /^\/api\/client$/,
+  /^\/api\/codeCotizacion$/,
   /^\/api\/client\/.*$/, // repasar este funcionamiento
 ];
 

@@ -10,7 +10,7 @@ function App() {
       <div>
         <NavBar />
         <div className="w-full flex justify-center">
-          <div className="p-4 sm:w-9/12">
+          <div className="p-4 sm:w-9/12 w-full">
             <TitlePage title="Cotizaciones" />
             <CotizacionesList />
           </div>

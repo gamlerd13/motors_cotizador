@@ -2,6 +2,10 @@
 GET http://localhost:3000/api/client
 Content-Type: application/json
 
+### Last Code Cotizacion
+GET http://localhost:3000/api/codeCotizacion
+Content-Type: application/json
+
 ### Cotizaciones
 GET http://localhost:3000/api/cotizacion
 Content-Type: application/json
