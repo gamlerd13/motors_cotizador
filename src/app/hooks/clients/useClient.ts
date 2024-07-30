@@ -10,7 +10,10 @@ export const useGetClientList = () => {
       const response = await axios.get("api/client");
 
       if (response.status == 200) {
-        console.log(response.data);
+        console.log(
+          "Cotizacion en resnpose use cliente, get client",
+          response.data
+        );
         setClientList(response.data);
       }
     } catch (error) {

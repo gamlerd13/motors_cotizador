@@ -23,7 +23,8 @@ function CotizarForm() {
   const { Items, addItem, updateItem, removeItem, prices, setPrices } =
     useItems();
   const { clientList } = useGetClientList();
-  console.log(clientList);
+  if (clientList) console.log(clientList);
+
   const { responseNewCotizacion, addNewCotizacion } = usePostCotizacion();
 
   const initialClientValues = {
