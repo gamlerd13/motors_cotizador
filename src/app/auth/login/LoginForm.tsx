@@ -28,10 +28,13 @@ export default function LoginForm() {
       redirect: false,
     });
 
+    console.log(res);
+
     if (res?.error) {
       setInputName("");
       setInputPassword("");
       setErrorCredentials("Usuario o contraseña incorrecta !");
+      console.log(errorCredentials)
     } else {
       setErrorCredentials(null);
       router.push("/");

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 export const useGetClientList = () => {
   const [clientList, setClientList] = useState<Client[] | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const getClients = async () => {
     try {
@@ -18,6 +19,8 @@ export const useGetClientList = () => {
       }
     } catch (error) {
       console.error("Hubo un error en useClient, getClient");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -27,6 +30,7 @@ export const useGetClientList = () => {
 
   return {
     clientList,
+    isLoading
   };
 };
 
