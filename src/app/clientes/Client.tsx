@@ -6,7 +6,7 @@ import { CiCircleMinus, CiCirclePlus } from "react-icons/ci";
 import { Button } from "@nextui-org/react";
 import ClientesList from "./ClientesList";
 import ClienteForm from "./formCliente/ClienteForm";
-import { AppWrapper } from "@/context";
+import { AppWrapper, useAppContext } from "@/context";
 
 function Client() {
   const [isActiveCreateClient, setIsActiveCreateClient] = useState(false);
@@ -33,6 +33,7 @@ function Client() {
           {
             isActiveCreateClient && (
               <ClienteForm
+                isActiveCreateClient={isActiveCreateClient}
                 setIsActiveCreateClient={setIsActiveCreateClient}
               />
             )
@@ -40,6 +41,8 @@ function Client() {
 
           {/* <LandingHome /> */}
           <ClientesList
+            isActiveCreateClient={isActiveCreateClient}
+            setIsActiveCreateClient={setIsActiveCreateClient}
           />
         </div>
 

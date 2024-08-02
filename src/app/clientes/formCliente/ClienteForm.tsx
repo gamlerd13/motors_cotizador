@@ -2,47 +2,90 @@
 
 import { usePostClient } from "@/app/hooks/clients/useClient";
 import ButtonSubmit from "@/components/Button";
-import { Client } from "@/models/client";
+import { useAppContext } from "@/context";
+import { Button } from "@nextui-org/button";
+import { DateInput } from "@nextui-org/date-input";
 import { Input } from "@nextui-org/input";
-import React, { Dispatch, useRef, useState } from "react";
+import { CalendarDate } from "@internationalized/date";
+import axios from "axios";
+import React, { SetStateAction, useRef } from "react";
+import { toast } from "sonner";
 
-interface ClientForm {
-  clientName: string;
-  clientContact: string;
-  clientRuc: string;
-  clientReference: string;
+
+interface ClientFormProps {
+  isActiveCreateClient: boolean,
+  setIsActiveCreateClient: React.Dispatch<SetStateAction<boolean>>
 }
 
-interface ClienteFormProps {
-  setIsActiveCreateClient: Dispatch<React.SetStateAction<boolean>>,
-}
-
-function ClienteForm({ setIsActiveCreateClient }: ClienteFormProps) {
-  const [clientValue, setClientValue] = useState<ClientForm | null>(null);
+function ClienteForm({ isActiveCreateClient, setIsActiveCreateClient }: ClientFormProps) {
   // TODO: add animation desplazamiento
 
-  const { addNewClient } = usePostClient()
+  const { clientValue, setClientValue, isEdit, setClients, clients, setIsEdit } = useAppContext();
 
+  const { addNewClient } = usePostClient()
+  console.log(clientValue.clientName)
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (isEdit) {
+
+      const clientToEdit = clients.find(client => client.id == clientValue.clientId);
+
+      if (clientToEdit?.name == clientValue.clientName && clientToEdit.ruc == clientValue.clientRuc &&
+        clientToEdit.contact == clientValue.clientContact && clientToEdit.reference == clientValue.clientReference
+      ) {
+        if (inputRef.current) {
+          inputRef.current.focus();
+        }
+
+        return;
+      }
+
+      try {
+        const response = await axios.put(`/api/client/${clientValue.clientId}`, {
+          name: clientValue.clientName.trim(),
+          contact: clientValue.clientContact.trim(),
+          reference: clientValue.clientReference.trim(),
+          ruc: clientValue.clientRuc.trim(),
+          createAt: clientValue.clientDate
+        });
+
+        console.log('Client updated:', response.data);
+
+        const editClient = clients.map(client => client.id == clientValue.clientId ? response.data : { ...client })
+        setClients(editClient);
+        setClientValue({
+          clientRuc: "",
+          clientName: "",
+          clientContact: "",
+          clientReference: ""
+        })
+
+        setIsActiveCreateClient(false);
+        setIsEdit(false);
+        toast.success("Cliente Actualizado satisfactoriamente");
+      } catch (error) {
+        console.error('Error updating client:', error);
+      }
+
+      console.log(clientValue, "editando")
+      return;
+    }
+
     const form = e.target as HTMLFormElement;
     const formData = new FormData(form);
 
-    // Convertir FormData a un array de pares clave-valor
     const formDataEntries = Array.from(formData.entries());
 
-    // Verificar si todos los campos están vacíos
     const allFieldsEmpty = formDataEntries.every(([key, value]) => (value as string).trim() === ''); if (allFieldsEmpty) {
-      // Activar el useRef si todos los campos están vacíos
+
       if (inputRef.current) {
         inputRef.current.focus();
       }
-      console.log("Todos los campos están vacíos");
-      return; // Salir de la función para evitar enviar el formulario
+      return;
     }
-
 
     try {
       await addNewClient(formData, setIsActiveCreateClient);
@@ -50,6 +93,16 @@ function ClienteForm({ setIsActiveCreateClient }: ClienteFormProps) {
       console.log(error)
     }
 
+  };
+
+  const handleEdit = (id: number) => {
+    console.log(clientValue, "clientValue")
+  }
+
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    setClientValue(prev => ({ ...prev, [name]: value }));
   };
 
   return (
@@ -65,6 +118,7 @@ function ClienteForm({ setIsActiveCreateClient }: ClienteFormProps) {
           value={clientValue?.clientName}
           label="Razón Social"
           ref={inputRef}
+          onChange={handleChange}
         />
         <Input
           size="sm"
@@ -73,6 +127,7 @@ function ClienteForm({ setIsActiveCreateClient }: ClienteFormProps) {
           name="clientContact"
           value={clientValue?.clientContact}
           label="Contacto"
+          onChange={handleChange}
         />
       </div>
 
@@ -84,6 +139,8 @@ function ClienteForm({ setIsActiveCreateClient }: ClienteFormProps) {
           name="clientReference"
           value={clientValue?.clientReference}
           label="Referencia"
+          onChange={handleChange}
+
         />
 
         <Input
@@ -93,11 +150,27 @@ function ClienteForm({ setIsActiveCreateClient }: ClienteFormProps) {
           name="clientRuc"
           value={clientValue?.clientRuc}
           label="Ruc"
+          onChange={handleChange}
         />
       </div>
+      {
+        isEdit &&
 
-      <ButtonSubmit text="Agregar Cliente" />
-    </form>
+        <DateInput
+          size="sm"
+          name="date"
+          label={"Fecha (Fecha actual por defecto)"}
+          placeholderValue={clientValue.clientDate && (new CalendarDate(clientValue.clientDate?.getFullYear(), clientValue.clientDate?.getMonth(), clientValue.clientDate?.getDay()))}
+          className="md:col-span-1"
+        />
+      }
+
+      {
+        (isEdit)
+          ? <Button className="bg-indigo-600" type="submit">Editar Cliente</Button>
+          : <ButtonSubmit text="Agregar Cliente" />
+      }
+    </form >
   );
 }
 

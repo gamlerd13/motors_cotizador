@@ -16,3 +16,13 @@ export interface ClientCreate {
     createAt: Date;
   };
 }
+
+
+export interface ClientForm {
+  clientId?: number;
+  clientName: string;
+  clientContact: string;
+  clientRuc: string;
+  clientReference: string;
+  clientDate?: Date;
+}

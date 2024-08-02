@@ -1,12 +1,18 @@
 "use client";
 
-import { useEffect } from "react";
+import React, { SetStateAction, useEffect } from "react";
 import { useGetClientList } from "../hooks/clients/useClient";
 import ClientesTable from "./ClientesTable";
 import { useAppContext } from "@/context";
 
 
-export default function ClientesList() {
+interface ClientesListProps {
+  isActiveCreateClient: boolean,
+  setIsActiveCreateClient: React.Dispatch<SetStateAction<boolean>>
+}
+
+
+export default function ClientesList({ isActiveCreateClient, setIsActiveCreateClient }: ClientesListProps) {
   const { clientList, isLoading } = useGetClientList();
 
 
@@ -22,6 +28,8 @@ export default function ClientesList() {
       <ClientesTable
         clientList={clients}
         isLoading={isLoading}
+        isActiveCreateClient={isActiveCreateClient}
+        setIsActiveCreateClient={setIsActiveCreateClient}
       />
     </div>
   );
