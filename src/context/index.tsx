@@ -7,7 +7,9 @@ interface Context {
   clientValue: ClientForm,
   setClientValue: React.Dispatch<SetStateAction<ClientForm>>,
   isEdit: boolean,
-  setIsEdit: React.Dispatch<SetStateAction<boolean>>
+  setIsEdit: React.Dispatch<SetStateAction<boolean>>,
+  isActiveCreateClient: boolean,
+  setIsActiveCreateClient: React.Dispatch<SetStateAction<boolean>>,
 }
 
 
@@ -27,8 +29,10 @@ export function AppWrapper({ children }: {
 
   const [isEdit, setIsEdit] = useState(false);
 
+  const [isActiveCreateClient, setIsActiveCreateClient] = useState(false);
+
   return (
-    <AppContext.Provider value={{ clients, setClients, clientValue, setClientValue, isEdit, setIsEdit }} >
+    <AppContext.Provider value={{ clients, setClients, clientValue, setClientValue, isEdit, setIsEdit, isActiveCreateClient, setIsActiveCreateClient }} >
       {children}
     </AppContext.Provider>
   )

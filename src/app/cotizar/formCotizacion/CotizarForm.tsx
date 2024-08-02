@@ -86,8 +86,8 @@ function CotizarForm() {
               name="client"
               onChange={(e) => handleSelect(e.target.value)}
             >
-              {clientList.map((client) => (
-                <SelectItem key={client.id} value={client.id}>
+              {clientList.map((client, index) => (
+                <SelectItem key={client.id || index} value={client.id}>
                   {client.name}
                 </SelectItem>
               ))}

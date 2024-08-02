@@ -8,9 +8,8 @@ import { DateInput } from "@nextui-org/date-input";
 import { Input } from "@nextui-org/input";
 import { CalendarDate } from "@internationalized/date";
 import axios from "axios";
-import React, { SetStateAction, useRef } from "react";
+import React, { SetStateAction, useRef, useEffect } from "react";
 import { toast } from "sonner";
-
 
 interface ClientFormProps {
   isActiveCreateClient: boolean,
@@ -23,7 +22,7 @@ function ClienteForm({ isActiveCreateClient, setIsActiveCreateClient }: ClientFo
   const { clientValue, setClientValue, isEdit, setClients, clients, setIsEdit } = useAppContext();
 
   const { addNewClient } = usePostClient()
-  console.log(clientValue.clientName)
+
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -104,6 +103,17 @@ function ClienteForm({ isActiveCreateClient, setIsActiveCreateClient }: ClientFo
     const { name, value } = event.target;
     setClientValue(prev => ({ ...prev, [name]: value }));
   };
+
+  useEffect(() => {
+    if (isActiveCreateClient && !isEdit) {
+      setClientValue({
+        clientRuc: "",
+        clientContact: "",
+        clientReference: "",
+        clientName: ""
+      })
+    }
+  }, [isActiveCreateClient])
 
   return (
     <form className="mb-8 grid gap-2"
