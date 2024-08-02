@@ -1,10 +1,10 @@
 export interface Client {
-  id: number;
+  id?: number;
   name: string;
   contact: string;
   ruc: string;
   reference: string;
-  createAt: string;
+  createAt?: string;
 }
 
 export interface ClientCreate {

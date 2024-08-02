@@ -1,10 +1,15 @@
+"use client"
+
+import { useAppContext } from "@/context";
 import { Client } from "@/models/client";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { toast } from "sonner";
 
 export const useGetClientList = () => {
-  const [clientList, setClientList] = useState<Client[] | null>(null);
+  const [clientList, setClientList] = useState<Client[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+
 
   const getClients = async () => {
     try {
@@ -34,21 +39,48 @@ export const useGetClientList = () => {
   };
 };
 
-// export const usePostClient = async (formDataNewClient) => {
-//   const [responseNewClient, setResponseNewClient] = useState<string | null>(
-//     null
-//   );
-//   const addNew
-//   try {
-//     const response = await axios.post("api/client", formDataNewClient);
+// TODO:create toast aviso create new client
+// validar all data equal
 
-//     if (response.status == 201) {
-//       setResponseNewClient(response.data);
-//     }
-//   } catch (error) {
-//     console.error("Hubo un error en useClient, getClient");
-//   }
-//   return {
-//     responseNewClient,
-//   };
-// };
+export const usePostClient = () => {
+  const [responseNewClient, setResponseNewClient] = useState<string | null>(
+    null
+  );
+
+  const { clients = [], setClients } = useAppContext();
+
+  const addNewClient = async (formDataNewClient: FormData, setIsActiveCreateClient: React.Dispatch<React.SetStateAction<boolean>>) => {
+
+    const formDataEntries = Object.fromEntries(
+      formDataNewClient.entries()
+    );
+
+    const newClient: Client = {
+      name: formDataEntries.clientName as string,
+      contact: formDataEntries.clientContact as string,
+      ruc: formDataEntries.clientRuc as string,
+      reference: formDataEntries.clientReference as string,
+    };
+
+    console.log(newClient, "objeto")
+    try {
+      const response = await axios.post("api/client", formDataEntries);
+
+      if (response.status == 201) {
+        setResponseNewClient(response.data);
+        setIsActiveCreateClient(false);
+        toast.success("Cliente Agregado Satisfactoriamente");
+
+        setClients([...clients, response.data])
+        console.log(response.data, "response.data")
+      }
+    } catch (error) {
+      console.error("Hubo un error en useClient, post client", error);
+    }
+  }
+
+  return {
+    responseNewClient,
+    addNewClient,
+  };
+};
