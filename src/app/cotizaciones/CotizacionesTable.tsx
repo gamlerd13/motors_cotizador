@@ -1,5 +1,5 @@
 import { getDateHour } from "@/lib/main";
-import { CotizacionGet, statusLabels } from "@/models/cotizacion";
+import { CotizacionGet, statusColors, statusLabels } from "@/models/cotizacion";
 import { FaFilePdf } from "react-icons/fa6";
 import { FaEdit } from "react-icons/fa";
 import { CotizacionStatus } from "@prisma/client";
@@ -42,6 +42,7 @@ interface CotizacionEnd {
   id: number;
   name: string;
   code: string;
+  status: CotizacionStatus;
 }
 
 function CotizacionesTable({
@@ -61,6 +62,7 @@ function CotizacionesTable({
   };
   const handleFinalizarCotizacion = (typeEnding: CotizacionStatus) => {
     if (cotizacionEnd) {
+      console.log(typeEnding);
       updateCotizacion(cotizacionEnd.id, typeEnding);
     }
     onClose();
@@ -77,29 +79,97 @@ function CotizacionesTable({
             <>
               <ModalHeader className="flex flex-col gap-1">
                 <div className="flex justify-around">
-                  Finalizar Cotización
+                  Cambiar de estado Cotización
                   <Chip color="success">{cotizacionEnd?.code}</Chip>
                 </div>
               </ModalHeader>
-              <ModalBody>¿Está seguro de finalizar cotización?</ModalBody>
+              <ModalBody>
+                <div className="flex justify-around">
+                  <Button
+                    size="sm"
+                    color={
+                      cotizacionEnd?.status == CotizacionStatus.ESTADO1
+                        ? "success"
+                        : "default"
+                    }
+                    onClick={() =>
+                      handleFinalizarCotizacion(CotizacionStatus.ESTADO1)
+                    }
+                  >
+                    {CotizacionStatus.ESTADO1}
+                  </Button>
+                  <Button
+                    size="sm"
+                    color={
+                      cotizacionEnd?.status == CotizacionStatus.ESTADO2
+                        ? "success"
+                        : "default"
+                    }
+                    onClick={() =>
+                      handleFinalizarCotizacion(CotizacionStatus.ESTADO2)
+                    }
+                  >
+                    {CotizacionStatus.ESTADO2}
+                  </Button>
+                  <Button
+                    size="sm"
+                    color={
+                      cotizacionEnd?.status == CotizacionStatus.ESTADO3
+                        ? "success"
+                        : "default"
+                    }
+                    onClick={() =>
+                      handleFinalizarCotizacion(CotizacionStatus.ESTADO3)
+                    }
+                  >
+                    {CotizacionStatus.ESTADO3}
+                  </Button>
+                </div>
+                <div className="flex justify-around">
+                  <Button
+                    size="sm"
+                    color={
+                      cotizacionEnd?.status == CotizacionStatus.ESTADO4
+                        ? "success"
+                        : "default"
+                    }
+                    onClick={() =>
+                      handleFinalizarCotizacion(CotizacionStatus.ESTADO4)
+                    }
+                  >
+                    {CotizacionStatus.ESTADO4}
+                  </Button>
+                  <Button
+                    size="sm"
+                    color={
+                      cotizacionEnd?.status == CotizacionStatus.ESTADO5
+                        ? "success"
+                        : "default"
+                    }
+                    onClick={() =>
+                      handleFinalizarCotizacion(CotizacionStatus.ESTADO5)
+                    }
+                  >
+                    {CotizacionStatus.ESTADO5}
+                  </Button>
+                  <Button
+                    size="sm"
+                    color={
+                      cotizacionEnd?.status == CotizacionStatus.ESTADO6
+                        ? "success"
+                        : "default"
+                    }
+                    onClick={() =>
+                      handleFinalizarCotizacion(CotizacionStatus.ESTADO6)
+                    }
+                  >
+                    {CotizacionStatus.ESTADO6}
+                  </Button>
+                </div>
+              </ModalBody>
               <ModalFooter>
-                <Button
-                  size="sm"
-                  color="success"
-                  onClick={() =>
-                    handleFinalizarCotizacion(CotizacionStatus.ACCEPTED)
-                  }
-                >
-                  Finalizar aceptado
-                </Button>
-                <Button
-                  size="sm"
-                  color="danger"
-                  onClick={() =>
-                    handleFinalizarCotizacion(CotizacionStatus.REJECTED)
-                  }
-                >
-                  Finalizar rechazado
+                <Button size="sm" color="default" onPress={onClose}>
+                  cerrar
                 </Button>
               </ModalFooter>
             </>
@@ -139,7 +209,7 @@ function CotizacionesTable({
                 <div>{getDateHour(cotizacion.date)[1]}</div>
               </TableCell>
               <TableCell>
-                <Chip size="sm" color="secondary">
+                <Chip size="sm" color={statusColors[cotizacion.status]}>
                   {statusLabels[cotizacion.status]}
                 </Chip>
               </TableCell>
@@ -169,10 +239,11 @@ function CotizacionesTable({
                         id: cotizacion.id,
                         name: cotizacion.client?.name || "Sin cliente",
                         code: cotizacion.code,
+                        status: cotizacion.status,
                       })
                     }
                   >
-                    Finalizar
+                    Cambiar Estado
                   </Button>
                 </div>
               </TableCell>

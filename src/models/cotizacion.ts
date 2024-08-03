@@ -108,6 +108,23 @@ export const statusLabels: { [key in CotizacionStatus]: string } = {
   [CotizacionStatus.ESTADO6]: "ESTADO6",
 };
 
+type ChipColor =
+  | "default"
+  | "primary"
+  | "secondary"
+  | "success"
+  | "warning"
+  | "danger";
+
+export const statusColors: { [key in CotizacionStatus]: ChipColor } = {
+  [CotizacionStatus.ESTADO1]: "default",
+  [CotizacionStatus.ESTADO2]: "primary",
+  [CotizacionStatus.ESTADO3]: "secondary",
+  [CotizacionStatus.ESTADO4]: "success",
+  [CotizacionStatus.ESTADO5]: "warning",
+  [CotizacionStatus.ESTADO6]: "danger",
+};
+
 export const InitialCodeCotizacionChild = [
   "A",
   "B",

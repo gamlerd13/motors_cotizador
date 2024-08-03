@@ -99,16 +99,16 @@ export const useGetUpdateCotizacion = () => {
     typeEnding: CotizacionStatus
   ) => {
     try {
-      console.log(typeEnding);
+      console.log("este es el cotizacion estatus", typeEnding);
 
       const response = await axios.put(
-        `api/cotizacion/${cotizacionId}`,
+        `/api/cotizacion/update-status/${cotizacionId}`,
         JSON.stringify(typeEnding)
       );
       console.log("respueste de la api: ", response);
       if (response.status == 201) {
         toast.success(
-          `Se finalizó el estado de la cotización ${statusLabels[typeEnding]}`
+          `Se actualizó el estado de la cotización ${statusLabels[typeEnding]}`
         );
         getCotizaciones();
       }
