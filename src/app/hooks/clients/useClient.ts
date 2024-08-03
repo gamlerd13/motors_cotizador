@@ -7,7 +7,7 @@ export const useGetClientList = () => {
 
   const getClients = async () => {
     try {
-      const response = await axios.get("api/client");
+      const response = await axios.get("/api/client");
 
       if (response.status == 200) {
         console.log(

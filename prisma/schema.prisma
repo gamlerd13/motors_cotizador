@@ -5,16 +5,16 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// datasource db {
-//   provider = "postgresql"
-//   url      = env("DATABASE_URL")
-// }
-
 datasource db {
-  provider  = "postgresql"
-  url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
-  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
+
+// datasource db {
+//   provider  = "postgresql"
+//   url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
+//   directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+// }
 
 model User {
   id       Int     @id @default(autoincrement())
@@ -23,12 +23,21 @@ model User {
   password String
 }
 
+// enum CotizacionStatus {
+//   DRAFT // Borrador
+//   SENT // Enviada
+//   ACCEPTED // Aceptada
+//   REJECTED // Rechazada
+//   EXPIRED // Expirada
+// }
+
 enum CotizacionStatus {
-  DRAFT // Borrador
-  SENT // Enviada
-  ACCEPTED // Aceptada
-  REJECTED // Rechazada
-  EXPIRED // Expirada
+  ESTADO1
+  ESTADO2
+  ESTADO3
+  ESTADO4
+  ESTADO5
+  ESTADO6
 }
 
 model Client {
@@ -44,8 +53,9 @@ model Client {
 
 model Cotizacion {
   id              Int              @id @default(autoincrement())
-  status          CotizacionStatus @default(DRAFT)
+  status          CotizacionStatus @default(ESTADO1)
   code            String
+  parentCode      String
   clientId        Int?
   client          Client?          @relation(fields: [clientId], references: [id])
   //Client ---
@@ -59,6 +69,13 @@ model Cotizacion {
   paymentCondition String
   totalPrice       Float
   items            Json
+  isEdit           Boolean  @default(false)
+}
+
+model LastCodeCotizacion {
+  id           Int @id @default(autoincrement())
+  cotizacionId Int
+  nextCode     Int @default(0)
 }
 
 model CodeCotizacion {

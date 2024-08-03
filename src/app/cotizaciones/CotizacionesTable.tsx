@@ -1,7 +1,7 @@
 import { getDateHour } from "@/lib/main";
 import { CotizacionGet, statusLabels } from "@/models/cotizacion";
 import { FaFilePdf } from "react-icons/fa6";
-import { GoPlusCircle } from "react-icons/go";
+import { FaEdit } from "react-icons/fa";
 import { CotizacionStatus } from "@prisma/client";
 import { useRouter } from "next/navigation";
 
@@ -66,8 +66,8 @@ function CotizacionesTable({
     onClose();
   };
 
-  const handleOpenCotizarForm = () => {
-    router.push("/cotizar");
+  const handleOpenCotizarForm = (idCotizacion: number) => {
+    router.push(`cotizar/edit/${idCotizacion}`);
   };
   return (
     <>
@@ -122,6 +122,7 @@ function CotizacionesTable({
           <TableColumn>Cliente</TableColumn>
           <TableColumn>Fecha Creación</TableColumn>
           <TableColumn>Estado</TableColumn>
+          <TableColumn>Precio Total</TableColumn>
           <TableColumn>Acciones</TableColumn>
         </TableHeader>
         <TableBody
@@ -138,21 +139,11 @@ function CotizacionesTable({
                 <div>{getDateHour(cotizacion.date)[1]}</div>
               </TableCell>
               <TableCell>
-                <Chip
-                  size="sm"
-                  color={
-                    cotizacion.status === CotizacionStatus.SENT
-                      ? "warning"
-                      : cotizacion.status === CotizacionStatus.ACCEPTED
-                      ? "success"
-                      : cotizacion.status === CotizacionStatus.REJECTED
-                      ? "danger"
-                      : "default"
-                  }
-                >
+                <Chip size="sm" color="secondary">
                   {statusLabels[cotizacion.status]}
                 </Chip>
               </TableCell>
+              <TableCell>S/. {cotizacion.totalPrice}</TableCell>
 
               <TableCell>
                 <div className="flex gap-2">
@@ -165,10 +156,10 @@ function CotizacionesTable({
                     </PDFDownloadLink>
                   </span>
                   <span
-                    onClick={() => handleOpenCotizarForm()}
+                    onClick={() => handleOpenCotizarForm(cotizacion.id)}
                     className="flex items-center justify-center text-2xl w-8 text-red-950 cursor-pointer rounded-full"
                   >
-                    <GoPlusCircle />
+                    <FaEdit />
                   </span>
                   <Button
                     size="sm"

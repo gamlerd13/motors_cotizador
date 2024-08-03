@@ -1,29 +1,41 @@
-import { CotizacionType, ProductItemPost } from "@/models/cotizacion";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/libs/db";
-import { CotizacionStatus } from "@prisma/client";
+import { ProductItemType } from "../route";
 
 interface Params {
   params: { id: string };
 }
 
-export async function PUT(req: NextRequest, { params }: Params) {
+export async function GET(req: NextRequest, { params }: Params) {
   try {
-    const typeEnding: CotizacionStatus = await req.json();
-
-    const cotizacionUpdated = await prisma.cotizacion.update({
+    const cotizacionId = params.id;
+    console.log(cotizacionId, "entro al get");
+    const cotizacion = await prisma.cotizacion.findFirst({
       where: {
-        id: parseInt(params.id),
-      },
-      data: {
-        status: typeEnding,
+        id: parseInt(cotizacionId),
       },
     });
 
-    return NextResponse.json(cotizacionUpdated, { status: 201 });
+    if (!cotizacion) throw new Error("No existe cotizacion");
+
+    const { items, ...resto } = cotizacion;
+
+    //Asegurar que items tenga key correlativos desde 1 a ...
+    const itemsObject = JSON.parse(items as string).map(
+      (item: ProductItemType, index: number) => ({
+        ...item,
+        key: index + 1,
+      })
+    );
+
+    const cotizacionItemsObject = {
+      items: itemsObject,
+      ...resto,
+    };
+
+    return NextResponse.json(cotizacionItemsObject, { status: 200 });
   } catch (error) {
-    const message =
-      error instanceof Error ? error.message : "Error desconocido";
-    return NextResponse.json({ error: message }, { status: 500 });
+    console.error("Error fetching data:", error);
+    return NextResponse.error();
   }
 }

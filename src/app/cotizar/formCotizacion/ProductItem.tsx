@@ -48,7 +48,11 @@ export default function ProductItem({
 
       <div className="flex flex-wrap gap-2">
         <div className="flex flex-grow gap-2">
-          <Input type="hidden" name={`${index}_id`} value={index.toString()} />
+          <Input
+            type="hidden"
+            name={`${item.key}_id`}
+            value={item.key.toString()}
+          />
           <Button
             size="sm"
             className="h-full hover:text-white hover:bg-rose-700 py-2"
@@ -80,7 +84,7 @@ export default function ProductItem({
             required
             className="flex-none w-[90px]"
             type="number"
-            name={`${index}_amount`}
+            name={`${item.key}_amount`}
             label="Cantidad"
             value={itemAmount.toString()}
             onChange={(e) => {
@@ -92,7 +96,7 @@ export default function ProductItem({
             size="sm"
             className="min-w-[110px]"
             type="number"
-            name={`${index}_unitprice`}
+            name={`${item.key}_unitprice`}
             label="P. Unitario"
             value={unitPrice.toString()}
             onChange={(e) => {
@@ -104,7 +108,7 @@ export default function ProductItem({
             size="sm"
             type="hidden"
             value={(itemAmount * unitPrice).toFixed(2).toString()}
-            name={`${index}_totalprice`}
+            name={`${item.key}_totalprice`}
             onChange={(e) => console.log(e.target.value)}
           />
           <Input
@@ -126,7 +130,7 @@ export default function ProductItem({
 
       <div className="flex flex-wrap gap-2">
         <div className="flex flex-grow gap-2">
-          <Input type="hidden" name={`${index}_id`} value={index.toString()} />
+          <Input type="hidden" name={`${item.key}_id`} value={index.toString()} />
           <Button
             size="sm"
             className="h-full hover:text-white hover:bg-rose-700 py-2"

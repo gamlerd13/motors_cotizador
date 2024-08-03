@@ -39,6 +39,40 @@ export const usePostCotizacion = () => {
   };
 };
 
+export const usePutCotizacion = () => {
+  const router = useRouter();
+  const [responseNewCotizacion, setResponseNewCotizacion] = useState<
+    string | null
+  >(null);
+  const updateCotizacion = async (
+    idCotizacion: number,
+    formDataNewCotizacion: FormData
+  ) => {
+    try {
+      const formDataEntries = Object.fromEntries(
+        formDataNewCotizacion.entries()
+      );
+      const response = await axios.put(
+        `/api/cotizacion/update-code/${idCotizacion}`,
+        formDataEntries
+        // JSON.stringify(formDataEntries)
+      );
+      if (response.status == 201) {
+        toast.success("Se actualizó una cotizacion exitosamente");
+        setResponseNewCotizacion(response.data);
+        router.push("/cotizaciones");
+      }
+    } catch (error) {
+      console.error("Hubo un error en useClient, getClient");
+    }
+  };
+
+  return {
+    responseNewCotizacion,
+    updateCotizacion,
+  };
+};
+
 export const useGetUpdateCotizacion = () => {
   const [cotizacionList, setCotizacionList] = useState<CotizacionGet[] | null>(
     null

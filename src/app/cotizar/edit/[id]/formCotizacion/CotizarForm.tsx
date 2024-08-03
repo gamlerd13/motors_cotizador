@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Input } from "@nextui-org/input";
 import { Button, DateInput } from "@nextui-org/react";
 import { CalendarDateTime } from "@internationalized/date";
@@ -9,10 +9,13 @@ import ButtonSubmit from "@/components/Button";
 import { CiCirclePlus } from "react-icons/ci";
 import { Select, SelectItem } from "@nextui-org/react";
 import { useGetClientList } from "@/app/hooks/clients/useClient";
-import { usePostCotizacion } from "@/app/hooks/cotizacion/useCotizacion";
-import { ProductItemType } from "@/models/cotizacion";
-import { useCodeCotizacion } from "@/app/hooks/cotizacion/useCodeCotizacion";
+import {
+  usePostCotizacion,
+  usePutCotizacion,
+} from "@/app/hooks/cotizacion/useCotizacion";
+import { CotizacionGet, ProductItemType } from "@/models/cotizacion";
 import { useDateTime } from "@/app/hooks/common/useDateTime";
+import { useLastCodeCotizacion } from "@/app/hooks/cotizacion/useLastCodeCotizacion";
 
 interface ClientForm {
   clientName: string;
@@ -21,16 +24,15 @@ interface ClientForm {
   clientReference: string;
 }
 
-function CotizarForm() {
+function CotizarForm({ cotizacion }: { cotizacion: CotizacionGet }) {
   const { Items, addItem, updateItem, removeItem, prices, setPrices } =
-    useItems();
+    useItems(cotizacion);
+
   const { clientList } = useGetClientList();
   const { currentDateTime } = useDateTime();
-  const { lastCodeCotizacion } = useCodeCotizacion();
-  if (clientList) console.log(clientList);
-  if (lastCodeCotizacion) console.log(lastCodeCotizacion);
+  const { lastCodeCotizacion } = useLastCodeCotizacion(cotizacion.id);
 
-  const { responseNewCotizacion, addNewCotizacion } = usePostCotizacion();
+  const { updateCotizacion } = usePutCotizacion();
 
   const initialClientValues = {
     clientName: "",
@@ -38,13 +40,23 @@ function CotizarForm() {
     clientReference: "",
   };
   const [clientValues, setClientValues] = useState<ClientForm | null>(null);
+  const [clientSelected, setClientSelected] = useState<string>("");
+  useEffect(() => {
+    if (cotizacion && cotizacion.clientId) {
+      const clientIdString = cotizacion.clientId.toString();
+      console.log("Este es el client seleccionado", clientIdString);
+      setClientSelected(clientIdString);
+      handleSelect(clientIdString);
+    }
+  }, [cotizacion, clientList]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const form = e.target as HTMLFormElement;
     const formData = new FormData(form);
 
-    await addNewCotizacion(formData);
+    if (cotizacion.id) await updateCotizacion(cotizacion.id, formData);
+
     //Guardar y generar pdf
     console.log(formData);
     console.log("Estos son los items: ", Items);
@@ -80,14 +92,20 @@ function CotizarForm() {
           {clientList && (
             <Select
               size="sm"
+              aria-label="clientSelect"
               className="w-32"
-              aria-label="selectClient"
               placeholder="Seleccione"
               name="client"
-              onChange={(e) => handleSelect(e.target.value)}
+              value={clientSelected}
+              defaultSelectedKeys={[clientSelected]}
+              onChange={(e) => {
+                const selectedValue = e.target.value;
+                handleSelect(selectedValue);
+                setClientSelected(selectedValue);
+              }}
             >
               {clientList.map((client) => (
-                <SelectItem key={client.id} value={client.id}>
+                <SelectItem key={client.id} value={client.id.toString()}>
                   {client.name}
                 </SelectItem>
               ))}
@@ -99,14 +117,24 @@ function CotizarForm() {
 
       <div className="w-full grid gap-y-2 mt-4">
         {lastCodeCotizacion && (
-          <Input
-            size="sm"
-            className="md:col-span-1 font-bold"
-            type="text"
-            value={lastCodeCotizacion}
-            label="Código"
-            disabled
-          />
+          <>
+            <Input
+              size="sm"
+              className="md:col-span-1 font-bold"
+              type="text"
+              value={`${cotizacion.parentCode}-${lastCodeCotizacion}`}
+              label="Código (El codigó se actualizará siguiente código)"
+              disabled
+            />
+            <Input
+              size="sm"
+              className="md:col-span-1 font-bold"
+              name="code"
+              value={cotizacion.parentCode}
+              label="Código"
+              type="hidden"
+            />
+          </>
         )}
 
         {clientValues ? (
@@ -245,6 +273,7 @@ function CotizarForm() {
           size="sm"
           label="Plazo de Entrega (Ejemplo: 4-6 )"
           name="deliverTime"
+          defaultValue={cotizacion.deliverTime}
           type="text"
         />
 
@@ -252,13 +281,14 @@ function CotizarForm() {
           size="sm"
           label="Condición de Pago"
           name="paymentCondition"
+          defaultValue={cotizacion.paymentCondition}
           placeholder="50% con la OC, 50% c. entrega"
           type="text"
         />
       </div>
 
       <div className="flex justify-end pt-4">
-        <ButtonSubmit text="Generar cotización" />
+        <ButtonSubmit text="Actualizar cotización" />
       </div>
     </form>
   );

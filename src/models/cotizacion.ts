@@ -48,8 +48,10 @@ export interface PdfCotizacion {
 export interface CotizacionGet {
   id: number; //por si hay que cotizar desde backend
   client: Client | null;
+  clientId: number;
   // undefined client
   code: string;
+  parentCode: string;
   clientName: string;
   status: CotizacionStatus;
   clientContact: string;
@@ -62,6 +64,7 @@ export interface CotizacionGet {
   deliverTime: string;
   paymentCondition: string;
   totalPrice: number;
+  isEdit: boolean;
 }
 
 export interface CotizacionPost {
@@ -88,10 +91,48 @@ export interface CotizacionPost {
   totalPrice: number;
 }
 
+// export const statusLabels: { [key in CotizacionStatus]: string } = {
+//   [CotizacionStatus.DRAFT]: "BORRADOR",
+//   [CotizacionStatus.SENT]: "ENVIADO",
+//   [CotizacionStatus.ACCEPTED]: "ACEPTADO",
+//   [CotizacionStatus.REJECTED]: "RECHAZADO",
+//   [CotizacionStatus.EXPIRED]: "EXPIRADO",
+// };
+
 export const statusLabels: { [key in CotizacionStatus]: string } = {
-  [CotizacionStatus.DRAFT]: "BORRADOR",
-  [CotizacionStatus.SENT]: "ENVIADO",
-  [CotizacionStatus.ACCEPTED]: "ACEPTADO",
-  [CotizacionStatus.REJECTED]: "RECHAZADO",
-  [CotizacionStatus.EXPIRED]: "EXPIRADO",
+  [CotizacionStatus.ESTADO1]: "ESTADO1",
+  [CotizacionStatus.ESTADO2]: "ESTADO2",
+  [CotizacionStatus.ESTADO3]: "ESTADO3",
+  [CotizacionStatus.ESTADO4]: "ESTADO4",
+  [CotizacionStatus.ESTADO5]: "ESTADO5",
+  [CotizacionStatus.ESTADO6]: "ESTADO6",
 };
+
+export const InitialCodeCotizacionChild = [
+  "A",
+  "B",
+  "C",
+  "D",
+  "E",
+  "F",
+  "G",
+  "H",
+  "I",
+  "J",
+  "K",
+  "L",
+  "M",
+  "N",
+  "O",
+  "P",
+  "Q",
+  "R",
+  "S",
+  "T",
+  "U",
+  "V",
+  "W",
+  "X",
+  "Y",
+  "Z",
+];

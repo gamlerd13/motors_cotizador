@@ -1,0 +1,89 @@
+//This is to create first data in cotizacion, and also make test
+// This is a database version 2
+
+GET http://localhost:3000/api/cotizacion
+
+### Crear primer elmento
+POST http://localhost:3000/api/cotizacion
+Content-Type: application/json
+
+{
+  "client": "",
+  "clientName": "Netflix",
+  "clientContact": "Diana Prince",
+  "clientRuc": "33445566778",
+  "clientReference": "Referencia D",
+  "date": "",
+  "deliverTime": "2 días hábiles",
+  "paymentCondition": "30 días neto",
+  "totalPrice": 4000.45,
+  "1_id": "40",
+  "1_description": "Bomba",
+  "1_model": "BM-700",
+  "1_amount": "5",
+  "1_unitprice": "300",
+  "1_totalprice": "1500",
+  "3_id": "42",
+  "3_description": "Filtro",
+  "3_model": "FT-100",
+  "3_amount": "30",
+  "3_unitprice": "10",
+  "3_totalprice": "300"
+}
+
+### Editar primer elemento
+PUT http://localhost:3000/api/cotizacion/update-code/40
+Content-Type: application/json
+
+{
+  "client": "",
+  "code":"2024-0004",
+  "clientName": "Google INC",
+  "clientContact": "Diana Prince",
+  "clientRuc": "33445566778",
+  "clientReference": "Referencia D",
+  "date": "",
+  "deliverTime": "2 días hábiles",
+  "paymentCondition": "30 días neto",
+  "totalPrice": 3210.45,
+  "1_id": "40",
+  "1_description": "Bomba",
+  "1_model": "BM-700",
+  "1_amount": "5",
+  "1_unitprice": "300",
+  "1_totalprice": "1500",
+  "2_id": "41",
+  "2_description": "Filtro",
+  "2_model": "FT-100",
+  "2_amount": "30",
+  "2_unitprice": "10",
+  "2_totalprice": "300"
+}
+
+### Crear un elemento sin cliente
+POST http://localhost:3000/api/cotizacion
+Content-Type: application/json
+
+{
+  "client": "",
+  "clientName": "",
+  "clientContact": "",
+  "clientRuc": "",
+  "clientReference": "",
+  "date": "",
+  "deliverTime": "3 días hábiles",
+  "paymentCondition": "45 días neto",
+  "totalPrice": 3210.45,
+  "1_id": "40",
+  "1_description": "Bomba",
+  "1_model": "BM-700",
+  "1_amount": "5",
+  "1_unitprice": "300",
+  "1_totalprice": "1500",
+  "2_id": "41",
+  "2_description": "Filtro",
+  "2_model": "FT-100",
+  "2_amount": "30",
+  "2_unitprice": "10",
+  "2_totalprice": "300"
+}

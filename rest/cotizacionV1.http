@@ -1,0 +1,60 @@
+//This is to create first data in cotizacion, and also make test
+// This is a database version 1
+
+GET http://localhost:3000/api/cotizacion
+
+###
+POST http://localhost:3000/api/cotizacion
+Content-Type: application/json
+
+{
+  "client": "",
+  "clientName": "Google INC",
+  "clientContact": "Diana Prince",
+  "clientRuc": "33445566778",
+  "clientReference": "Referencia D",
+  "date": "",
+  "deliverTime": "2 días hábiles",
+  "paymentCondition": "30 días neto",
+  "totalPrice": 3210.45,
+  "1_id": "40",
+  "1_description": "Bomba",
+  "1_model": "BM-700",
+  "1_amount": "5",
+  "1_unitprice": "300",
+  "1_totalprice": "1500",
+  "2_id": "41",
+  "2_description": "Filtro",
+  "2_model": "FT-100",
+  "2_amount": "30",
+  "2_unitprice": "10",
+  "2_totalprice": "300"
+}
+
+###
+POST http://localhost:3000/api/cotizacion
+Content-Type: application/json
+
+{
+  "client": "",
+  "clientName": "",
+  "clientContact": "",
+  "clientRuc": "",
+  "clientReference": "",
+  "date": "",
+  "deliverTime": "3 días hábiles",
+  "paymentCondition": "45 días neto",
+  "totalPrice": 3210.45,
+  "1_id": "40",
+  "1_description": "Bomba",
+  "1_model": "BM-700",
+  "1_amount": "5",
+  "1_unitprice": "300",
+  "1_totalprice": "1500",
+  "2_id": "41",
+  "2_description": "Filtro",
+  "2_model": "FT-100",
+  "2_amount": "30",
+  "2_unitprice": "10",
+  "2_totalprice": "300"
+}

@@ -1,4 +1,4 @@
-import { ProductItemType } from "@/models/cotizacion";
+import { CotizacionGet, ProductItemType } from "@/models/cotizacion";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -7,7 +7,15 @@ interface Price {
   total: number;
 }
 
-export default function useItems() {
+export default function useItems(cotizacion: CotizacionGet) {
+  // const initialItemValues = {
+  //   description: "",
+  //   model: "",
+  //   amount: 0,
+  //   unitPrice: 0,
+  //   totalPrice: 0,
+  // };
+
   const initialItemValues = {
     description: "",
     model: "",
@@ -15,19 +23,25 @@ export default function useItems() {
     unitPrice: 0,
     totalPrice: 0,
   };
-  const [Items, setItems] = useState<ProductItemType[]>([
-    {
-      key: 1,
-      ...initialItemValues,
-    },
-  ]);
-  const [prices, setPrices] = useState<Price[]>([
-    {
-      key: 1,
-      total: 0,
-    },
-  ]);
-  const [nextKey, setNextKey] = useState<number>(2);
+
+  // const [Items, setItems] = useState<ProductItemType[]>([
+  //   {
+  //     key: 1,
+  //     ...initialItemValues,
+  //   },
+  // ]);
+  // const [prices, setPrices] = useState<Price[]>([
+  //   {
+  //     key: 1,
+  //     total: 0,
+  //   },
+  // ]);
+
+  const [Items, setItems] = useState<ProductItemType[]>(cotizacion.items);
+  const [prices, setPrices] = useState<Price[]>(
+    cotizacion.items.map((item) => ({ key: item.key, total: item.totalPrice }))
+  );
+  const [nextKey, setNextKey] = useState<number>(cotizacion.items.length + 1); //next id should be 1 more
 
   const addItem = () => {
     setItems((prevItem) => [
@@ -53,8 +67,9 @@ export default function useItems() {
       toast.error("Tiene que tener al menos un Item");
       return;
     }
-    setItems((prevItem) => prevItem.filter((item) => item.key !== idItem)); // {key: 1} , {key: 2} , {key: 3}   {key: 4}
+    setItems((prevItem) => prevItem.filter((item) => item.key !== idItem));
     setPrices((prevPrice) => prevPrice.filter((price) => price.key !== idItem));
+    setNextKey((prevKey) => prevKey - 1);
   };
 
   return {

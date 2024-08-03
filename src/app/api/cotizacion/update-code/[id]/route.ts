@@ -2,6 +2,7 @@ import {
   CotizacionType,
   CotizacionPost,
   ProductItemPost,
+  InitialCodeCotizacionChild,
 } from "@/models/cotizacion";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/libs/db";
@@ -16,23 +17,14 @@ export interface ProductItemType {
   totalPrice: number;
 }
 
-export interface PdfCotizacion {
-  id: number; //por si hay que cotizar desde backend
-  code: string;
-  clientName: string;
-  clientReference: string;
-  clientContact: string;
-  date: string;
-  items: ProductItemType[];
-  deliverTime: string;
-  paymentCondition: string;
-  totalPrice: number;
+interface Params {
+  params: { id: string };
 }
 
-export async function POST(req: NextRequest, res: NextResponse) {
+export async function PUT(req: NextRequest, { params }: Params) {
   try {
     const body: CotizacionType = await req.json();
-    console.log("Body start", body);
+    const parentId = params.id;
     const {
       client: clientBody,
       clientName,
@@ -43,6 +35,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
       deliverTime,
       paymentCondition,
       totalPrice,
+      code,
       ...resto //son los items que hay que tiene,estos son dinamicos
     } = body;
 
@@ -60,12 +53,15 @@ export async function POST(req: NextRequest, res: NextResponse) {
         };
       });
 
-    //  manejar el codigo aca
-    const prefix = "2024-";
-    let newNumber = 1; // Valor predeterminado si no hay registros
-    const codeRecord = await prisma.codeCotizacion.findFirst();
-    if (codeRecord) newNumber = codeRecord.nextCode + 1;
-    const newCode = `${prefix}${newNumber.toString().padStart(4, "0")}`;
+    //  manejar el codigo, asegurar que exista una coti. padre
+    let newCodeLeter = 0;
+    const codeLeter = await prisma.lastCodeCotizacion.findFirst({
+      where: {
+        cotizacionId: parseInt(parentId),
+      },
+    });
+    if (codeLeter) newCodeLeter = codeLeter.nextCode;
+    const newCode = `${code}-${InitialCodeCotizacionChild[newCodeLeter]}`; //2024-0021-A
 
     const dateString = date === "" ? new Date() : new Date(date);
 
@@ -74,12 +70,12 @@ export async function POST(req: NextRequest, res: NextResponse) {
     const commonData = {
       status: CotizacionStatus.ESTADO1,
       code: newCode,
-      parentCode: newCode,
       date: dateString,
       deliverTime: deliverTime,
       paymentCondition: paymentCondition,
       totalPrice: parseFloat(totalPrice),
       items: JSON.stringify(items),
+      isEdit: true,
     };
 
     const cli = {
@@ -95,7 +91,10 @@ export async function POST(req: NextRequest, res: NextResponse) {
     };
     if (clientBody === "") {
       const client = clientName.trim() !== "" ? cli.client : undefined;
-      newCotizacionConditional = await prisma.cotizacion.create({
+      newCotizacionConditional = await prisma.cotizacion.update({
+        where: {
+          id: parseInt(parentId),
+        },
         data: {
           ...commonData,
           client,
@@ -106,7 +105,10 @@ export async function POST(req: NextRequest, res: NextResponse) {
         },
       });
     } else if (!isNaN(parseInt(clientBody))) {
-      newCotizacionConditional = await prisma.cotizacion.create({
+      newCotizacionConditional = await prisma.cotizacion.update({
+        where: {
+          id: parseInt(parentId),
+        },
         data: {
           ...commonData,
           clientName: clientName.trim(),
@@ -119,65 +121,25 @@ export async function POST(req: NextRequest, res: NextResponse) {
     }
 
     if (!newCotizacionConditional) {
-      throw new Error("No se pudo crear el pago");
+      throw new Error("No se pudo crear la cotizacion");
     }
 
     //Despues de que se haya creado satisfactoriamente la cotizacion, crear el siguiente numero en codigo cotizacion
-    if (codeRecord) {
-      await prisma.codeCotizacion.update({
-        where: { id: codeRecord.id },
-        data: { nextCode: newNumber },
-      });
-    } else {
-      //crear el primer registro
-      await prisma.codeCotizacion.create({
+    if (codeLeter) {
+      await prisma.lastCodeCotizacion.update({
+        where: {
+          id: codeLeter.id,
+        },
         data: {
-          nextCode: 1,
+          nextCode: codeLeter.nextCode + 1,
         },
       });
     }
-
-    //Crear una instancia de LastCodeFhaterCotizacion para el cotizador padre
-    await prisma.lastCodeCotizacion.create({
-      data: {
-        cotizacionId: newCotizacionConditional.id,
-      },
-    });
 
     return NextResponse.json(newCotizacionConditional, { status: 201 });
   } catch (error) {
     const message =
       error instanceof Error ? error.message : "Error desconocido";
     return NextResponse.json({ error: message }, { status: 500 });
-  }
-}
-
-export async function GET() {
-  try {
-    const cotizaciones = await prisma.cotizacion.findMany({
-      include: {
-        client: true,
-      },
-
-      orderBy: {
-        date: "desc",
-      },
-    });
-
-    const cotizacionesMap = await cotizaciones.map((coti) => {
-      const { items, ...todoDemas } = coti;
-
-      return {
-        ...todoDemas,
-        items: JSON.parse(items as string),
-      };
-    });
-
-    console.log(await cotizacionesMap);
-
-    return NextResponse.json(cotizacionesMap, { status: 200 });
-  } catch (error) {
-    console.error("Error fetching data:", error);
-    return NextResponse.error();
   }
 }
