@@ -19,7 +19,17 @@ export const usePostCotizacion = () => {
       );
       const response = await axios.post(
         "api/cotizacion/",
-        formDataEntries
+        formDataEntries,
+        {
+          headers: {
+            "Cache-Control":
+              "no-store, no-cache, must-revalidate, proxy-revalidate",
+            Pragma: "no-cache",
+            Expires: "0",
+            "Surrogate-Control": "no-store",
+          },
+        }
+
         // JSON.stringify(formDataEntries)
       );
       console.log("respueste de la api: ", response);

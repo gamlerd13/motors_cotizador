@@ -1,5 +1,5 @@
 export interface Client {
-  id?: number;
+  id: number;
   name: string;
   contact: string;
   ruc: string;
@@ -16,7 +16,6 @@ export interface ClientCreate {
     createAt: Date;
   };
 }
-
 
 export interface ClientForm {
   clientId?: number;

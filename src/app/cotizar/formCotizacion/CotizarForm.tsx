@@ -24,11 +24,9 @@ interface ClientForm {
 function CotizarForm() {
   const { Items, addItem, updateItem, removeItem, prices, setPrices } =
     useItems();
-  const { clientList } = useGetClientList();
+  const { clientList, isLoading: isLoadingClient } = useGetClientList();
   const { currentDateTime } = useDateTime();
   const { lastCodeCotizacion } = useCodeCotizacion();
-  if (clientList) console.log(clientList);
-  if (lastCodeCotizacion) console.log(lastCodeCotizacion);
 
   const { responseNewCotizacion, addNewCotizacion } = usePostCotizacion();
 
@@ -39,6 +37,7 @@ function CotizarForm() {
   };
   const [clientValues, setClientValues] = useState<ClientForm | null>(null);
 
+  if (!lastCodeCotizacion) return;
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const form = e.target as HTMLFormElement;
@@ -47,7 +46,6 @@ function CotizarForm() {
     await addNewCotizacion(formData);
     //Guardar y generar pdf
     console.log(formData);
-    console.log("Estos son los items: ", Items);
   };
 
   const handleSelect = (e: string) => {
@@ -77,7 +75,7 @@ function CotizarForm() {
       <div className="flex justify-between">
         <h1 className="font-medium text-slate-600">Cliente</h1>
         <div className="flex gap-x-2">
-          {clientList && (
+          {clientList && !isLoadingClient && (
             <Select
               size="sm"
               className="w-32"

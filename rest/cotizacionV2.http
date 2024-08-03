@@ -1,6 +1,11 @@
 //This is to create first data in cotizacion, and also make test
 // This is a database version 2
 
+### get siguiente code cotizacion
+GET http://localhost:3000/api/codeCotizacion
+
+
+### get cotizacion
 GET http://localhost:3000/api/cotizacion
 
 ### Crear primer elmento

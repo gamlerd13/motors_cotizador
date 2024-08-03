@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useAppContext } from "@/context";
 import { Client } from "@/models/client";
@@ -9,7 +9,6 @@ import { toast } from "sonner";
 export const useGetClientList = () => {
   const [clientList, setClientList] = useState<Client[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-
 
   const getClients = async () => {
     try {
@@ -35,7 +34,7 @@ export const useGetClientList = () => {
 
   return {
     clientList,
-    isLoading
+    isLoading,
   };
 };
 
@@ -49,20 +48,20 @@ export const usePostClient = () => {
 
   const { clients = [], setClients } = useAppContext();
 
-  const addNewClient = async (formDataNewClient: FormData, setIsActiveCreateClient: React.Dispatch<React.SetStateAction<boolean>>) => {
+  const addNewClient = async (
+    formDataNewClient: FormData,
+    setIsActiveCreateClient: React.Dispatch<React.SetStateAction<boolean>>
+  ) => {
+    const formDataEntries = Object.fromEntries(formDataNewClient.entries());
 
-    const formDataEntries = Object.fromEntries(
-      formDataNewClient.entries()
-    );
-
-    const newClient: Client = {
+    const newClient: Omit<Client, "id"> = {
       name: formDataEntries.clientName as string,
       contact: formDataEntries.clientContact as string,
       ruc: formDataEntries.clientRuc as string,
       reference: formDataEntries.clientReference as string,
     };
 
-    console.log(newClient, "objeto")
+    console.log(newClient, "objeto");
     try {
       const response = await axios.post("api/client", formDataEntries);
 
@@ -71,13 +70,13 @@ export const usePostClient = () => {
         setIsActiveCreateClient(false);
         toast.success("Cliente Agregado Satisfactoriamente");
 
-        setClients([...clients, response.data])
-        console.log(response.data, "response.data")
+        setClients([...clients, response.data]);
+        console.log(response.data, "response.data");
       }
     } catch (error) {
       console.error("Hubo un error en useClient, post client", error);
     }
-  }
+  };
 
   return {
     responseNewClient,
