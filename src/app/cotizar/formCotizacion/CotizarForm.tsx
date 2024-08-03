@@ -157,6 +157,7 @@ function CotizarForm() {
                 type="text"
                 name="clientName"
                 label="Razón Social"
+                required
               />
               <Input
                 size="sm"

@@ -32,6 +32,23 @@ export interface CotizacionType {
   [key: string]: any;
 }
 
+export interface CotizacionUpdate {
+  id?: number; //por si hay que cotizar desde backend
+  clientId: string;
+  // undefined client
+  clientName: string;
+  clientContact: string;
+  clientReference: string;
+  clientRuc: string;
+
+  date: string;
+
+  // items: ProductItemType[];
+  deliverTime: string;
+  paymentCondition: string;
+  totalPrice: string;
+  [key: string]: any;
+}
 export interface PdfCotizacion {
   id: number; //por si hay que cotizar desde backend
   code: string;

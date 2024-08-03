@@ -3,6 +3,7 @@ import {
   CotizacionPost,
   ProductItemPost,
   InitialCodeCotizacionChild,
+  CotizacionUpdate,
 } from "@/models/cotizacion";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/libs/db";
@@ -23,10 +24,11 @@ interface Params {
 
 export async function PUT(req: NextRequest, { params }: Params) {
   try {
-    const body: CotizacionType = await req.json();
+    const body: CotizacionUpdate = await req.json();
     const parentId = params.id;
     const {
-      client: clientBody,
+      // client: clientBody,
+      clientId,
       clientName,
       clientContact,
       clientRuc,
@@ -77,48 +79,69 @@ export async function PUT(req: NextRequest, { params }: Params) {
       isEdit: true,
     };
 
-    const cli = {
-      client: {
-        create: {
-          name: clientName.trim(),
-          contact: clientContact.trim(),
-          ruc: clientRuc.trim(),
-          reference: clientReference.trim(),
-          createAt: new Date(),
+    // const cli = {
+    //   client: {
+    //     create: {
+    //       name: clientName.trim(),
+    //       contact: clientContact.trim(),
+    //       ruc: clientRuc.trim(),
+    //       reference: clientReference.trim(),
+    //       createAt: new Date(),
+    //     },
+    //   },
+    // };
+    // if (clientBody === "") {
+    //   const client = clientName.trim() !== "" ? cli.client : undefined;
+    //   newCotizacionConditional = await prisma.cotizacion.update({
+    //     where: {
+    //       id: parseInt(parentId),
+    //     },
+    //     data: {
+    //       ...commonData,
+    //       client,
+    //       clientName: "",
+    //       clientContact: "",
+    //       clientRuc: "",
+    //       clientReference: "",
+    //     },
+    //   });
+    // } else if (!isNaN(parseInt(clientBody))) {
+    //   newCotizacionConditional = await prisma.cotizacion.update({
+    //     where: {
+    //       id: parseInt(parentId),
+    //     },
+    //     data: {
+    //       ...commonData,
+    //       clientName: clientName.trim(),
+    //       clientContact: clientContact.trim(),
+    //       clientRuc: clientRuc.trim(),
+    //       clientReference: clientReference.trim(),
+    //       clientId: parseInt(clientBody),
+    //     },
+    //   });
+    // }
+
+    newCotizacionConditional = await prisma.cotizacion.update({
+      where: {
+        id: parseInt(parentId),
+      },
+      data: {
+        ...commonData,
+        client: {
+          update: {
+            where: {
+              id: parseInt(clientId),
+            },
+            data: {
+              name: clientName,
+              contact: clientContact,
+              ruc: clientRuc,
+              reference: clientReference,
+            },
+          },
         },
       },
-    };
-    if (clientBody === "") {
-      const client = clientName.trim() !== "" ? cli.client : undefined;
-      newCotizacionConditional = await prisma.cotizacion.update({
-        where: {
-          id: parseInt(parentId),
-        },
-        data: {
-          ...commonData,
-          client,
-          clientName: "",
-          clientContact: "",
-          clientRuc: "",
-          clientReference: "",
-        },
-      });
-    } else if (!isNaN(parseInt(clientBody))) {
-      newCotizacionConditional = await prisma.cotizacion.update({
-        where: {
-          id: parseInt(parentId),
-        },
-        data: {
-          ...commonData,
-          clientName: clientName.trim(),
-          clientContact: clientContact.trim(),
-          clientRuc: clientRuc.trim(),
-          clientReference: clientReference.trim(),
-          clientId: parseInt(clientBody),
-        },
-      });
-    }
-
+    });
     if (!newCotizacionConditional) {
       throw new Error("No se pudo crear la cotizacion");
     }

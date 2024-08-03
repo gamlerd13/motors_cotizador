@@ -14,6 +14,9 @@ export async function GET(req: NextRequest, { params }: Params) {
       where: {
         id: parseInt(cotizacionId),
       },
+      include: {
+        client: true,
+      },
     });
 
     if (!cotizacion) throw new Error("No existe cotizacion");

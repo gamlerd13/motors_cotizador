@@ -41,14 +41,6 @@ function CotizarForm({ cotizacion }: { cotizacion: CotizacionGet }) {
   };
   const [clientValues, setClientValues] = useState<ClientForm | null>(null);
   const [clientSelected, setClientSelected] = useState<string>("");
-  useEffect(() => {
-    if (cotizacion && cotizacion.clientId) {
-      const clientIdString = cotizacion.clientId.toString();
-      console.log("Este es el client seleccionado", clientIdString);
-      setClientSelected(clientIdString);
-      handleSelect(clientIdString);
-    }
-  }, [cotizacion, clientList]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -78,18 +70,27 @@ function CotizarForm({ cotizacion }: { cotizacion: CotizacionGet }) {
     }
   };
 
+  useEffect(() => {
+    if (cotizacion && cotizacion.clientId) {
+      const clientIdString = cotizacion.clientId.toString();
+      setClientSelected(clientIdString);
+      handleSelect(clientIdString);
+    }
+  }, [cotizacion, clientList]);
+
   const totalPrice = prices
     .reduce((accumulator, currentValue) => {
       return currentValue.total + accumulator;
     }, 0)
     .toFixed(2);
 
+  console.log(cotizacion);
   return (
     <form onSubmit={handleSubmit}>
       <div className="flex justify-between">
         <h1 className="font-medium text-slate-600">Cliente</h1>
         <div className="flex gap-x-2">
-          {clientList && (
+          {/* {clientList && (
             <Select
               size="sm"
               aria-label="clientSelect"
@@ -110,7 +111,7 @@ function CotizarForm({ cotizacion }: { cotizacion: CotizacionGet }) {
                 </SelectItem>
               ))}
             </Select>
-          )}
+          )} */}
         </div>
       </div>
       <hr />
@@ -137,8 +138,55 @@ function CotizarForm({ cotizacion }: { cotizacion: CotizacionGet }) {
           </>
         )}
 
-        {clientValues ? (
+        {cotizacion && (
           <>
+            <div className="grid md:grid-cols-2 gap-2">
+              <Input
+                size="sm"
+                className="md:col-span-1"
+                type="hidden"
+                name="clientId"
+                defaultValue={cotizacion.client?.id.toString()}
+              />
+              <Input
+                size="sm"
+                className="md:col-span-1"
+                type="text"
+                name="clientName"
+                value={cotizacion.client?.name}
+                defaultValue={cotizacion.client?.name}
+                label="Razón Social"
+              />
+              <Input
+                size="sm"
+                className="md:col-span-1"
+                type="text"
+                name="clientContact"
+                defaultValue={cotizacion.client?.contact}
+                label="Contacto"
+              />
+            </div>
+
+            <div className="w-full grid md:grid-cols-2 gap-2 text-[20px]">
+              <Input
+                size="sm"
+                className="md:col-span-1 "
+                type="text"
+                name="clientReference"
+                defaultValue={cotizacion.client?.reference}
+                label="Referencia"
+              />
+
+              <Input
+                size="sm"
+                className="md:col-span-1 "
+                type="text"
+                name="clientRuc"
+                defaultValue={cotizacion.client?.ruc}
+                label="Ruc"
+              />
+            </div>
+            {/* 
             <div className="grid md:grid-cols-2 gap-2">
               <Input
                 size="sm"
@@ -176,44 +224,7 @@ function CotizarForm({ cotizacion }: { cotizacion: CotizacionGet }) {
                 value={clientValues.clientRuc}
                 label="Ruc"
               />
-            </div>
-          </>
-        ) : (
-          <>
-            <div className="grid md:grid-cols-2 gap-2">
-              <Input
-                size="sm"
-                className="md:col-span-1"
-                type="text"
-                name="clientName"
-                label="Razón Social"
-              />
-              <Input
-                size="sm"
-                className="md:col-span-1"
-                type="text"
-                name="clientContact"
-                label="Contacto"
-              />
-            </div>
-
-            <div className="w-full grid md:grid-cols-2 gap-2 text-[20px]">
-              <Input
-                size="sm"
-                className="md:col-span-1 "
-                type="text"
-                name="clientReference"
-                label="Referencia"
-              />
-
-              <Input
-                size="sm"
-                className="md:col-span-1 "
-                type="text"
-                name="clientRuc"
-                label="Ruc"
-              />
-            </div>
+            </div> */}
           </>
         )}
         {currentDateTime && (
