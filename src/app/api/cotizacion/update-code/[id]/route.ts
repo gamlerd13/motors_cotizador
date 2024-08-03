@@ -68,7 +68,6 @@ export async function PUT(req: NextRequest, { params }: Params) {
     let newCotizacionConditional = null;
     //create client
     const commonData = {
-      status: CotizacionStatus.ESTADO1,
       code: newCode,
       date: dateString,
       deliverTime: deliverTime,
