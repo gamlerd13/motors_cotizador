@@ -26,7 +26,7 @@ Font.register({
 const styles = StyleSheet.create({
   page: {
     padding: 20,
-    paddingLeft : 70,
+    paddingLeft: 70,
     fontFamily: "Roboto",
   },
   boldText: {
@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     paddingBottom: 5,
   },
-  cellFlex:{
+  cellFlex: {
     textAlign: "center",
   },
 });
@@ -194,7 +194,7 @@ const ReactPdfComponent = ({ cotizacion }: { cotizacion: CotizacionGet }) => {
   const formattedTotalPrice = totalPrice.toLocaleString("es-PE", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
-  })
+  });
   const itemsFormatted = items.map((item) => ({
     ...item,
     unitPrice: item.unitPrice.toLocaleString("es-PE", {
@@ -210,16 +210,18 @@ const ReactPdfComponent = ({ cotizacion }: { cotizacion: CotizacionGet }) => {
   return (
     <Document style={styles.all}>
       <Page style={styles.page}>
-        <View style={styles.startLogo}>
+        <View style={styles.startLogo} fixed>
           <Image src="/logo1.jpg" style={{ width: 165, height: 22 }} />
         </View>
         <View style={styles.headerContainer}>
           <View style={styles.dateContainer}>
             <Text style={styles.date}>{formattedDate[0]}</Text>
-          </View>   
+          </View>
           <View style={styles.titleContainer}>
-            <Text style={[styles.title, styles.boldText]}>COTIZACIÓN No {code}</Text>
-          </View>       
+            <Text style={[styles.title, styles.boldText]}>
+              COTIZACIÓN No {code}
+            </Text>
+          </View>
         </View>
 
         <View style={styles.companyInfoContainer}>
@@ -234,9 +236,7 @@ const ReactPdfComponent = ({ cotizacion }: { cotizacion: CotizacionGet }) => {
             <Text style={styles.companyInfo}>Telefono: 902196904</Text>
             <Text style={styles.companyInfo}>
               Correo:{" "}
-              <Text style={{ color: "#00109e" }}>
-                ventas@moventodrives.com
-              </Text>
+              <Text style={{ color: "#00109e" }}>ventas@moventodrives.com</Text>
             </Text>
           </View>
         </View>
@@ -257,28 +257,51 @@ const ReactPdfComponent = ({ cotizacion }: { cotizacion: CotizacionGet }) => {
 
         <View style={styles.table}>
           <View style={[styles.tableRow, styles.tableHeader]}>
-            <Text style={[styles.tableCell, styles.cellFlex, { flex: 1 }]}>Item</Text>
+            <Text style={[styles.tableCell, styles.cellFlex, { flex: 1 }]}>
+              Item
+            </Text>
             <Text style={[styles.tableCell, { flex: 10 }]}>Descripción</Text>
-            <Text style={[styles.tableCell, styles.cellFlex, { flex: 1 }]}>Cant.</Text>
-            <Text style={[styles.tableCell, styles.cellFlex, { flex: 1 }]}>P.U.</Text>
-            <Text style={[styles.tableCell, styles.cellFlex, { flex: 2 }]}>Precio total S/.</Text>
+            <Text style={[styles.tableCell, styles.cellFlex, { flex: 1 }]}>
+              Cant.
+            </Text>
+            <Text style={[styles.tableCell, styles.cellFlex, { flex: 1 }]}>
+              P.U.
+            </Text>
+            <Text style={[styles.tableCell, styles.cellFlex, { flex: 2 }]}>
+              Precio total S/.
+            </Text>
           </View>
           {itemsFormatted.map((item, index) => (
             <View key={index} style={styles.tableRow}>
-              <Text style={[styles.tableCell, styles.cellFlex, { flex: 1 }]}>{item.key}</Text>
-              <View style={[styles.tableCell, { flexDirection: "column", flex: 10 }]}>
+              <Text style={[styles.tableCell, styles.cellFlex, { flex: 1 }]}>
+                {item.key}
+              </Text>
+              <View
+                style={[
+                  styles.tableCell,
+                  { flexDirection: "column", flex: 10 },
+                ]}
+              >
                 <Text style={styles.itemDescription}>{item.description}</Text>
                 <Text>Modelo: {item.model}</Text>
               </View>
-              <Text style={[styles.tableCell, styles.cellFlex, { flex: 1 }]}>{item.amount}</Text>
-              <Text style={[styles.tableCell, styles.cellFlex, { flex: 1 }]}>{item.unitPrice}</Text>
-              <Text style={[styles.tableCell, styles.cellFlex, { flex: 2 }]}>{item.totalPrice}</Text>
+              <Text style={[styles.tableCell, styles.cellFlex, { flex: 1 }]}>
+                {item.amount}
+              </Text>
+              <Text style={[styles.tableCell, styles.cellFlex, { flex: 1 }]}>
+                {item.unitPrice}
+              </Text>
+              <Text style={[styles.tableCell, styles.cellFlex, { flex: 2 }]}>
+                {item.totalPrice}
+              </Text>
             </View>
           ))}
         </View>
 
         <View style={styles.totalPrice}>
-          <Text style={styles.cellTotalPrice}>PRECIO DE VENTA TOTAL (NO INCLUYE I.G.V.) </Text>
+          <Text style={styles.cellTotalPrice}>
+            PRECIO DE VENTA TOTAL (NO INCLUYE I.G.V.){" "}
+          </Text>
           <Text style={styles.cellTotalPrice}> S/. {formattedTotalPrice}</Text>
         </View>
 
@@ -286,7 +309,7 @@ const ReactPdfComponent = ({ cotizacion }: { cotizacion: CotizacionGet }) => {
           <Text>TIEMPO DE ENTREGA: </Text>
           <Text>{deliverTime} DÍAS</Text>
         </View>
-        
+
         <View style={styles.termsInfoContainer}>
           <Text style={styles.termsInfoHeader}>CONDICIONES COMERCIALES:</Text>
           <View style={styles.termsInfo}>
@@ -299,9 +322,13 @@ const ReactPdfComponent = ({ cotizacion }: { cotizacion: CotizacionGet }) => {
           </View>
           <View style={styles.termsInfo}>
             <Text style={styles.boldText}>GARANTIA: </Text>
-            <Text>La garantía es por 6 meses luego de la puesta en servicio.</Text>
+            <Text>
+              La garantía es por 6 meses luego de la puesta en servicio.
+            </Text>
           </View>
-          <Text style={[styles.termsInfo, styles.boldText]}>No CUENTA BANCARIA DE MOVENTO S.A.C.</Text>
+          <Text style={[styles.termsInfo, styles.boldText]}>
+            No CUENTA BANCARIA DE MOVENTO S.A.C.
+          </Text>
           <Text style={styles.termsInfo}>
             {[
               "BANCO INTERBANK",
@@ -312,12 +339,10 @@ const ReactPdfComponent = ({ cotizacion }: { cotizacion: CotizacionGet }) => {
               "Cuenta detracción del banco de la nación - Cuenta Corriente: 00-002-212722",
             ].join("\n")}
           </Text>
-          
         </View>
         <View style={styles.endLogo}>
           <Image src="/logo2.png" style={{ width: 90, height: 159 }} />
         </View>
-        
       </Page>
     </Document>
   );
