@@ -1,6 +1,6 @@
 import { ProductItemType } from "@/models/cotizacion";
 import { Button } from "@nextui-org/button";
-import { Input } from "@nextui-org/input";
+import { Input, Textarea } from "@nextui-org/input";
 import { useEffect, useState } from "react";
 import { BiTrash } from "react-icons/bi";
 interface Item {
@@ -46,7 +46,7 @@ export default function ProductItem({
     <div className="w-full">
       <hr className="pb-2" />
 
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-col gap-2">
         <div className="flex flex-grow gap-2">
           <Input
             type="hidden"
@@ -55,7 +55,7 @@ export default function ProductItem({
           />
           <Button
             size="sm"
-            className="h-full hover:text-white hover:bg-rose-700 py-2"
+            className="h- hover:text-white hover:bg-rose-700 py-2"
             type="button"
             onClick={() => removeItem(item.key)}
           >
@@ -70,11 +70,15 @@ export default function ProductItem({
             label="Descripción"
             required
           />
-          <Input
+        </div>
+
+        <div className="flex flex-grow gap-2">
+          <Textarea
+            placeholder="Ingrese el modelo"
             size="sm"
-            type="text"
             name={`${item.key}_model`}
             label="Modelo"
+            className="w-full"
           />
         </div>
 
