@@ -65,6 +65,13 @@
 
 7. **Generar el Cliente de Prisma**:
    Genera el cliente de Prisma basado en el esquema actual. Esto es necesario cada vez que cambias el archivo `schema.prisma`:
+
    ```sh
    npx prisma generate
+   ```
+
+8. **Abrir Prisma Studio**:
+   Genera el cliente de Prisma basado en el esquema actual. Esto es necesario cada vez que cambias el archivo `schema.prisma`:
+   ```sh
+   npx prisma studio
    ```
