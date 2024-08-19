@@ -342,7 +342,10 @@ const ReactPdfComponent = ({ cotizacion }: { cotizacion: CotizacionGet }) => {
           </Text>
         </View>
         <View style={styles.endLogo}>
-          <Image src="/logo2.png" style={{ width: 140, height: 160 }} />
+          <Image
+            src="/logo_movento_drives.png"
+            style={{ width: 140, height: 160 }}
+          />
         </View>
       </Page>
     </Document>
