@@ -26,7 +26,7 @@ Font.register({
 const styles = StyleSheet.create({
   page: {
     padding: 30,
-    paddingLeft : 50,
+    paddingLeft: 50,
     paddingRight: 50,
     fontFamily: "Roboto",
   },
@@ -306,14 +306,16 @@ const ReactPdfComponent = ({ cotizacion }: { cotizacion: CotizacionGet }) => {
 
         <View style={styles.tableFooter}>
           <Text>TIEMPO DE ENTREGA: </Text>
-          <Text>{deliverTime} DÍAS</Text>
+          <Text>{deliverTime}</Text>
         </View>
 
         <View style={styles.termsInfoContainer}>
           <Text style={styles.termsInfoHeader}>CONDICIONES COMERCIALES:</Text>
           <View style={styles.termsInfo}>
             <Text style={styles.boldText}>CONDICIÓN DE PAGO: </Text>
-            <Text style={styles.paymentCondition}>{paymentCondition || "A tratar"}.</Text>
+            <Text style={styles.paymentCondition}>
+              {paymentCondition || "A tratar"}.
+            </Text>
           </View>
           <View style={styles.termsInfo}>
             <Text style={styles.boldText}>VALIDEZ DE LA OFERTA: </Text>

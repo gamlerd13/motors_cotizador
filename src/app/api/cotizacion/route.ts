@@ -173,8 +173,6 @@ export async function GET() {
       };
     });
 
-    console.log(await cotizacionesMap);
-
     return NextResponse.json(cotizacionesMap, { status: 200 });
   } catch (error) {
     console.error("Error fetching data:", error);
