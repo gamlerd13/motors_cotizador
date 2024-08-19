@@ -25,8 +25,9 @@ Font.register({
 
 const styles = StyleSheet.create({
   page: {
-    padding: 20,
-    paddingLeft: 70,
+    padding: 30,
+    paddingLeft : 50,
+    paddingRight: 50,
     fontFamily: "Roboto",
   },
   boldText: {
@@ -49,7 +50,6 @@ const styles = StyleSheet.create({
   endLogo: {
     flexDirection: "row",
     justifyContent: "flex-end",
-    marginRight: 15,
   },
   date: {
     fontSize: 12,
@@ -118,7 +118,10 @@ const styles = StyleSheet.create({
   termsInfo: {
     paddingLeft: 5,
     flexDirection: "row",
-    marginBottom: 9,
+    flexWrap: "wrap",
+  },
+  paymentCondition: {
+    flex: 1,
   },
   totalPrice: {
     flexDirection: "row",
@@ -139,10 +142,6 @@ const styles = StyleSheet.create({
     marginRight: 15,
     justifyContent: "flex-end",
     fontSize: 8,
-  },
-  image: {
-    alignSelf: "center",
-    marginVertical: 10,
   },
   all: {
     fontSize: 10,
@@ -314,7 +313,7 @@ const ReactPdfComponent = ({ cotizacion }: { cotizacion: CotizacionGet }) => {
           <Text style={styles.termsInfoHeader}>CONDICIONES COMERCIALES:</Text>
           <View style={styles.termsInfo}>
             <Text style={styles.boldText}>CONDICIÓN DE PAGO: </Text>
-            <Text>{paymentCondition || "A tratar"}.</Text>
+            <Text style={styles.paymentCondition}>{paymentCondition || "A tratar"}.</Text>
           </View>
           <View style={styles.termsInfo}>
             <Text style={styles.boldText}>VALIDEZ DE LA OFERTA: </Text>
@@ -341,7 +340,7 @@ const ReactPdfComponent = ({ cotizacion }: { cotizacion: CotizacionGet }) => {
           </Text>
         </View>
         <View style={styles.endLogo}>
-          <Image src="/logo2.png" style={{ width: 90, height: 159 }} />
+          <Image src="/logo2.png" style={{ width: 140, height: 160 }} />
         </View>
       </Page>
     </Document>
