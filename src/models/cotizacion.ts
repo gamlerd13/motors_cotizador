@@ -116,13 +116,21 @@ export interface CotizacionPost {
 //   [CotizacionStatus.EXPIRED]: "EXPIRADO",
 // };
 
+// export const statusLabels: { [key in CotizacionStatus]: string } = {
+//   [CotizacionStatus.ESTADO1]: "ESTADO1",
+//   [CotizacionStatus.ESTADO2]: "ESTADO2",
+//   [CotizacionStatus.ESTADO3]: "ESTADO3",
+//   [CotizacionStatus.ESTADO4]: "ESTADO4",
+//   [CotizacionStatus.ESTADO5]: "ESTADO5",
+//   [CotizacionStatus.ESTADO6]: "ESTADO6",
+// };
 export const statusLabels: { [key in CotizacionStatus]: string } = {
-  [CotizacionStatus.ESTADO1]: "ESTADO1",
-  [CotizacionStatus.ESTADO2]: "ESTADO2",
-  [CotizacionStatus.ESTADO3]: "ESTADO3",
-  [CotizacionStatus.ESTADO4]: "ESTADO4",
-  [CotizacionStatus.ESTADO5]: "ESTADO5",
-  [CotizacionStatus.ESTADO6]: "ESTADO6",
+  [CotizacionStatus.ESTADO1]: "En evaluación por cliente",
+  [CotizacionStatus.ESTADO2]: "Cotización actualizada",
+  [CotizacionStatus.ESTADO3]: "Cliente toma decisión en siguientes días",
+  [CotizacionStatus.ESTADO4]: "Cliente no responde llamada/mensaje",
+  [CotizacionStatus.ESTADO5]: "Ganada",
+  [CotizacionStatus.ESTADO6]: "Perdida",
 };
 
 type ChipColor =

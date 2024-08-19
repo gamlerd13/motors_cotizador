@@ -84,8 +84,9 @@ function CotizacionesTable({
                 </div>
               </ModalHeader>
               <ModalBody>
-                <div className="flex justify-around">
+                <div className="flex gap-2 justify-around">
                   <Button
+                    className="w-[170px] max-w-[170px] text-wrap"
                     size="sm"
                     color={
                       cotizacionEnd?.status == CotizacionStatus.ESTADO1
@@ -96,10 +97,11 @@ function CotizacionesTable({
                       handleFinalizarCotizacion(CotizacionStatus.ESTADO1)
                     }
                   >
-                    {CotizacionStatus.ESTADO1}
+                    <span>{statusLabels[CotizacionStatus.ESTADO1]}</span>
                   </Button>
                   <Button
                     size="sm"
+                    className="w-[170px] max-w-[170px] text-wrap"
                     color={
                       cotizacionEnd?.status == CotizacionStatus.ESTADO2
                         ? "success"
@@ -109,9 +111,12 @@ function CotizacionesTable({
                       handleFinalizarCotizacion(CotizacionStatus.ESTADO2)
                     }
                   >
-                    {CotizacionStatus.ESTADO2}
+                    <span>{statusLabels[CotizacionStatus.ESTADO2]}</span>
                   </Button>
+                </div>
+                <div className="flex gap-2 justify-around">
                   <Button
+                    className="w-[170px] max-w-[170px] text-wrap"
                     size="sm"
                     color={
                       cotizacionEnd?.status == CotizacionStatus.ESTADO3
@@ -122,11 +127,10 @@ function CotizacionesTable({
                       handleFinalizarCotizacion(CotizacionStatus.ESTADO3)
                     }
                   >
-                    {CotizacionStatus.ESTADO3}
+                    <span>{statusLabels[CotizacionStatus.ESTADO3]}</span>
                   </Button>
-                </div>
-                <div className="flex justify-around">
                   <Button
+                    className="w-[170px] max-w-[170px] text-wrap"
                     size="sm"
                     color={
                       cotizacionEnd?.status == CotizacionStatus.ESTADO4
@@ -137,10 +141,17 @@ function CotizacionesTable({
                       handleFinalizarCotizacion(CotizacionStatus.ESTADO4)
                     }
                   >
-                    {CotizacionStatus.ESTADO4}
+                    <span className="">
+                      {" "}
+                      {statusLabels[CotizacionStatus.ESTADO4]}
+                    </span>
                   </Button>
+                </div>
+
+                <div className="flex gap-2 justify-around">
                   <Button
                     size="sm"
+                    className="w-[170px] max-w-[170px] text-wrap"
                     color={
                       cotizacionEnd?.status == CotizacionStatus.ESTADO5
                         ? "success"
@@ -150,9 +161,10 @@ function CotizacionesTable({
                       handleFinalizarCotizacion(CotizacionStatus.ESTADO5)
                     }
                   >
-                    {CotizacionStatus.ESTADO5}
+                    {statusLabels[CotizacionStatus.ESTADO5]}
                   </Button>
                   <Button
+                    className="w-[170px] max-w-[170px] text-wrap"
                     size="sm"
                     color={
                       cotizacionEnd?.status == CotizacionStatus.ESTADO6
@@ -163,7 +175,7 @@ function CotizacionesTable({
                       handleFinalizarCotizacion(CotizacionStatus.ESTADO6)
                     }
                   >
-                    {CotizacionStatus.ESTADO6}
+                    {statusLabels[CotizacionStatus.ESTADO6]}
                   </Button>
                 </div>
               </ModalBody>
