@@ -65,8 +65,6 @@ function ClienteForm({
           }
         );
 
-        console.log("Client updated:", response.data);
-
         const editClient = clients.map((client) =>
           client.id == clientValue.clientId ? response.data : { ...client }
         );
@@ -85,7 +83,6 @@ function ClienteForm({
         console.error("Error updating client:", error);
       }
 
-      console.log(clientValue, "editando");
       return;
     }
 

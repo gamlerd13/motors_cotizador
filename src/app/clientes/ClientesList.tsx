@@ -5,23 +5,22 @@ import { useGetClientList } from "../hooks/clients/useClient";
 import ClientesTable from "./ClientesTable";
 import { useAppContext } from "@/context";
 
-
 interface ClientesListProps {
-  isActiveCreateClient: boolean,
-  setIsActiveCreateClient: React.Dispatch<SetStateAction<boolean>>
+  isActiveCreateClient: boolean;
+  setIsActiveCreateClient: React.Dispatch<SetStateAction<boolean>>;
 }
 
-
-export default function ClientesList({ isActiveCreateClient, setIsActiveCreateClient }: ClientesListProps) {
+export default function ClientesList({
+  isActiveCreateClient,
+  setIsActiveCreateClient,
+}: ClientesListProps) {
   const { clientList, isLoading } = useGetClientList();
 
-
-  const { clients = [], setClients } = useAppContext()
+  const { clients = [], setClients } = useAppContext();
 
   useEffect(() => {
-    setClients(clientList)
-    console.log(clients)
-  }, [clientList])
+    setClients(clientList);
+  }, [clientList]);
 
   return (
     <div>

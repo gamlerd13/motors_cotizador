@@ -13,7 +13,6 @@ export const usePostCotizacion = () => {
   >(null);
   const addNewCotizacion = async (formDataNewCotizacion: FormData) => {
     try {
-      console.log("esto es el usepsotCotizacion: ", formDataNewCotizacion);
       const formDataEntries = Object.fromEntries(
         formDataNewCotizacion.entries()
       );
@@ -32,7 +31,6 @@ export const usePostCotizacion = () => {
 
         // JSON.stringify(formDataEntries)
       );
-      console.log("respueste de la api: ", response);
       if (response.status == 201) {
         toast.success("Se creó una cotizacion exitosamente");
         setResponseNewCotizacion(response.data);
@@ -94,7 +92,6 @@ export const useGetUpdateCotizacion = () => {
       const response = await axios.get("api/cotizacion");
 
       if (response.status == 200) {
-        console.log(response.data);
         setCotizacionList(response.data);
       }
     } catch (error) {
@@ -109,13 +106,11 @@ export const useGetUpdateCotizacion = () => {
     typeEnding: CotizacionStatus
   ) => {
     try {
-      console.log("este es el cotizacion estatus", typeEnding);
-
       const response = await axios.put(
         `/api/cotizacion/update-status/${cotizacionId}`,
         JSON.stringify(typeEnding)
       );
-      console.log("respueste de la api: ", response);
+
       if (response.status == 201) {
         toast.success(
           `Se actualizó el estado de la cotización ${statusLabels[typeEnding]}`

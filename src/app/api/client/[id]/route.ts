@@ -10,7 +10,6 @@ export async function PUT(req: NextRequest, { params }: Params) {
   try {
     // Leer el cuerpo de la petición
     const clientData: Client = await req.json();
-    console.log(clientData, "desde PUT");
 
     const updatedClient = await prisma.client.update({
       where: {
@@ -22,8 +21,7 @@ export async function PUT(req: NextRequest, { params }: Params) {
     // Retornar la respuesta con el cliente actualizado
     return NextResponse.json(updatedClient, { status: 200 });
   } catch (error) {
-    const message =
-      error instanceof Error ? error.message : "Unknown error";
+    const message = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }

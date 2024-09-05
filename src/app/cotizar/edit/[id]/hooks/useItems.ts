@@ -54,7 +54,6 @@ export default function useItems(cotizacion: CotizacionGet) {
 
   //Con esto se trabaja el tema de los items dinamicos en el cliente, pero consume muchos recursos
   const updateItem = (id: number, clave: string, valor: string | number) => {
-    console.log(id, clave, valor);
     setItems((prevValues) =>
       prevValues.map((item) =>
         item.key === id ? { ...item, [clave]: valor } : item

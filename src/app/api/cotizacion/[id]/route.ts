@@ -9,7 +9,6 @@ interface Params {
 export async function GET(req: NextRequest, { params }: Params) {
   try {
     const cotizacionId = params.id;
-    console.log(cotizacionId, "entro al get");
     const cotizacion = await prisma.cotizacion.findFirst({
       where: {
         id: parseInt(cotizacionId),

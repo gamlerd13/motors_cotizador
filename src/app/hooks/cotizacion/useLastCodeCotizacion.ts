@@ -16,7 +16,6 @@ export const useLastCodeCotizacion = (idCotizacion: number) => {
       );
 
       if (response.status == 200) {
-        console.log(response.data);
         setLastCodeCotizacion(response.data);
       }
     } catch (error) {

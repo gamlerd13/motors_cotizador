@@ -29,8 +29,6 @@ export default function ProductItem({
 
   useEffect(() => {
     const updatePrices = (key: number) => {
-      console.log("Cantidad: ", itemAmount, "Precio unitario: ", unitPrice);
-
       setPrices((prevPrices) =>
         prevPrices.map((price: Price) =>
           price.key === key

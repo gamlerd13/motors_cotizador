@@ -15,10 +15,6 @@ export const useGetClientList = () => {
       const response = await axios.get("/api/client");
 
       if (response.status == 200) {
-        console.log(
-          "Cotizacion en resnpose use cliente, get client",
-          response.data
-        );
         setClientList(response.data);
       }
     } catch (error) {
@@ -61,7 +57,6 @@ export const usePostClient = () => {
       reference: formDataEntries.clientReference as string,
     };
 
-    console.log(newClient, "objeto");
     try {
       const response = await axios.post("api/client", formDataEntries);
 

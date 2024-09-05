@@ -51,7 +51,6 @@ function CotizarForm({ cotizacion }: { cotizacion: CotizacionGet }) {
 
     //Guardar y generar pdf
     console.log(formData);
-    console.log("Estos son los items: ", Items);
   };
 
   const handleSelect = (e: string) => {
@@ -84,7 +83,6 @@ function CotizarForm({ cotizacion }: { cotizacion: CotizacionGet }) {
     }, 0)
     .toFixed(2);
 
-  console.log(cotizacion);
   return (
     <form onSubmit={handleSubmit}>
       <div className="flex justify-between">
