@@ -29,6 +29,10 @@ import {
 import { useState } from "react";
 import ReactPdfComponent from "@/components/cotizacion/React-pdf";
 import { PDFDownloadLink } from "@react-pdf/renderer";
+import { CotizacionEnd } from "./types/main";
+import ModalEndCotizacion from "./modal/ModalEndQuotation";
+import ModalJoinCotizacion from "./modal/ModalJoinCotizacion";
+import { BiEdit } from "react-icons/bi";
 
 interface CotizacionesTable {
   cotizacionList: CotizacionGet[] | null;
@@ -38,12 +42,6 @@ interface CotizacionesTable {
     typeEnding: CotizacionStatus
   ) => void;
 }
-interface CotizacionEnd {
-  id: number;
-  name: string;
-  code: string;
-  status: CotizacionStatus;
-}
 
 function CotizacionesTable({
   cotizacionList,
@@ -52,17 +50,34 @@ function CotizacionesTable({
 }: CotizacionesTable) {
   const router = useRouter();
   const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
+  const {
+    isOpen: isOpenJoinCotizacion,
+    onOpen: onOpenJoinCotizacion,
+    onClose: onCloseJoinCotizacion,
+    onOpenChange: onOpenChangeJoinCotizacion,
+  } = useDisclosure();
+
   const [cotizacionEnd, setCotizacionIdEnd] = useState<CotizacionEnd | null>(
     null
   );
+  const [cotizacionSelected, setCotizacionSelected] =
+    useState<CotizacionGet | null>(null);
+
   if (!cotizacionList) return true;
+
+  // Handle modal
   const handleOpenFinalizarModal = (cotizacion: CotizacionEnd) => {
     setCotizacionIdEnd(cotizacion);
     onOpen();
   };
+  const handleOpenJoinCotizacionModal = (cotizacion: CotizacionGet) => {
+    //Manejar
+    setCotizacionSelected(cotizacion);
+    onOpenJoinCotizacion();
+  };
+
   const handleFinalizarCotizacion = (typeEnding: CotizacionStatus) => {
     if (cotizacionEnd) {
-      console.log(typeEnding);
       updateCotizacion(cotizacionEnd.id, typeEnding);
     }
     onClose();
@@ -73,121 +88,17 @@ function CotizacionesTable({
   };
   return (
     <>
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader className="flex flex-col gap-1">
-                <div className="flex justify-around">
-                  Cambiar de estado Cotización
-                  <Chip color="success">{cotizacionEnd?.code}</Chip>
-                </div>
-              </ModalHeader>
-              <ModalBody>
-                <div className="flex gap-2 justify-around">
-                  <Button
-                    className="w-[170px] max-w-[170px] text-wrap"
-                    size="sm"
-                    color={
-                      cotizacionEnd?.status == CotizacionStatus.ESTADO1
-                        ? "success"
-                        : "default"
-                    }
-                    onClick={() =>
-                      handleFinalizarCotizacion(CotizacionStatus.ESTADO1)
-                    }
-                  >
-                    <span>{statusLabels[CotizacionStatus.ESTADO1]}</span>
-                  </Button>
-                  <Button
-                    size="sm"
-                    className="w-[170px] max-w-[170px] text-wrap"
-                    color={
-                      cotizacionEnd?.status == CotizacionStatus.ESTADO2
-                        ? "success"
-                        : "default"
-                    }
-                    onClick={() =>
-                      handleFinalizarCotizacion(CotizacionStatus.ESTADO2)
-                    }
-                  >
-                    <span>{statusLabels[CotizacionStatus.ESTADO2]}</span>
-                  </Button>
-                </div>
-                <div className="flex gap-2 justify-around">
-                  <Button
-                    className="w-[170px] max-w-[170px] text-wrap"
-                    size="sm"
-                    color={
-                      cotizacionEnd?.status == CotizacionStatus.ESTADO3
-                        ? "success"
-                        : "default"
-                    }
-                    onClick={() =>
-                      handleFinalizarCotizacion(CotizacionStatus.ESTADO3)
-                    }
-                  >
-                    <span>{statusLabels[CotizacionStatus.ESTADO3]}</span>
-                  </Button>
-                  <Button
-                    className="w-[170px] max-w-[170px] text-wrap"
-                    size="sm"
-                    color={
-                      cotizacionEnd?.status == CotizacionStatus.ESTADO4
-                        ? "success"
-                        : "default"
-                    }
-                    onClick={() =>
-                      handleFinalizarCotizacion(CotizacionStatus.ESTADO4)
-                    }
-                  >
-                    <span className="">
-                      {" "}
-                      {statusLabels[CotizacionStatus.ESTADO4]}
-                    </span>
-                  </Button>
-                </div>
-
-                <div className="flex gap-2 justify-around">
-                  <Button
-                    size="sm"
-                    className="w-[170px] max-w-[170px] text-wrap"
-                    color={
-                      cotizacionEnd?.status == CotizacionStatus.ESTADO5
-                        ? "success"
-                        : "default"
-                    }
-                    onClick={() =>
-                      handleFinalizarCotizacion(CotizacionStatus.ESTADO5)
-                    }
-                  >
-                    {statusLabels[CotizacionStatus.ESTADO5]}
-                  </Button>
-                  <Button
-                    className="w-[170px] max-w-[170px] text-wrap"
-                    size="sm"
-                    color={
-                      cotizacionEnd?.status == CotizacionStatus.ESTADO6
-                        ? "success"
-                        : "default"
-                    }
-                    onClick={() =>
-                      handleFinalizarCotizacion(CotizacionStatus.ESTADO6)
-                    }
-                  >
-                    {statusLabels[CotizacionStatus.ESTADO6]}
-                  </Button>
-                </div>
-              </ModalBody>
-              <ModalFooter>
-                <Button size="sm" color="default" onPress={onClose}>
-                  cerrar
-                </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
+      <ModalEndCotizacion
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        cotizacionEnd={cotizacionEnd}
+        handleFinalizarCotizacion={handleFinalizarCotizacion}
+      />
+      <ModalJoinCotizacion
+        isOpen={isOpenJoinCotizacion}
+        onOpenChange={onOpenChangeJoinCotizacion}
+        cotizacionSelected={cotizacionSelected}
+      />
 
       <Table
         aria-label="Example table with dynamic content"
@@ -229,13 +140,19 @@ function CotizacionesTable({
 
               <TableCell>
                 <div className="flex gap-2">
-                  <span className="flex items-center justify-center text-2xl w-8  text-red-950 cursor-pointer rounded-full">
+                  {/* <span className="flex items-center justify-center text-2xl w-8  text-red-950 cursor-pointer rounded-full">
                     <PDFDownloadLink
                       document={<ReactPdfComponent cotizacion={cotizacion} />}
                       fileName={`cotizacion-${cotizacion.code}.pdf`}
                     >
                       <FaFilePdf />
                     </PDFDownloadLink>
+                  </span> */}
+                  <span
+                    onClick={() => handleOpenJoinCotizacionModal(cotizacion)}
+                    className="flex items-center justify-center text-2xl w-8 text-red-950 cursor-pointer rounded-full"
+                  >
+                    <FaFilePdf />
                   </span>
                   <span
                     onClick={() => handleOpenCotizarForm(cotizacion.id)}
@@ -243,6 +160,7 @@ function CotizacionesTable({
                   >
                     <FaEdit />
                   </span>
+
                   <Button
                     size="sm"
                     type="button"
