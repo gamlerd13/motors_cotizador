@@ -178,3 +178,8 @@ export const InitialCodeCotizacionChild = [
   "Y",
   "Z",
 ];
+
+export interface RangeDate {
+  dateStart: Date;
+  dateEnd: Date;
+}

@@ -138,7 +138,7 @@ export default function ModalJoinCotizacion({
         {(onClose) => (
           <>
             <ModalHeader className="flex flex-col gap-1">
-              <div className="">Decargar o unir Cotización con PDF extras</div>
+              <div className="">Descargar o unir Cotización con PDF extras</div>
             </ModalHeader>
             <ModalBody>
               <div className="">

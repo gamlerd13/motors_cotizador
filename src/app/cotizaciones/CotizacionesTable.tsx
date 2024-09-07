@@ -33,6 +33,7 @@ import { CotizacionEnd } from "./types/main";
 import ModalEndCotizacion from "./modal/ModalEndQuotation";
 import ModalJoinCotizacion from "./modal/ModalJoinCotizacion";
 import { BiEdit } from "react-icons/bi";
+import ModalDownloadCotizacionByDate from "./modal/ModalDownloadCotizacionByDate";
 
 interface CotizacionesTable {
   cotizacionList: CotizacionGet[] | null;
@@ -50,11 +51,19 @@ function CotizacionesTable({
 }: CotizacionesTable) {
   const router = useRouter();
   const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
+
   const {
     isOpen: isOpenJoinCotizacion,
     onOpen: onOpenJoinCotizacion,
     onClose: onCloseJoinCotizacion,
     onOpenChange: onOpenChangeJoinCotizacion,
+  } = useDisclosure();
+
+  const {
+    isOpen: isOpenDownload,
+    onOpen: onOpenDownload,
+    onClose: onCloseDownload,
+    onOpenChange: onOpenChangeDownload,
   } = useDisclosure();
 
   const [cotizacionEnd, setCotizacionIdEnd] = useState<CotizacionEnd | null>(
@@ -99,6 +108,19 @@ function CotizacionesTable({
         onOpenChange={onOpenChangeJoinCotizacion}
         cotizacionSelected={cotizacionSelected}
       />
+      <ModalDownloadCotizacionByDate
+        isOpen={isOpenDownload}
+        onOpenChange={onOpenChangeDownload}
+      />
+
+      <div className="flex justify-end p-2 gap-x-2">
+        {/* <Button size="sm" type="button" onClick={() => console.log("Manejar luego esto")}>
+          Descargar seleccionados
+        </Button> */}
+        <Button size="sm" type="button" onClick={() => onOpenDownload()}>
+          Descargar por fecha
+        </Button>
+      </div>
 
       <Table
         aria-label="Example table with dynamic content"
