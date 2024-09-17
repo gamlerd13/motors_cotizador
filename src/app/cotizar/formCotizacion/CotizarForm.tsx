@@ -270,6 +270,7 @@ function CotizarForm() {
             className="w-[150px]"
             value={currencyType}
             name="currencyType"
+            defaultSelectedKeys={[currencyType]}
             onChange={(e) =>
               setCurrencyType(e.target.value as "SOLES" | "DOLARES")
             }

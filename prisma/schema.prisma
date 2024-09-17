@@ -16,6 +16,7 @@ generator client {
 //   directUrl = env("DIRECT_URL")
 // }
 
+// vercel deployment
 datasource db {
   provider  = "postgresql"
   url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
@@ -67,8 +68,8 @@ model Cotizacion {
   status          CotizacionStatus @default(ESTADO1)
   code            String
   parentCode      String
-  companyPhone    String
-  companyEmail    String
+  companyPhone    String           @default("")
+  companyEmail    String           @default("")
   clientId        Int?
   client          Client?          @relation(fields: [clientId], references: [id])
   //Client ---
@@ -80,15 +81,15 @@ model Cotizacion {
   date         DateTime
   deliverTime  String
   totalPrice   Float
-  currencyType CurrencyType // Tipo de moneda
+  currencyType CurrencyType @default(SOLES) // Tipo de moneda
   items        Json
   isEdit       Boolean      @default(false)
 
   //commercial conditions ---
-  paymentCondition  String
-  offerValidity     String // Validez de la oferta
-  warranty          String // Garantía
-  bankAccountNumber String // Número de cuenta bancaria de Movento S.A.C
+  paymentCondition  String @default("")
+  offerValidity     String @default("") // Validez de la oferta
+  warranty          String @default("") // Garantía
+  bankAccountNumber String @default("") // Número de cuenta bancaria de Movento S.A.C
 }
 
 model LastCodeCotizacion {
