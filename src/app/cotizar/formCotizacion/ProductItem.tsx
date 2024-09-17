@@ -75,7 +75,6 @@ export default function ProductItem({
             placeholder="Ingrese el modelo"
             size="sm"
             name={`${item.key}_model`}
-            label="Modelo"
             className="w-full"
           />
         </div>

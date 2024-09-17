@@ -75,7 +75,6 @@ export default function ProductItem({
             size="sm"
             name={`${item.key}_model`}
             defaultValue={item.model}
-            label="Modelo"
             className="w-full"
           />
         </div>

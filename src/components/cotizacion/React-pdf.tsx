@@ -288,7 +288,7 @@ const ReactPdfComponent = ({ cotizacion }: { cotizacion: CotizacionGet }) => {
                 ]}
               >
                 <Text style={styles.itemDescription}>{item.description}</Text>
-                <Text>Modelo: {item.model}</Text>
+                <Text>{item.model}</Text>
               </View>
               <Text style={[styles.tableCell, styles.cellFlex, { flex: 1 }]}>
                 {item.amount}
@@ -340,10 +340,7 @@ const ReactPdfComponent = ({ cotizacion }: { cotizacion: CotizacionGet }) => {
           <Text style={styles.termsInfo}>{bankAccountNumber}</Text>
         </View>
         <View style={styles.endLogo}>
-          <Image
-            src="/logo_movento_drives.png"
-            style={{ width: 140, height: 160 }}
-          />
+          <Image src="/logo_movento_drives.png" style={{ width: 100 }} />
         </View>
       </Page>
     </Document>

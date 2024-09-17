@@ -341,7 +341,7 @@ function CotizarForm() {
       </div>
       <div className="w-full pt-4 flex flex-col sm:flex-row gap-2 ">
         <Textarea
-          placeholder="Ingrese el modelo"
+          placeholder=""
           size="sm"
           name="bankAccountNumber"
           label="No CUENTA BANCARIA DE MOVENTO S.A.C"
