@@ -34,6 +34,8 @@ export async function POST(req: NextRequest, res: NextResponse) {
     const body: CotizacionType = await req.json();
     console.log("Body start", body);
     const {
+      companyPhone,
+      companyEmail,
       client: clientBody,
       clientName,
       clientContact,
@@ -42,7 +44,11 @@ export async function POST(req: NextRequest, res: NextResponse) {
       date,
       deliverTime,
       paymentCondition,
+      offerValidity,
+      warranty,
+      bankAccountNumber,
       totalPrice,
+      currencyType,
       ...resto //son los items que hay que tiene,estos son dinamicos
     } = body;
 
@@ -72,13 +78,19 @@ export async function POST(req: NextRequest, res: NextResponse) {
     let newCotizacionConditional = null;
     //create client
     const commonData = {
+      companyPhone: companyPhone,
+      companyEmail: companyEmail,
       status: CotizacionStatus.ESTADO1,
       code: newCode,
       parentCode: newCode,
       date: dateString,
       deliverTime: deliverTime,
       paymentCondition: paymentCondition,
+      offerValidity: offerValidity,
+      warranty: warranty,
+      bankAccountNumber: bankAccountNumber,
       totalPrice: parseFloat(totalPrice),
+      currencyType: currencyType,
       items: JSON.stringify(items),
     };
 

@@ -176,6 +176,8 @@ const styles = StyleSheet.create({
 
 const ReactPdfComponent = ({ cotizacion }: { cotizacion: CotizacionGet }) => {
   const {
+    companyPhone,
+    companyEmail,
     client,
     clientName,
     clientContact,
@@ -185,7 +187,11 @@ const ReactPdfComponent = ({ cotizacion }: { cotizacion: CotizacionGet }) => {
     date,
     deliverTime,
     paymentCondition,
+    offerValidity,
+    warranty,
+    bankAccountNumber,
     totalPrice,
+    currencyType,
     items,
   } = cotizacion;
 
@@ -205,6 +211,7 @@ const ReactPdfComponent = ({ cotizacion }: { cotizacion: CotizacionGet }) => {
       maximumFractionDigits: 2,
     }),
   }));
+  const currencySymbol = currencyType === "SOLES" ? "S/." : "$";
 
   return (
     <Document style={styles.all}>
@@ -232,10 +239,9 @@ const ReactPdfComponent = ({ cotizacion }: { cotizacion: CotizacionGet }) => {
             </Text>
           </View>
           <View style={styles.cellCompanyInfo}>
-            <Text style={styles.companyInfo}>Telefono: 902196904</Text>
+            <Text style={styles.companyInfo}>Telefono: {companyPhone}</Text>
             <Text style={styles.companyInfo}>
-              Correo:{" "}
-              <Text style={{ color: "#00109e" }}>ventas@moventodrives.com</Text>
+              Correo: <Text style={{ color: "#00109e" }}>{companyEmail}</Text>
             </Text>
           </View>
         </View>
@@ -267,7 +273,7 @@ const ReactPdfComponent = ({ cotizacion }: { cotizacion: CotizacionGet }) => {
               P.U.
             </Text>
             <Text style={[styles.tableCell, styles.cellFlex, { flex: 2 }]}>
-              Precio total S/.
+              Precio total {currencySymbol}
             </Text>
           </View>
           {itemsFormatted.map((item, index) => (
@@ -301,7 +307,10 @@ const ReactPdfComponent = ({ cotizacion }: { cotizacion: CotizacionGet }) => {
           <Text style={styles.cellTotalPrice}>
             PRECIO DE VENTA TOTAL (NO INCLUYE I.G.V.){" "}
           </Text>
-          <Text style={styles.cellTotalPrice}> S/. {formattedTotalPrice}</Text>
+          <Text style={styles.cellTotalPrice}>
+            {" "}
+            {currencySymbol} {formattedTotalPrice}{" "}
+          </Text>
         </View>
 
         <View style={styles.tableFooter}>
@@ -319,27 +328,16 @@ const ReactPdfComponent = ({ cotizacion }: { cotizacion: CotizacionGet }) => {
           </View>
           <View style={styles.termsInfo}>
             <Text style={styles.boldText}>VALIDEZ DE LA OFERTA: </Text>
-            <Text>30 días.</Text>
+            <Text>{offerValidity}</Text>
           </View>
           <View style={styles.termsInfo}>
             <Text style={styles.boldText}>GARANTIA: </Text>
-            <Text>
-              La garantía es por 6 meses luego de la puesta en servicio.
-            </Text>
+            <Text>{warranty}</Text>
           </View>
           <Text style={[styles.termsInfo, styles.boldText]}>
             No CUENTA BANCARIA DE MOVENTO S.A.C.
           </Text>
-          <Text style={styles.termsInfo}>
-            {[
-              "BANCO INTERBANK",
-              "SOLES: 200-3005630612",
-              "CCI SOLES: 003-200-003005630612-36",
-              "DOLARES: 200-003005630620",
-              "CCI DOLARES: 003-200-003005630620-39",
-              "Cuenta detracción del banco de la nación - Cuenta Corriente: 00-002-212722",
-            ].join("\n")}
-          </Text>
+          <Text style={styles.termsInfo}>{bankAccountNumber}</Text>
         </View>
         <View style={styles.endLogo}>
           <Image

@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Input } from "@nextui-org/input";
+import { Input, Textarea } from "@nextui-org/input";
 import { Button, DateInput } from "@nextui-org/react";
 import { CalendarDateTime } from "@internationalized/date";
 import useItems from "../hooks/useItems";
@@ -41,6 +41,15 @@ function CotizarForm({ cotizacion }: { cotizacion: CotizacionGet }) {
   };
   const [clientValues, setClientValues] = useState<ClientForm | null>(null);
   const [clientSelected, setClientSelected] = useState<string>("");
+
+  const [currencyType, setCurrencyType] = useState<"SOLES" | "DOLARES">(
+    cotizacion.currencyType
+  );
+  useEffect(() => {
+    if (cotizacion && cotizacion.currencyType) {
+      setCurrencyType(cotizacion.currencyType);
+    }
+  }, [cotizacion]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -85,7 +94,26 @@ function CotizarForm({ cotizacion }: { cotizacion: CotizacionGet }) {
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="flex justify-between">
+      <div className="w-full pt-4">
+        <div className="grid md:grid-cols-2 gap-2">
+          <Input
+            size="sm"
+            className="md:col-span-1"
+            label="Número telefónico de Movento S.A.C."
+            defaultValue={cotizacion.companyPhone}
+            name="companyPhone"
+          />
+          <Input
+            size="sm"
+            className="md:col-span-1"
+            name="companyEmail"
+            label="Correo de Movento S.A.C."
+            defaultValue={cotizacion.companyEmail}
+          />
+        </div>
+      </div>
+
+      <div className="flex justify-between mt-4">
         <h1 className="font-medium text-slate-600">Cliente</h1>
         <div className="flex gap-x-2">
           {/* {clientList && (
@@ -261,15 +289,38 @@ function CotizarForm({ cotizacion }: { cotizacion: CotizacionGet }) {
       </div>
 
       <div className="w-full pt-4">
-        <div className="flex justify-end">
+        <div className="flex justify-end items-end space-x-4">
+          <Select
+            size="sm"
+            label="Tipo de moneda"
+            className="w-[150px]"
+            name="currencyType"
+            selectedKeys={[currencyType]}
+            value={currencyType}
+            onChange={(e) =>
+              setCurrencyType(e.target.value as "SOLES" | "DOLARES")
+            }
+          >
+            <SelectItem key="SOLES" value="SOLES">
+              Soles
+            </SelectItem>
+            <SelectItem key="DOLARES" value="DOLARES">
+              Dólares
+            </SelectItem>
+          </Select>
           <Input
             size="sm"
             className="max-w-[300px]"
             label="Precio de Venta Total (No incluye I.G.V.)"
             type="number"
             name="totalPrice"
-            startContent={<span>s/. </span>}
+            startContent={
+              <span className="text-default-400 text-small">
+                {currencyType === "SOLES" ? "S/." : "$"}
+              </span>
+            }
             value={totalPrice.toString()}
+            readOnly
           />
         </div>
       </div>
@@ -295,7 +346,35 @@ function CotizarForm({ cotizacion }: { cotizacion: CotizacionGet }) {
           type="text"
         />
       </div>
-
+      <div className="w-full pt-4 flex flex-col sm:flex-row gap-2 ">
+        <Input
+          size="sm"
+          className="md:col-span-1"
+          type="text"
+          name="offerValidity"
+          defaultValue={cotizacion.offerValidity}
+          label="Validez de oferta"
+        />
+        <Input
+          size="sm"
+          className="md:col-span-1"
+          type="text"
+          name="warranty"
+          defaultValue={cotizacion.warranty}
+          label="Garantía"
+        />
+      </div>
+      <div className="w-full pt-4 flex flex-col sm:flex-row gap-2 ">
+        <Textarea
+          placeholder="Ingrese el modelo"
+          size="sm"
+          name="bankAccountNumber"
+          label="No CUENTA BANCARIA DE MOVENTO S.A.C"
+          defaultValue={cotizacion.bankAccountNumber}
+          className="w-full"
+          style={{ whiteSpace: "pre-wrap" }}
+        />
+      </div>
       <div className="flex justify-end pt-4">
         <ButtonSubmit text="Actualizar cotización" />
       </div>

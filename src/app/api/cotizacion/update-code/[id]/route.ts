@@ -28,6 +28,8 @@ export async function PUT(req: NextRequest, { params }: Params) {
     const parentId = params.id;
     const {
       // client: clientBody,
+      companyPhone,
+      companyEmail,
       clientId,
       clientName,
       clientContact,
@@ -36,7 +38,11 @@ export async function PUT(req: NextRequest, { params }: Params) {
       date,
       deliverTime,
       paymentCondition,
+      offerValidity,
+      warranty,
+      bankAccountNumber,
       totalPrice,
+      currencyType,
       code,
       ...resto //son los items que hay que tiene,estos son dinamicos
     } = body;
@@ -70,11 +76,17 @@ export async function PUT(req: NextRequest, { params }: Params) {
     let newCotizacionConditional = null;
     //create client
     const commonData = {
+      companyPhone: companyPhone,
+      companyEmail: companyEmail,
       code: newCode,
       date: dateString,
       deliverTime: deliverTime,
       paymentCondition: paymentCondition,
+      offerValidity: offerValidity,
+      warranty: warranty,
+      bankAccountNumber: bankAccountNumber,
       totalPrice: parseFloat(totalPrice),
+      currencyType: currencyType,
       items: JSON.stringify(items),
       isEdit: true,
     };

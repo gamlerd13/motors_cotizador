@@ -1,4 +1,4 @@
-import { CotizacionStatus } from "@prisma/client";
+import { CotizacionStatus, CurrencyType } from "@prisma/client";
 import { Client, ClientCreate } from "./client";
 
 export interface ProductItemType {
@@ -16,6 +16,8 @@ export type ProductItemPost = ProductItemType & {
 
 export interface CotizacionType {
   id?: number; //por si hay que cotizar desde backend
+  companyPhone: string,
+  companyEmail: string,
   client: string;
   // undefined client
   clientName: string;
@@ -27,9 +29,16 @@ export interface CotizacionType {
 
   // items: ProductItemType[];
   deliverTime: string;
-  paymentCondition: string;
+  
+  currencyType: CurrencyType;
   totalPrice: string;
   [key: string]: any;
+
+  // comercial conditions
+  paymentCondition: string;
+  offerValidity: string; // Validez de la oferta
+  warranty: string; // Garantía
+  bankAccountNumber: string; // Número de cuenta bancaria de Movento S.A.C
 }
 
 export interface CotizacionUpdate {
@@ -64,6 +73,8 @@ export interface PdfCotizacion {
 
 export interface CotizacionGet {
   id: number; //por si hay que cotizar desde backend
+  companyPhone: string,
+  companyEmail: string,
   client: Client | null;
   clientId: number;
   // undefined client
@@ -79,9 +90,15 @@ export interface CotizacionGet {
 
   items: ProductItemType[];
   deliverTime: string;
-  paymentCondition: string;
   totalPrice: number;
+  currencyType: CurrencyType;
   isEdit: boolean;
+
+  // comercial conditions
+  paymentCondition: string;
+  offerValidity: string; // Validez de la oferta
+  warranty: string; // Garantía
+  bankAccountNumber: string; // Número de cuenta bancaria de Movento S.A.C
 }
 
 export interface CotizacionPost {

@@ -46,6 +46,11 @@ enum CotizacionStatus {
   ESTADO6
 }
 
+enum CurrencyType {
+  SOLES
+  DOLARES
+}
+
 model Client {
   id         Int          @id @default(autoincrement())
   name       String
@@ -62,6 +67,8 @@ model Cotizacion {
   status          CotizacionStatus @default(ESTADO1)
   code            String
   parentCode      String
+  companyPhone    String
+  companyEmail    String
   clientId        Int?
   client          Client?          @relation(fields: [clientId], references: [id])
   //Client ---
@@ -70,12 +77,18 @@ model Cotizacion {
   clientRuc       String
   clientReference String
 
-  date             DateTime
-  deliverTime      String
-  paymentCondition String
-  totalPrice       Float
-  items            Json
-  isEdit           Boolean  @default(false)
+  date         DateTime
+  deliverTime  String
+  totalPrice   Float
+  currencyType CurrencyType // Tipo de moneda
+  items        Json
+  isEdit       Boolean      @default(false)
+
+  //commercial conditions ---
+  paymentCondition  String
+  offerValidity     String // Validez de la oferta
+  warranty          String // Garantía
+  bankAccountNumber String // Número de cuenta bancaria de Movento S.A.C
 }
 
 model LastCodeCotizacion {

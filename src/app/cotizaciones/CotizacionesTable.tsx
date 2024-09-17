@@ -158,7 +158,10 @@ function CotizacionesTable({
                   {statusLabels[cotizacion.status]}
                 </Chip>
               </TableCell>
-              <TableCell>S/. {cotizacion.totalPrice}</TableCell>
+              <TableCell>
+                {cotizacion.currencyType === "SOLES" ? "S/." : "$"}{" "}
+                {cotizacion.totalPrice}
+              </TableCell>
 
               <TableCell>
                 <div className="flex gap-2">
