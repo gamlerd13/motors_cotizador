@@ -99,6 +99,8 @@ export interface CotizacionGet {
   offerValidity: string; // Validez de la oferta
   warranty: string; // Garantía
   bankAccountNumber: string; // Número de cuenta bancaria de Movento S.A.C
+
+  saleStatus: "CREATED" | "TO_CREATE" | "NONE";
 }
 
 export interface CotizacionPost {

@@ -42,8 +42,7 @@ function CotizarForm() {
   const [currencyType, setCurrencyType] = React.useState<"SOLES" | "DOLARES">(
     "SOLES"
   );
-  // Estado para los campos de condiciones comerciales editables
-  const [offerValidity, setOfferValidity] = useState("30 días.");
+  const [offerValidity, setOfferValidity] = useState("30 DÍAS");
   const [warranty, setWarranty] = useState(
     "La garantía es por 6 meses luego de la puesta en servicio."
   );
@@ -97,9 +96,9 @@ function CotizarForm() {
             size="sm"
             className="md:col-span-1"
             label="Número telefónico de Movento S.A.C."
-            value={companyPhone} // Valor del estado
+            value={companyPhone}
             name="companyPhone"
-            onChange={(e) => setCompanyPhone(e.target.value)} // Actualización del estado
+            onChange={(e) => setCompanyPhone(e.target.value)}
           />
           <Input
             size="sm"
@@ -325,8 +324,8 @@ function CotizarForm() {
           className="md:col-span-1"
           type="text"
           name="offerValidity"
-          value={offerValidity} // Valor del estado
-          onChange={(e) => setOfferValidity(e.target.value)} // Actualizar estado
+          value={offerValidity}
+          onChange={(e) => setOfferValidity(e.target.value)}
           label="Validez de oferta"
         />
         <Input

@@ -1,10 +1,11 @@
+"use client";
+
 import { getDateHour } from "@/lib/main";
 import { CotizacionGet, statusColors, statusLabels } from "@/models/cotizacion";
-import { FaFilePdf } from "react-icons/fa6";
-import { FaEdit } from "react-icons/fa";
+import { FaFilePdf, FaEdit } from "react-icons/fa";
 import { CotizacionStatus } from "@prisma/client";
 import { useRouter } from "next/navigation";
-
+import { SaleExport } from "@/models/sale";
 import {
   Table,
   TableHeader,
@@ -12,53 +13,47 @@ import {
   TableBody,
   TableRow,
   TableCell,
-  getKeyValue,
   Spinner,
   Chip,
-} from "@nextui-org/react";
-
-import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
   Button,
   useDisclosure,
 } from "@nextui-org/react";
 import { useState } from "react";
-import ReactPdfComponent from "@/components/cotizacion/React-pdf";
-import { PDFDownloadLink } from "@react-pdf/renderer";
 import { CotizacionEnd } from "./types/main";
 import ModalEndCotizacion from "./modal/ModalEndQuotation";
 import ModalJoinCotizacion from "./modal/ModalJoinCotizacion";
-import { BiEdit } from "react-icons/bi";
 import ModalDownloadCotizacionByDate from "./modal/ModalDownloadCotizacionByDate";
+import { toast } from "sonner";
+import axios from "axios";
 
-interface CotizacionesTable {
+interface CotizacionesTableProps {
   cotizacionList: CotizacionGet[] | null;
   isLoading: boolean;
   updateCotizacion: (
     cotizacionId: number,
     typeEnding: CotizacionStatus
   ) => void;
+  createSale: (cotizacionId: number) => void;
+  editSale: (cotizacionId: number) => void;
+  sales?: SaleExport[];
 }
 
 function CotizacionesTable({
   cotizacionList,
   isLoading,
   updateCotizacion,
-}: CotizacionesTable) {
+  createSale,
+  editSale,
+  sales = [],
+}: CotizacionesTableProps) {
   const router = useRouter();
   const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
-
   const {
     isOpen: isOpenJoinCotizacion,
     onOpen: onOpenJoinCotizacion,
     onClose: onCloseJoinCotizacion,
     onOpenChange: onOpenChangeJoinCotizacion,
   } = useDisclosure();
-
   const {
     isOpen: isOpenDownload,
     onOpen: onOpenDownload,
@@ -66,21 +61,19 @@ function CotizacionesTable({
     onOpenChange: onOpenChangeDownload,
   } = useDisclosure();
 
+  const [isExporting, setIsExporting] = useState(false);
   const [cotizacionEnd, setCotizacionIdEnd] = useState<CotizacionEnd | null>(
     null
   );
   const [cotizacionSelected, setCotizacionSelected] =
     useState<CotizacionGet | null>(null);
 
-  if (!cotizacionList) return true;
-
-  // Handle modal
   const handleOpenFinalizarModal = (cotizacion: CotizacionEnd) => {
     setCotizacionIdEnd(cotizacion);
     onOpen();
   };
+
   const handleOpenJoinCotizacionModal = (cotizacion: CotizacionGet) => {
-    //Manejar
     setCotizacionSelected(cotizacion);
     onOpenJoinCotizacion();
   };
@@ -95,6 +88,41 @@ function CotizacionesTable({
   const handleOpenCotizarForm = (idCotizacion: number) => {
     router.push(`cotizar/edit/${idCotizacion}`);
   };
+
+  const handleExportToExcel = async () => {
+    setIsExporting(true);
+    try {
+      const response = await axios.post("/api/exportSales", sales, {
+        responseType: "blob",
+      });
+
+      if (response.status !== 200) {
+        throw new Error("Failed to generate Excel file");
+      }
+
+      const blob = new Blob([response.data], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "Reporte_de_Ventas.xlsx";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+
+      toast.success("Reporte de ventas exportado exitosamente");
+    } catch (error) {
+      console.error("Error exporting to Excel:", error);
+      toast.error("Error al exportar el reporte de ventas");
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  if (!cotizacionList) return null;
+
   return (
     <>
       <ModalEndCotizacion
@@ -114,21 +142,22 @@ function CotizacionesTable({
       />
 
       <div className="flex justify-end p-2 gap-x-2">
-        {/* <Button size="sm" type="button" onClick={() => console.log("Manejar luego esto")}>
-          Descargar seleccionados
-        </Button> */}
-        <Button size="sm" type="button" onClick={() => onOpenDownload()}>
+        <Button
+          size="sm"
+          type="button"
+          onClick={handleExportToExcel}
+          disabled={isExporting || sales.length === 0}
+        >
+          {isExporting ? "Exportando..." : "Reporte de Ventas"}
+        </Button>
+        <Button size="sm" type="button" onClick={onOpenDownload}>
           Descargar por fecha
         </Button>
       </div>
 
       <Table
-        aria-label="Example table with dynamic content"
-        className=""
-        classNames={{
-          base: "max-h-[520px] overflow-scroll",
-          table: "min-h-[200px]",
-        }}
+        aria-label="Tabla de cotizaciones"
+        className="max-h-[520px] overflow-scroll"
         isCompact
         removeWrapper
       >
@@ -138,7 +167,9 @@ function CotizacionesTable({
           <TableColumn>Fecha Creación</TableColumn>
           <TableColumn>Estado</TableColumn>
           <TableColumn>Precio Total</TableColumn>
-          <TableColumn>Acciones</TableColumn>
+          <TableColumn>Acciones Cotización</TableColumn>
+          <TableColumn>Venta</TableColumn>
+          <TableColumn>Acciones Venta</TableColumn>
         </TableHeader>
         <TableBody
           items={cotizacionList}
@@ -162,17 +193,8 @@ function CotizacionesTable({
                 {cotizacion.currencyType === "SOLES" ? "S/." : "$"}{" "}
                 {cotizacion.totalPrice}
               </TableCell>
-
               <TableCell>
                 <div className="flex gap-2">
-                  {/* <span className="flex items-center justify-center text-2xl w-8  text-red-950 cursor-pointer rounded-full">
-                    <PDFDownloadLink
-                      document={<ReactPdfComponent cotizacion={cotizacion} />}
-                      fileName={`cotizacion-${cotizacion.code}.pdf`}
-                    >
-                      <FaFilePdf />
-                    </PDFDownloadLink>
-                  </span> */}
                   <span
                     onClick={() => handleOpenJoinCotizacionModal(cotizacion)}
                     className="flex items-center justify-center text-2xl w-8 text-red-950 cursor-pointer rounded-full"
@@ -185,7 +207,6 @@ function CotizacionesTable({
                   >
                     <FaEdit />
                   </span>
-
                   <Button
                     size="sm"
                     type="button"
@@ -200,6 +221,39 @@ function CotizacionesTable({
                   >
                     Cambiar Estado
                   </Button>
+                </div>
+              </TableCell>
+              <TableCell>
+                {cotizacion.saleStatus === "CREATED" && (
+                  <span className="text-green-600">Creada</span>
+                )}
+                {cotizacion.saleStatus === "TO_CREATE" && (
+                  <span className="text-yellow-600">Por crear</span>
+                )}
+                {cotizacion.saleStatus === "NONE" && (
+                  <span className="text-red-600">Ninguna</span>
+                )}
+              </TableCell>
+              <TableCell>
+                <div className="flex gap-2">
+                  {cotizacion.saleStatus === "TO_CREATE" && (
+                    <Button
+                      size="sm"
+                      type="button"
+                      onPress={() => createSale(cotizacion.id)}
+                    >
+                      Crear Venta
+                    </Button>
+                  )}
+                  {cotizacion.saleStatus === "CREATED" && (
+                    <Button
+                      size="sm"
+                      type="button"
+                      onPress={() => editSale(cotizacion.id)}
+                    >
+                      Detalles Venta
+                    </Button>
+                  )}
                 </div>
               </TableCell>
             </TableRow>

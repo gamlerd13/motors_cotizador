@@ -52,14 +52,20 @@ enum CurrencyType {
   DOLARES
 }
 
+enum SaleStatus {
+  CREATED // Venta creada
+  TO_CREATE // Venta por crear
+  NONE // Ninguna venta
+}
+
 model Client {
-  id         Int          @id @default(autoincrement())
-  name       String
-  contact    String
-  ruc        String
-  reference  String
-  createAt   DateTime     @default(now())
-  //agregar la relacion de cotizacion
+  id        Int      @id @default(autoincrement())
+  name      String
+  contact   String
+  ruc       String
+  reference String
+  createAt  DateTime @default(now())
+
   Cotizacion Cotizacion[]
 }
 
@@ -90,6 +96,46 @@ model Cotizacion {
   offerValidity     String @default("") // Validez de la oferta
   warranty          String @default("") // Garantía
   bankAccountNumber String @default("") // Número de cuenta bancaria de Movento S.A.C
+
+  // Relación 1:1 con Sale
+  saleStatus SaleStatus @default(NONE)
+  sale       Sale?
+}
+
+model Sale {
+  id           Int        @id @default(autoincrement())
+  cotizacionId Int        @unique
+  cotizacion   Cotizacion @relation(fields: [cotizacionId], references: [id])
+
+  customerOrderDate DateTime? // Fecha OC del Cliente
+  customerOrder     String? // OC del Cliente
+  line              String? // Línea
+  deliveryTime      String? // Plazo de entrega
+  deliveryDate      DateTime? // Fecha de entrega
+  invoiceNumber     String? // N° Factura
+  paymentType       String? // Tipo de pago
+  observation       String? // Observación
+  paymentMethod     String? // Forma de pago
+  startDate         DateTime? // Inicio
+  dueDate           DateTime? // Vencimiento
+  withoutTax        Float? // Sin IGV
+  withTax           Float? // Con IGV
+  detraction        Float? // Detracción
+  netPayable        Float? // Neto a pagar
+  paidAmount        Float? // Abonado
+  totalSalePrice    Float? // Precio Venta Total (con IGV)
+  status            String? // Estado
+  outstandingAmount Float? // Falta
+  supplierOrder     String? // No OC a Proveedor
+  advancePayment    Float? // Adelanto (con IGV)
+  advanceDate       DateTime? // Fecha de Adelanto
+  balance           Float? // Saldo (con IGV)
+  balanceDate       DateTime? // Fecha de Saldo
+  totalCost         Float? // Costo Total (con IGV)
+  supplierInvoice   String? // No Factura de Proveedor
+  supplierShipment  String? // No Guía de Remisión de Proveedor
+  value             Float? // Valor
+  percentage        Float? // %
 }
 
 model LastCodeCotizacion {

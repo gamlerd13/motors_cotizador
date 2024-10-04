@@ -101,24 +101,19 @@ export const useGetUpdateCotizacion = () => {
     }
   };
 
-  const updateCotizacion = async (
-    cotizacionId: number,
-    typeEnding: CotizacionStatus
-  ) => {
+  const updateCotizacion = async (cotizacionId: number, typeEnding: CotizacionStatus) => {
     try {
-      const response = await axios.put(
-        `/api/cotizacion/update-status/${cotizacionId}`,
-        JSON.stringify(typeEnding)
-      );
-
-      if (response.status == 201) {
-        toast.success(
-          `Se actualizó el estado de la cotización ${statusLabels[typeEnding]}`
-        );
+      const response = await axios.put(`/api/cotizacion/update-status/${cotizacionId}`, JSON.stringify(typeEnding));
+  
+      if (response.status === 201) {
+        toast.success(`Se actualizó el estado de la cotización a ${statusLabels[typeEnding]}`);
         getCotizaciones();
+      } else if (response.status === 400) {
+        toast.error(response.data.error);
       }
     } catch (error) {
-      console.error("Hubo un error en updateCotizacion, updateCotizacion");
+      console.error("Hubo un error en updateCotizacion", error);
+      toast.error("No puedes cambiar el estado de la cotización porque la venta ya está creada. Considera eliminar la venta para continuar.");
     }
   };
 
