@@ -1,5 +1,5 @@
 "use client";
-
+import React from "react";
 import { getDateHour } from "@/lib/main";
 import { CotizacionGet, statusColors, statusLabels } from "@/models/cotizacion";
 import { FaFilePdf, FaEdit } from "react-icons/fa";
