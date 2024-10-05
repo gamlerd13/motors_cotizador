@@ -20,7 +20,7 @@ const CreateSalePage: FC<CreateSalePageProps> = ({ params }) => {
       <div>
         <NavBar />
         <div className="w-full flex justify-center">
-          <div className="p-4 sm:w-9/12">
+          <div className="w-full p-4 sm:w-9/12">
             {cotizacion && (
               <CreateForm cotizacion={cotizacion} cotizacionId={cotizacionId} />
             )}
