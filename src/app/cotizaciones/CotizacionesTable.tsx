@@ -142,14 +142,14 @@ function CotizacionesTable({
       />
 
       <div className="flex justify-end p-2 gap-x-2">
-        <Button
+        {/* <Button
           size="sm"
           type="button"
           onClick={handleExportToExcel}
           disabled={isExporting || sales.length === 0}
         >
           {isExporting ? "Exportando..." : "Reporte de Ventas"}
-        </Button>
+        </Button> */}
         <Button size="sm" type="button" onClick={onOpenDownload}>
           Descargar por fecha
         </Button>

@@ -112,30 +112,95 @@ model Sale {
   line              String? // Línea
   deliveryTime      String? // Plazo de entrega
   deliveryDate      DateTime? // Fecha de entrega
-  invoiceNumber     String? // N° Factura
-  paymentType       String? // Tipo de pago
-  observation       String? // Observación
-  paymentMethod     String? // Forma de pago
-  startDate         DateTime? // Inicio
-  dueDate           DateTime? // Vencimiento
-  withoutTax        Float? // Sin IGV
-  withTax           Float? // Con IGV
-  detraction        Float? // Detracción
-  netPayable        Float? // Neto a pagar
-  paidAmount        Float? // Abonado
-  totalSalePrice    Float? // Precio Venta Total (con IGV)
-  status            String? // Estado
-  outstandingAmount Float? // Falta
-  supplierOrder     String? // No OC a Proveedor
-  advancePayment    Float? // Adelanto (con IGV)
-  advanceDate       DateTime? // Fecha de Adelanto
-  balance           Float? // Saldo (con IGV)
-  balanceDate       DateTime? // Fecha de Saldo
-  totalCost         Float? // Costo Total (con IGV)
-  supplierInvoice   String? // No Factura de Proveedor
-  supplierShipment  String? // No Guía de Remisión de Proveedor
-  value             Float? // Valor
-  percentage        Float? // %
+
+  // Cuentas por cobrar - Cliente
+  clientInvoiceNumber       String? // No de Factura de Movento SAC
+  clientInvoiceDate         DateTime? // Fecha de factura de cliente
+  clientInvoiceDueDate      DateTime? // Vencimiento de Factura de cliente
+  isPaidByClient            Boolean? // Pagado por el cliente (checkbox)
+  isPaidByFactoring         Boolean? // Pagado por factoring (checkbox)
+  factoringPaymentAmountUsd Float? // Monto pagado por factoring en USD
+  factoringPaymentAmountPen Float? // Monto pagado por factoring en S/.
+  // Adelanto
+  advanceValueUsdClient     Float? // Valor de Adelanto en USD (con IGV)
+  advanceValuePenClient     Float? // Valor de Adelanto en S/. (con IGV)
+  advancePaymentDate        DateTime? // Fecha de Adelanto
+  advanceInvoiceNumber      String? // No de Factura de Movento SAC (adelanto)
+  advanceInvoiceDate        DateTime? // Fecha de Factura de cliente (adelanto)
+  // Segundo Pago
+  secondPaymentUsdClient    Float? // Valor de 2do pago en USD (con IGV)
+  secondPaymentPenClient    Float? // Valor de 2do pago en S/. (con IGV)
+  secondPaymentDate         DateTime? // Fecha de 2do pago
+  secondInvoiceNumber       String? // No de Factura de Movento SAC (2do pago)
+  secondInvoiceDate         DateTime? // Fecha de Factura de cliente (2do pago)
+  // Tercer Pago
+  thirdPaymentUsdClient     Float? // Valor de 3er pago en USD (con IGV)
+  thirdPaymentPenClient     Float? // Valor de 3er pago en S/. (con IGV)
+  thirdPaymentDate          DateTime? // Fecha de 3er pago
+  thirdInvoiceNumber        String? // No de Factura de Movento SAC (3er pago)
+  thirdInvoiceDate          DateTime? // Fecha de Factura de cliente (3er pago)
+  // Total Venta
+  totalSaleUsd              Float? // Precio de venta total en USD (con IGV)
+  totalSalePen              Float? // Precio de venta total en S/. (con IGV)
+
+  // Proveedor 1
+  supplierOrder1      String? // No OC
+  advanceValueUsd1    Float? // Valor de Adelanto en USD (con IGV)
+  balanceValueUsd1    Float? // Valor de Saldo en USD (con IGV)
+  totalCostUsd1       Float? // Costo Total en USD (con IGV)
+  advanceValuePen1    Float? // Valor de Adelanto en S/. (con IGV)
+  balanceValuePen1    Float? // Valor de Saldo en S/. (con IGV)
+  totalCostPen1       Float? // Costo Total en S/. (con IGV)
+  advanceDate1        DateTime? // Fecha de Adelanto
+  balanceDate1        DateTime? // Fecha de Saldo
+  supplierInvoice1    String? // No Factura de Proveedor (adelanto)
+  balanceInvoice1     String? // No Factura de Proveedor (saldo)
+  supplierShipment1   String? // No Guía de Remisión de Proveedor
+  invoiceDate1        DateTime? // Fecha de Factura (adelanto)
+  balanceInvoiceDate1 DateTime? // Fecha de Factura (saldo)
+  shipmentDate1       DateTime? // Fecha de Guía de Remisión
+
+  // Proveedor 2
+  supplierOrder2      String?
+  advanceValueUsd2    Float?
+  balanceValueUsd2    Float?
+  totalCostUsd2       Float?
+  advanceValuePen2    Float?
+  balanceValuePen2    Float?
+  totalCostPen2       Float?
+  advanceDate2        DateTime?
+  balanceDate2        DateTime?
+  supplierInvoice2    String?
+  balanceInvoice2     String?
+  supplierShipment2   String?
+  invoiceDate2        DateTime?
+  balanceInvoiceDate2 DateTime?
+  shipmentDate2       DateTime?
+
+  // Proveedor 3
+  supplierOrder3      String?
+  advanceValueUsd3    Float?
+  balanceValueUsd3    Float?
+  totalCostUsd3       Float?
+  advanceValuePen3    Float?
+  balanceValuePen3    Float?
+  totalCostPen3       Float?
+  advanceDate3        DateTime?
+  balanceDate3        DateTime?
+  supplierInvoice3    String?
+  balanceInvoice3     String?
+  supplierShipment3   String?
+  invoiceDate3        DateTime?
+  balanceInvoiceDate3 DateTime?
+  shipmentDate3       DateTime?
+
+  totalSaleCostUsd Float? // Costo Total de Venta en USD (con IGV)
+  totalSaleCostPen Float? // Costo Total de Venta en S/. (con IGV)
+
+  valueUsd      Float? // Valor
+  percentageUsd Float? // %
+  valuePen      Float? // Valor
+  percentagePen Float? // %
 }
 
 model LastCodeCotizacion {

@@ -1,20 +1,17 @@
 import { useEffect, useState } from "react";
 import { DateInput } from "@nextui-org/react"; // Asegúrate de importar el componente correcto
-import { CalendarDateTime } from "@internationalized/date";
+import { CalendarDate } from "@internationalized/date";
 
 export const useDateTime = () => {
   const [currentDateTime, setCurrentDateTime] =
-    useState<CalendarDateTime | null>(null);
+    useState<CalendarDate | null>(null);
 
   useEffect(() => {
     const now = new Date();
-    const dateTime = new CalendarDateTime(
+    const dateTime = new CalendarDate(
       now.getFullYear(),
-      now.getMonth() + 1, // Los meses en JavaScript son base 0
+      now.getMonth() + 1,
       now.getDate(),
-      now.getHours(),
-      now.getMinutes(),
-      now.getSeconds()
     );
     setCurrentDateTime(dateTime);
   }, []);
