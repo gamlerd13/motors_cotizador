@@ -32,12 +32,7 @@ export async function POST(req: NextRequest) {
       const rowNumber = index + 5;
       const row = worksheet.getRow(rowNumber);
 
-      let currencySymbol = '';
-      if (sale.currencyType === 'DOLARES' || sale.currencyType === 'USD') {
-        currencySymbol = '$';
-      } else if (sale.currencyType === 'SOLES' || sale.currencyType === 'PEN') {
-        currencySymbol = 'S/.';
-      }
+
 
       const cells = [
         { col: 2, value: sale.customerOrderDate ? new Date(sale.customerOrderDate) : '' },
@@ -48,35 +43,6 @@ export async function POST(req: NextRequest) {
         { col: 7, value: sale.companyRuc || '' },
         { col: 8, value: sale.deliveryTime || '' },
         { col: 9, value: sale.deliveryDate ? new Date(sale.deliveryDate) : '' },
-        { col: 10, value: sale.invoiceNumber || '' },
-        { 
-          col: 11, 
-          value: sale.currencyType === 'DOLARES' ? 'USD' :
-                 sale.currencyType === 'SOLES' ? 'PEN' :
-                 sale.currencyType || '' 
-        },
-        { col: 12, value: sale.paymentType || '' },
-        { col: 14, value: sale.observation || '' },
-        { col: 15, value: sale.paymentMethod || '' },
-        { col: 16, value: sale.period || '' },
-        { col: 18, value: sale.startDate ? new Date(sale.startDate) : '' },
-        { col: 19, value: sale.dueDate ? new Date(sale.dueDate) : '' },
-        { col: 20, value: sale.withoutTax || 0 },
-        { col: 21, value: sale.withTax || 0 },
-        { col: 22, value: sale.detraction || 0 },
-        { col: 23, value: sale.netPayable || 0 },
-        { col: 24, value: sale.paidAmount || 0 },
-        { col: 25, value: sale.totalSalePrice || 0 },
-        { col: 26, value: sale.status || '' },
-        { col: 27, value: sale.outstandingAmount || 0 },
-        { col: 28, value: sale.supplierOrder || '' },
-        { col: 29, value: sale.advancePayment || 0 },
-        { col: 30, value: sale.advanceDate ? new Date(sale.advanceDate) : '' },
-        { col: 31, value: sale.balance || 0 },
-        { col: 32, value: sale.balanceDate ? new Date(sale.balanceDate) : '' },
-        { col: 33, value: sale.totalCost || 0 },
-        { col: 34, value: sale.supplierInvoice || '' },
-        { col: 35, value: sale.supplierShipment || '' },
         { col: 36, value: sale.value || 0 },
         { col: 37, value: sale.percentage || 0 }
       ];
@@ -86,13 +52,7 @@ export async function POST(req: NextRequest) {
         cellObj.value = cell.value;
 
         if (currencyColumns.includes(cell.col)) {
-          if (currencySymbol === '$') {
-            cellObj.numFmt = `"${currencySymbol}"#,##0.00`;
-          } else if (currencySymbol === 'S/.') {
-            cellObj.numFmt = `"${currencySymbol}"#,##0.00`;
-          } else {
-            cellObj.numFmt = '#,##0.00';
-          }
+          cellObj.numFmt = '#,##0.00';
         }
 
         cellObj.border = {
@@ -102,17 +62,6 @@ export async function POST(req: NextRequest) {
           right: { style: 'thin' }
         };
       });
-
-      const statusCell = row.getCell(26);
-      switch (sale.status) {
-        case 'POR CANCELAR':
-        case 'CANCELADO':
-          statusCell.font = { color: { argb: '000746' }, bold: true };
-          break;
-        case 'ANULADO':
-          statusCell.font = { color: { argb: 'FF0000' }, bold: true };
-          break;
-      }
 
       row.commit();
     });

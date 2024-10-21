@@ -47,12 +47,14 @@ function CotizarForm() {
     "La garantía es por 6 meses luego de la puesta en servicio."
   );
   const [bankAccountNumber, setBankAccountNumber] = useState(
-    "BANCO INTERBANK\n" +
-      "SOLES: 200-3005630612\n" +
-      "CCI SOLES: 003-200-003005630612-36\n" +
-      "DOLARES: 200-003005630620\n" +
-      "CCI DOLARES: 003-200-003005630620-39\n" +
-      "Cuenta detracción del banco de la nación - Cuenta Corriente: 00-002-212722"
+    "BANCO BCP\n" +
+      "SOLES: 1936929215069 / CCI SOLES: 00219300692921506910\n" +
+      "DÓLARES:  1936929236191 / CCI DÓLARES: 00219300692923619117\n" +
+      "BANCO INTERBANK\n" +
+      "SOLES: 200-3005630612 / CCI SOLES: 003-200-003005630612-36\n" +
+      "DÓLARES: 200-003005630620 / CCI DOLARES: 003-200-003005630620-39\n" +
+      "BANCO DE LA NACIÓN\n" +
+      "Cuenta detracción: Cuenta Corriente: 00-002-212722\n"
   );
 
   if (!lastCodeCotizacion) return;
