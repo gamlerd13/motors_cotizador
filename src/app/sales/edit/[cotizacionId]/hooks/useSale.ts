@@ -13,7 +13,9 @@ export function useSale(cotizacionId: string) {
   useEffect(() => {
     const fetchSale = async () => {
       try {
-        const response = await axios.get(`/api/saleByCotizacion/${cotizacionId}`);
+        const response = await axios.get(
+          `/api/saleByCotizacion/${cotizacionId}`
+        );
         setSale(response.data);
       } catch (err: any) {
         console.error("Error fetching sale data:", err);
@@ -34,34 +36,28 @@ export function useSale(cotizacionId: string) {
 
 export const usePutSale = () => {
   const router = useRouter();
-  const [responseNewSale, setResponseNewSale] = useState<
-    string | null
-  >(null);
-  
-  const updateSale = async (
-    id: number,
-    formDataNewSale: FormData
-  ) => {
+  const [responseNewSale, setResponseNewSale] = useState<string | null>(null);
+
+  const updateSale = async (id: number, formDataNewSale: FormData) => {
     try {
-      const formDataEntries = Object.fromEntries(
-        formDataNewSale.entries()
-      );
+      const formDataEntries = Object.fromEntries(formDataNewSale.entries());
       const response = await axios.put(
         `/api/sale/${id}`,
-        JSON.stringify(formDataEntries), {
+        JSON.stringify(formDataEntries),
+        {
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
         }
       );
       if (response.status == 200) {
         toast.success("Se actualizó una venta exitosamente");
         setResponseNewSale(response.data);
-        router.push("/cotizaciones");
+        router.push("/sales");
       }
     } catch (error) {
       console.error("Hubo un error en usePutSale");
-      toast.error("Error al actualizar la venta")
+      toast.error("Error al actualizar la venta");
     }
   };
 
@@ -74,17 +70,20 @@ export const usePutSale = () => {
 export const useDeleteSale = () => {
   const router = useRouter();
 
-  const deleteSale = useCallback(async (id: number) => {
-    try {
-      const { status } = await axios.delete(`/api/sale/${id}`);
-      if (status === 200) {
-        toast.success("Se eliminó la venta exitosamente");
-        router.push("/cotizaciones");
+  const deleteSale = useCallback(
+    async (id: number) => {
+      try {
+        const { status } = await axios.delete(`/api/sale/${id}`);
+        if (status === 200) {
+          toast.success("Se eliminó la venta exitosamente");
+          router.push("/cotizaciones");
+        }
+      } catch (error) {
+        toast.error("Error al eliminar la venta");
       }
-    } catch (error) {
-      toast.error("Error al eliminar la venta");
-    }
-  }, [router]);
+    },
+    [router]
+  );
 
   return { deleteSale };
 };

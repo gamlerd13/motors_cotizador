@@ -3,7 +3,7 @@
 import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useGetUpdateCotizacion } from "../hooks/cotizacion/useCotizacion";
-import { useSales } from "../hooks/sales/useSales";
+import { useExportSales } from "../hooks/sales/useSales";
 import CotizacionesTable from "./CotizacionesTable";
 
 export default function CotizacionesList() {
@@ -15,7 +15,7 @@ export default function CotizacionesList() {
     isLoading: isCotizacionLoading,
   } = useGetUpdateCotizacion();
 
-  const { sales, loading: isSalesLoading, fetchSales } = useSales();
+  const { sales, loading: isSalesLoading, fetchSales } = useExportSales();
 
   useEffect(() => {
     fetchSales();

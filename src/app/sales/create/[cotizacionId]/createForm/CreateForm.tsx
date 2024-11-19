@@ -1,13 +1,14 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { Input } from "@nextui-org/input";
-import { Checkbox, DateInput } from "@nextui-org/react";
+import { Button, Checkbox, DateInput } from "@nextui-org/react";
 import { DateValue } from "@internationalized/date";
 
 import ButtonSubmit from "@/components/Button";
 import { useDateTime } from "@/app/hooks/common/useDateTime";
 import { CotizacionGet } from "@/models/cotizacion";
 import useSale from "../hooks/useSale";
+import { useRouter } from "next/navigation";
 
 function CreateForm({
   cotizacion,
@@ -18,6 +19,7 @@ function CreateForm({
 }) {
   const { currentDateTime } = useDateTime();
   const { createExpense } = useSale();
+  const router = useRouter();
 
   const [isPaidByClient, setIsPaidByClient] = useState(false);
   const [isPaidByFactoring, setIsPaidByFactoring] = useState(false);
@@ -986,6 +988,9 @@ function CreateForm({
         </>
       </div>
       <div className="flex justify-end pt-4">
+        <Button color="default" onClick={() => router.push("/cotizaciones")}>
+          Cancelar
+        </Button>
         <ButtonSubmit text="Generar Venta" />
       </div>
     </form>

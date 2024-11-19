@@ -5,17 +5,17 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// datasource db {
-//   provider = "postgresql"
-//   url      = env("DATABASE_URL")
-// }
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
 
 // vercel deployment (postgres de vercel)
-datasource db {
-  provider  = "postgresql"
-  url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
-  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
-}
+// datasource db {
+//   provider  = "postgresql"
+//   url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
+//   directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+// }
 
 model User {
   id       Int     @id @default(autoincrement())
@@ -50,6 +50,12 @@ enum SaleStatus {
   CREATED // Venta creada
   TO_CREATE // Venta por crear
   NONE // Ninguna venta
+}
+
+enum SaleStatusV2 {
+  CREATED
+  UPDATED
+  FINISHED
 }
 
 model Client {
@@ -195,6 +201,8 @@ model Sale {
   percentageUsd Float? // %
   valuePen      Float? // Valor
   percentagePen Float? // %
+
+  status SaleStatusV2 @default(CREATED)
 }
 
 model LastCodeCotizacion {

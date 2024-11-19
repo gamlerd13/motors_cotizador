@@ -42,6 +42,11 @@ export default function NavBar() {
       name: "Clientes",
       url: "/clientes",
     },
+    {
+      id: 5,
+      name: "Ventas",
+      url: "/sales",
+    },
   ];
 
   return (
@@ -74,6 +79,11 @@ export default function NavBar() {
         <NavbarItem isActive={pathname == "/clientes"}>
           <Link href="/clientes" aria-current="page">
             Clientes
+          </Link>
+        </NavbarItem>
+        <NavbarItem isActive={pathname == "/sales"}>
+          <Link href="/sales" aria-current="page">
+            Ventas
           </Link>
         </NavbarItem>
       </NavbarContent>

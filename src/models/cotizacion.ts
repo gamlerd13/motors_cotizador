@@ -1,5 +1,6 @@
 import { CotizacionStatus, CurrencyType } from "@prisma/client";
 import { Client, ClientCreate } from "./client";
+import { ChipColor } from "./core";
 
 export interface ProductItemType {
   key: number;
@@ -16,8 +17,8 @@ export type ProductItemPost = ProductItemType & {
 
 export interface CotizacionType {
   id?: number; //por si hay que cotizar desde backend
-  companyPhone: string,
-  companyEmail: string,
+  companyPhone: string;
+  companyEmail: string;
   client: string;
   // undefined client
   clientName: string;
@@ -29,7 +30,7 @@ export interface CotizacionType {
 
   // items: ProductItemType[];
   deliverTime: string;
-  
+
   currencyType: CurrencyType;
   totalPrice: string;
   [key: string]: any;
@@ -73,8 +74,8 @@ export interface PdfCotizacion {
 
 export interface CotizacionGet {
   id: number; //por si hay que cotizar desde backend
-  companyPhone: string,
-  companyEmail: string,
+  companyPhone: string;
+  companyEmail: string;
   client: Client | null;
   clientId: number;
   // undefined client
@@ -127,22 +128,6 @@ export interface CotizacionPost {
   totalPrice: number;
 }
 
-// export const statusLabels: { [key in CotizacionStatus]: string } = {
-//   [CotizacionStatus.DRAFT]: "BORRADOR",
-//   [CotizacionStatus.SENT]: "ENVIADO",
-//   [CotizacionStatus.ACCEPTED]: "ACEPTADO",
-//   [CotizacionStatus.REJECTED]: "RECHAZADO",
-//   [CotizacionStatus.EXPIRED]: "EXPIRADO",
-// };
-
-// export const statusLabels: { [key in CotizacionStatus]: string } = {
-//   [CotizacionStatus.ESTADO1]: "ESTADO1",
-//   [CotizacionStatus.ESTADO2]: "ESTADO2",
-//   [CotizacionStatus.ESTADO3]: "ESTADO3",
-//   [CotizacionStatus.ESTADO4]: "ESTADO4",
-//   [CotizacionStatus.ESTADO5]: "ESTADO5",
-//   [CotizacionStatus.ESTADO6]: "ESTADO6",
-// };
 export const statusLabels: { [key in CotizacionStatus]: string } = {
   [CotizacionStatus.ESTADO1]: "En evaluación por cliente",
   [CotizacionStatus.ESTADO2]: "Cotización actualizada",
@@ -151,14 +136,6 @@ export const statusLabels: { [key in CotizacionStatus]: string } = {
   [CotizacionStatus.ESTADO5]: "Ganada",
   [CotizacionStatus.ESTADO6]: "Perdida",
 };
-
-type ChipColor =
-  | "default"
-  | "primary"
-  | "secondary"
-  | "success"
-  | "warning"
-  | "danger";
 
 export const statusColors: { [key in CotizacionStatus]: ChipColor } = {
   [CotizacionStatus.ESTADO1]: "default",

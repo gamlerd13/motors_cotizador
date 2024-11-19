@@ -2,13 +2,16 @@
 
 import React, { useEffect, useState } from "react";
 import { Input } from "@nextui-org/input";
-import { Button, Checkbox, DateInput } from "@nextui-org/react";
-import ButtonSubmit from "@/components/Button";
-import { SaleGet } from "@/models/sale";
-
+import { Button, Checkbox, DateInput, useDisclosure } from "@nextui-org/react";
 import { CalendarDate, DateValue } from "@internationalized/date";
-import { useDeleteSale, usePutSale } from "../hooks/useSale";
 import { FiTrash } from "react-icons/fi";
+
+import ButtonSubmit from "@/components/Button";
+import { ModalConfirmation } from "@/components/modal/ModalConfirmation";
+import { useDeleteSale, usePutSale } from "../hooks/useSale";
+import { useRouter } from "next/navigation";
+
+import { SaleGet } from "@/models/sale";
 
 interface EditFormProps {
   sale: SaleGet;
@@ -34,6 +37,12 @@ const formatNumber = (num: number | null | undefined) => {
 function EditForm({ sale }: EditFormProps) {
   const { updateSale } = usePutSale();
   const { deleteSale } = useDeleteSale();
+  const router = useRouter();
+  const {
+    isOpen: isOpenDelete,
+    onOpen: onOpenDelete,
+    onOpenChange: onOpenChangeDelete,
+  } = useDisclosure();
 
   const [isPaidByClient, setIsPaidByClient] = useState<boolean>(
     sale?.isPaidByClient === "true" || sale?.isPaidByClient === true
@@ -269,7 +278,7 @@ function EditForm({ sale }: EditFormProps) {
   const [daysUntilDue, setDaysUntilDue] = useState<number | null>(null);
 
   const handleDateChange = (value: DateValue) => {
-    const date = new Date(value.toString());
+    const date = value ? new Date(value.toString()) : null;
     setDueDate(date);
   };
 
@@ -302,790 +311,821 @@ function EditForm({ sale }: EditFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div className="flex justify-between mt-4">
-        <h1 className="font-medium text-slate-600">Cliente Comercial</h1>
-      </div>
-      <hr />
-      <div className="w-full grid gap-y-2 mt-4">
-        <div className="grid md:grid-cols-2 gap-2">
-          <DateInput
-            size="sm"
-            className="md:col-span-1"
-            label="Fecha OC del Cliente"
-            name="customerOrderDate"
-            defaultValue={convertToCalendarDateTime(sale.customerOrderDate)}
-          />
-          <Input
-            size="sm"
-            className="md:col-span-1"
-            type="text"
-            name="customerOrder"
-            defaultValue={sale.customerOrder}
-            label="OC del Cliente"
-          />
-          <Input
-            size="sm"
-            className="md:col-span-1"
-            type="text"
-            value={sale.quoteCode}
-            label="N° Cotización"
-          />
-          <Input
-            size="sm"
-            className="md:col-span-1"
-            type="text"
-            value={sale.companyName}
-            label="Razón Social"
-          />
-          <Input
-            size="sm"
-            className="md:col-span-1"
-            type="text"
-            name="line"
-            defaultValue={sale.line}
-            label="Línea"
-          />
-          <Input
-            size="sm"
-            className="md:col-span-1"
-            type="text"
-            value={sale.companyRuc}
-            label="RUC"
-          />
-          <Input
-            size="sm"
-            className="md:col-span-1"
-            type="text"
-            name="deliveryTime"
-            defaultValue={sale.deliveryTime}
-            label="Plazo de Entrega"
-          />
-          <DateInput
-            size="sm"
-            className="md:col-span-1"
-            label="Fecha de Entrega"
-            name="deliveryDate"
-            defaultValue={convertToCalendarDateTime(sale.deliveryDate)}
-          />
+    <>
+      <ModalConfirmation
+        title="Eliminar venta"
+        isOpen={isOpenDelete}
+        onOpenChange={onOpenChangeDelete}
+        content="Esta seguro de eliminar la venta ?"
+        onClick={() => deleteSale(sale.id)}
+      />
+      <form onSubmit={handleSubmit}>
+        <div className="flex justify-between mt-4">
+          <h1 className="font-medium text-slate-600">Cliente Comercial</h1>
         </div>
-      </div>
-
-      <div className="flex justify-between mt-4">
-        <h1 className="font-medium text-slate-600">
-          Cuentas por Cobrar - Cliente
-        </h1>
-      </div>
-      <hr />
-      <div className="w-full grid gap-y-2 mt-4">
-        <>
-          <h2 className="text-slate-600">CRÉDITO</h2>
-          <div className="grid md:grid-cols-4 gap-2">
-            <Input
-              size="sm"
-              className="md:col-span-1"
-              type="text"
-              name="clientInvoiceNumber"
-              label="N° de Factura de Movento SAC"
-              defaultValue={sale.clientInvoiceNumber}
-            />
+        <hr />
+        <div className="w-full grid gap-y-2 mt-4">
+          <div className="grid md:grid-cols-2 gap-2">
             <DateInput
               size="sm"
               className="md:col-span-1"
-              label="Fecha Factura de cliente"
-              name="clientInvoiceDate"
-              defaultValue={convertToCalendarDateTime(sale.clientInvoiceDate)}
-            />
-            <DateInput
-              size="sm"
-              className="md:col-span-1"
-              label="Vencimiento de Factura de cliente"
-              name="clientInvoiceDueDate"
-              defaultValue={convertToCalendarDateTime(
-                sale.clientInvoiceDueDate
-              )}
-              onChange={handleDateChange}
+              label="Fecha OC del Cliente"
+              name="customerOrderDate"
+              defaultValue={convertToCalendarDateTime(sale.customerOrderDate)}
             />
             <Input
               size="sm"
               className="md:col-span-1"
               type="text"
-              label="Número de días para vencimiento"
-              name="daysUntilDue"
-              value={getDaysMessage()}
-              disabled
-              style={{
-                color:
-                  daysUntilDue !== null && daysUntilDue > 0 ? "green" : "red",
-              }}
+              name="customerOrder"
+              defaultValue={sale.customerOrder}
+              label="OC del Cliente"
             />
-          </div>
-          <div className="grid md:grid-cols-4 gap-2">
-            <Checkbox
+            <Input
               size="sm"
               className="md:col-span-1"
-              isSelected={isPaidByClient}
-              onValueChange={handleClientPaymentChange}
-            >
-              Pagado por el cliente
-            </Checkbox>
+              type="text"
+              value={sale.quoteCode}
+              label="N° Cotización"
+            />
+            <Input
+              size="sm"
+              className="md:col-span-1"
+              type="text"
+              value={sale.companyName}
+              label="Razón Social"
+            />
+            <Input
+              size="sm"
+              className="md:col-span-1"
+              type="text"
+              name="line"
+              defaultValue={sale.line}
+              label="Línea"
+            />
+            <Input
+              size="sm"
+              className="md:col-span-1"
+              type="text"
+              value={sale.companyRuc}
+              label="RUC"
+            />
+            <Input
+              size="sm"
+              className="md:col-span-1"
+              type="text"
+              name="deliveryTime"
+              defaultValue={sale.deliveryTime}
+              label="Plazo de Entrega"
+            />
+            <DateInput
+              size="sm"
+              className="md:col-span-1"
+              label="Fecha de Entrega"
+              name="deliveryDate"
+              defaultValue={convertToCalendarDateTime(sale.deliveryDate)}
+            />
+          </div>
+        </div>
 
-            <Checkbox
-              size="sm"
-              className="md:col-span-1"
-              isSelected={isPaidByFactoring}
-              onValueChange={handleFactoringPaymentChange}
-            >
-              Pagado por factoring
-            </Checkbox>
-            <Input
-              size="sm"
-              className="md:col-span-1"
-              type="number"
-              name="factoringPaymentAmountUsd"
-              label="Monto pagado por factoring en USD"
-              value={factoringPaymentAmountUsd.toString()}
-              onChange={(e) =>
-                setFactoringPaymentAmountUsd(Number(e.target.value))
-              }
-              isDisabled={!isPaidByFactoring}
-            />
-            <Input
-              size="sm"
-              className="md:col-span-1"
-              type="number"
-              name="factoringPaymentAmountPen"
-              label="Monto pagado por factoring en S/."
-              value={factoringPaymentAmountPen.toString()}
-              onChange={(e) =>
-                setFactoringPaymentAmountPen(Number(e.target.value))
-              }
-              isDisabled={!isPaidByFactoring}
-            />
-          </div>
+        <div className="flex justify-between mt-4">
+          <h1 className="font-medium text-slate-600">
+            Cuentas por Cobrar - Cliente
+          </h1>
+        </div>
+        <hr />
+        <div className="w-full grid gap-y-2 mt-4">
+          <>
+            <h2 className="text-slate-600">CRÉDITO</h2>
+            <div className="grid md:grid-cols-4 gap-2">
+              <Input
+                size="sm"
+                className="md:col-span-1"
+                type="text"
+                name="clientInvoiceNumber"
+                label="N° de Factura de Movento SAC"
+                defaultValue={sale.clientInvoiceNumber}
+              />
+              <DateInput
+                size="sm"
+                className="md:col-span-1"
+                label="Fecha Factura de cliente"
+                name="clientInvoiceDate"
+                defaultValue={convertToCalendarDateTime(sale.clientInvoiceDate)}
+              />
+              <DateInput
+                size="sm"
+                className="md:col-span-1"
+                label="Vencimiento de Factura de cliente"
+                name="clientInvoiceDueDate"
+                defaultValue={convertToCalendarDateTime(
+                  sale.clientInvoiceDueDate
+                )}
+                onChange={handleDateChange}
+              />
+              <Input
+                size="sm"
+                className="md:col-span-1"
+                type="text"
+                label="Número de días para vencimiento"
+                name="daysUntilDue"
+                value={getDaysMessage()}
+                disabled
+                style={{
+                  color:
+                    daysUntilDue !== null && daysUntilDue > 0 ? "green" : "red",
+                }}
+              />
+            </div>
+            <div className="grid md:grid-cols-4 gap-2">
+              <Checkbox
+                size="sm"
+                className="md:col-span-1"
+                isSelected={isPaidByClient}
+                onValueChange={handleClientPaymentChange}
+              >
+                Pagado por el cliente
+              </Checkbox>
+
+              <Checkbox
+                size="sm"
+                className="md:col-span-1"
+                isSelected={isPaidByFactoring}
+                onValueChange={handleFactoringPaymentChange}
+              >
+                Pagado por factoring
+              </Checkbox>
+              <Input
+                size="sm"
+                className="md:col-span-1"
+                type="number"
+                name="factoringPaymentAmountUsd"
+                label="Monto pagado por factoring en USD"
+                value={factoringPaymentAmountUsd.toString()}
+                onChange={(e) =>
+                  setFactoringPaymentAmountUsd(Number(e.target.value))
+                }
+                isDisabled={!isPaidByFactoring}
+              />
+              <Input
+                size="sm"
+                className="md:col-span-1"
+                type="number"
+                name="factoringPaymentAmountPen"
+                label="Monto pagado por factoring en S/."
+                value={factoringPaymentAmountPen.toString()}
+                onChange={(e) =>
+                  setFactoringPaymentAmountPen(Number(e.target.value))
+                }
+                isDisabled={!isPaidByFactoring}
+              />
+            </div>
+            <hr />
+            <h2 className="text-slate-600">CON ANTICIPO</h2>
+            <div className="grid md:grid-cols-5 gap-2">
+              <Input
+                size="sm"
+                className="md:col-span-1"
+                type="number"
+                name="advanceValueUsdClient"
+                label="Valor Adelanto USD (con IGV)"
+                defaultValue={formatNumber(sale.advanceValueUsdClient)}
+                onChange={(e) =>
+                  setAdvanceValueUsdClient(Number(e.target.value))
+                }
+              />
+              <Input
+                size="sm"
+                className="md:col-span-1"
+                type="number"
+                name="advanceValuePenClient"
+                label="Valor Adelanto S/. (con IGV)"
+                defaultValue={formatNumber(sale.advanceValuePenClient)}
+                onChange={(e) =>
+                  setAdvanceValuePenClient(Number(e.target.value))
+                }
+              />
+              <DateInput
+                size="sm"
+                className="md:col-span-1"
+                label="Fecha de Adelanto"
+                name="advancePaymentDate"
+                defaultValue={convertToCalendarDateTime(
+                  sale.advancePaymentDate
+                )}
+              />
+              <Input
+                size="sm"
+                className="md:col-span-1"
+                type="text"
+                name="advanceInvoiceNumber"
+                label="N° Factura de Movento SAC"
+                defaultValue={sale.advanceInvoiceNumber}
+              />
+              <DateInput
+                size="sm"
+                className="md:col-span-1"
+                label="Fecha Factura de cliente"
+                name="advanceInvoiceDate"
+                defaultValue={convertToCalendarDateTime(
+                  sale.advanceInvoiceDate
+                )}
+              />
+            </div>
+            <div className="grid md:grid-cols-5 gap-2">
+              <Input
+                size="sm"
+                className="md:col-span-1"
+                type="number"
+                name="secondPaymentUsdClient"
+                label="Valor 2do.Pago USD (con IGV)"
+                defaultValue={formatNumber(sale.secondPaymentUsdClient)}
+                onChange={(e) =>
+                  setSecondPaymentUsdClient(Number(e.target.value))
+                }
+              />
+              <Input
+                size="sm"
+                className="md:col-span-1"
+                type="number"
+                name="secondPaymentPenClient"
+                label="Valor 2do Pago S/. (con IGV)"
+                defaultValue={formatNumber(sale.secondPaymentPenClient)}
+                onChange={(e) =>
+                  setSecondPaymentPenClient(Number(e.target.value))
+                }
+              />
+              <DateInput
+                size="sm"
+                className="md:col-span-1"
+                label="Fecha de 2do. Pago"
+                name="secondPaymentDate"
+                defaultValue={convertToCalendarDateTime(sale.secondPaymentDate)}
+              />
+              <Input
+                size="sm"
+                className="md:col-span-1"
+                type="text"
+                name="secondInvoiceNumber"
+                label="N° Factura de Movento SAC"
+                defaultValue={sale.secondInvoiceNumber}
+              />
+              <DateInput
+                size="sm"
+                className="md:col-span-1"
+                label="Fecha Factura de cliente"
+                name="secondInvoiceDate"
+                defaultValue={convertToCalendarDateTime(sale.secondInvoiceDate)}
+              />
+            </div>
+            <div className="grid md:grid-cols-5 gap-2">
+              <Input
+                size="sm"
+                className="md:col-span-1"
+                type="number"
+                name="thirdPaymentUsdClient"
+                label="Valor 3er.Pago USD (con IGV)"
+                defaultValue={formatNumber(sale.thirdPaymentUsdClient)}
+                onChange={(e) =>
+                  setThirdPaymentUsdClient(Number(e.target.value))
+                }
+              />
+              <Input
+                size="sm"
+                className="md:col-span-1"
+                type="number"
+                name="thirdPaymentPenClient"
+                label="Valor 3er Pago S/. (con IGV)"
+                defaultValue={formatNumber(sale.thirdPaymentPenClient)}
+                onChange={(e) =>
+                  setThirdPaymentPenClient(Number(e.target.value))
+                }
+              />
+              <DateInput
+                size="sm"
+                className="md:col-span-1"
+                label="Fecha de 3er. Pago"
+                name="thirdPaymentDate"
+                defaultValue={convertToCalendarDateTime(sale.thirdPaymentDate)}
+              />
+              <Input
+                size="sm"
+                className="md:col-span-1"
+                type="text"
+                name="thirdInvoiceNumber"
+                label="N° Factura de Movento SAC"
+                defaultValue={sale.thirdInvoiceNumber}
+              />
+              <DateInput
+                size="sm"
+                className="md:col-span-1"
+                label="Fecha Factura de cliente"
+                name="thirdInvoiceDate"
+                defaultValue={convertToCalendarDateTime(sale.thirdInvoiceDate)}
+              />
+            </div>
+            <hr />
+            <div className="grid md:grid-cols-6 gap-2">
+              <Input
+                size="sm"
+                className="md:col-span-2"
+                type="number"
+                name="totalSaleUsd"
+                label="Precio de Venta Total en USD (con IGV)"
+                value={formatNumber(totalSaleUsd)}
+              />
+              <Input
+                size="sm"
+                className="md:col-span-2"
+                type="number"
+                name="totalSalePen"
+                label="Precio de Venta Total en S/. (con IGV)"
+                value={formatNumber(totalSalePen)}
+              />
+              <div className="md:col-span-2"></div>
+            </div>
+          </>
+        </div>
+        <div className="flex justify-between mt-4">
+          <h1 className="font-medium text-slate-600">
+            Cuentas por Pagar - Proveedor
+          </h1>
+        </div>
+        <hr />
+        <div className="w-full grid gap-y-2 mt-4">
+          <>
+            <div className="grid md:grid-cols-5 gap-2">
+              <Input
+                size="sm"
+                className="md:col-span-5"
+                type="text"
+                name="supplierOrder1"
+                defaultValue={sale.supplierOrder1}
+                label="N° OC a Proveedor No 1"
+              />
+            </div>
+            <div className="grid md:grid-cols-5 gap-2">
+              <Input
+                size="sm"
+                className="md:col-span-1"
+                type="number"
+                name="advanceValueUsd1"
+                defaultValue={formatNumber(advanceValueUsd1)}
+                onChange={(e) => setAdvanceValueUsd1(Number(e.target.value))}
+                label="Valor Adelanto USD (con IGV)"
+              />
+              <Input
+                size="sm"
+                className="md:col-span-1"
+                type="number"
+                name="advanceValuePen1"
+                defaultValue={formatNumber(advanceValuePen1)}
+                onChange={(e) => setAdvanceValuePen1(Number(e.target.value))}
+                label="Valor Adelanto en S/. (con IGV)"
+              />
+              <DateInput
+                size="sm"
+                className="md:col-span-1"
+                label="Fecha de Adelanto"
+                name="advanceDate1"
+                defaultValue={convertToCalendarDateTime(sale.advanceDate1)}
+              />
+              <Input
+                size="sm"
+                className="md:col-span-1"
+                type="text"
+                name="supplierInvoice1"
+                defaultValue={sale.supplierInvoice1}
+                label="N° Factura de Proveedor"
+              />
+              <DateInput
+                size="sm"
+                className="md:col-span-1"
+                label="Fecha de Factura"
+                name="invoiceDate1"
+                defaultValue={convertToCalendarDateTime(sale.invoiceDate1)}
+              />
+            </div>
+            <div className="grid md:grid-cols-5 gap-2">
+              <Input
+                size="sm"
+                className="md:col-span-1"
+                type="number"
+                name="balanceValueUsd1"
+                defaultValue={formatNumber(balanceValueUsd1)}
+                onChange={(e) => setBalanceValueUsd1(Number(e.target.value))}
+                label="Valor Saldo en USD (con IGV)"
+              />
+              <Input
+                size="sm"
+                className="md:col-span-1"
+                type="number"
+                name="balanceValuePen1"
+                defaultValue={formatNumber(balanceValuePen1)}
+                onChange={(e) => setBalanceValuePen1(Number(e.target.value))}
+                label="Valor Saldo en S/. (con IGV)"
+              />
+              <DateInput
+                size="sm"
+                className="md:col-span-1"
+                label="Fecha de Saldo"
+                name="balanceDate1"
+                defaultValue={convertToCalendarDateTime(sale.balanceDate1)}
+              />
+              <Input
+                size="sm"
+                className="md:col-span-1"
+                type="text"
+                name="balanceInvoice1"
+                label="N° Factura de Proveedor"
+                defaultValue={sale.balanceInvoice1}
+              />
+              <DateInput
+                size="sm"
+                className="md:col-span-1"
+                label="Fecha de Factura"
+                name="balanceInvoiceDate1"
+                defaultValue={convertToCalendarDateTime(
+                  sale.balanceInvoiceDate1
+                )}
+              />
+            </div>
+            <div className="grid md:grid-cols-5 gap-2">
+              <Input
+                size="sm"
+                className="md:col-span-1"
+                type="number"
+                name="totalCostUsd1"
+                value={formatNumber(totalCostUsd1)}
+                label="Costo Total en USD (con IGV)"
+              />
+              <Input
+                size="sm"
+                className="md:col-span-1"
+                type="number"
+                name="totalCostPen1"
+                value={formatNumber(totalCostPen1)}
+                label="Costo Total en S/. (con IGV)"
+              />
+              <Input
+                size="sm"
+                className="md:col-span-2"
+                type="text"
+                name="supplierShipment1"
+                label="N° Guía de Remisión del Proveedor"
+                defaultValue={sale.supplierShipment1}
+              />
+              <DateInput
+                size="sm"
+                className="md:col-span-1"
+                label="Fecha de GR"
+                name="shipmentDate1"
+                defaultValue={convertToCalendarDateTime(sale.shipmentDate1)}
+              />
+            </div>
+          </>
           <hr />
-          <h2 className="text-slate-600">CON ANTICIPO</h2>
-          <div className="grid md:grid-cols-5 gap-2">
-            <Input
-              size="sm"
-              className="md:col-span-1"
-              type="number"
-              name="advanceValueUsdClient"
-              label="Valor Adelanto USD (con IGV)"
-              defaultValue={formatNumber(sale.advanceValueUsdClient)}
-              onChange={(e) => setAdvanceValueUsdClient(Number(e.target.value))}
-            />
-            <Input
-              size="sm"
-              className="md:col-span-1"
-              type="number"
-              name="advanceValuePenClient"
-              label="Valor Adelanto S/. (con IGV)"
-              defaultValue={formatNumber(sale.advanceValuePenClient)}
-              onChange={(e) => setAdvanceValuePenClient(Number(e.target.value))}
-            />
-            <DateInput
-              size="sm"
-              className="md:col-span-1"
-              label="Fecha de Adelanto"
-              name="advancePaymentDate"
-              defaultValue={convertToCalendarDateTime(sale.advancePaymentDate)}
-            />
-            <Input
-              size="sm"
-              className="md:col-span-1"
-              type="text"
-              name="advanceInvoiceNumber"
-              label="N° Factura de Movento SAC"
-              defaultValue={sale.advanceInvoiceNumber}
-            />
-            <DateInput
-              size="sm"
-              className="md:col-span-1"
-              label="Fecha Factura de cliente"
-              name="advanceInvoiceDate"
-              defaultValue={convertToCalendarDateTime(sale.advanceInvoiceDate)}
-            />
-          </div>
-          <div className="grid md:grid-cols-5 gap-2">
-            <Input
-              size="sm"
-              className="md:col-span-1"
-              type="number"
-              name="secondPaymentUsdClient"
-              label="Valor 2do.Pago USD (con IGV)"
-              defaultValue={formatNumber(sale.secondPaymentUsdClient)}
-              onChange={(e) =>
-                setSecondPaymentUsdClient(Number(e.target.value))
-              }
-            />
-            <Input
-              size="sm"
-              className="md:col-span-1"
-              type="number"
-              name="secondPaymentPenClient"
-              label="Valor 2do Pago S/. (con IGV)"
-              defaultValue={formatNumber(sale.secondPaymentPenClient)}
-              onChange={(e) =>
-                setSecondPaymentPenClient(Number(e.target.value))
-              }
-            />
-            <DateInput
-              size="sm"
-              className="md:col-span-1"
-              label="Fecha de 2do. Pago"
-              name="secondPaymentDate"
-              defaultValue={convertToCalendarDateTime(sale.secondPaymentDate)}
-            />
-            <Input
-              size="sm"
-              className="md:col-span-1"
-              type="text"
-              name="secondInvoiceNumber"
-              label="N° Factura de Movento SAC"
-              defaultValue={sale.secondInvoiceNumber}
-            />
-            <DateInput
-              size="sm"
-              className="md:col-span-1"
-              label="Fecha Factura de cliente"
-              name="secondInvoiceDate"
-              defaultValue={convertToCalendarDateTime(sale.secondInvoiceDate)}
-            />
-          </div>
-          <div className="grid md:grid-cols-5 gap-2">
-            <Input
-              size="sm"
-              className="md:col-span-1"
-              type="number"
-              name="thirdPaymentUsdClient"
-              label="Valor 3er.Pago USD (con IGV)"
-              defaultValue={formatNumber(sale.thirdPaymentUsdClient)}
-              onChange={(e) => setThirdPaymentUsdClient(Number(e.target.value))}
-            />
-            <Input
-              size="sm"
-              className="md:col-span-1"
-              type="number"
-              name="thirdPaymentPenClient"
-              label="Valor 3er Pago S/. (con IGV)"
-              defaultValue={formatNumber(sale.thirdPaymentPenClient)}
-              onChange={(e) => setThirdPaymentPenClient(Number(e.target.value))}
-            />
-            <DateInput
-              size="sm"
-              className="md:col-span-1"
-              label="Fecha de 3er. Pago"
-              name="thirdPaymentDate"
-              defaultValue={convertToCalendarDateTime(sale.thirdPaymentDate)}
-            />
-            <Input
-              size="sm"
-              className="md:col-span-1"
-              type="text"
-              name="thirdInvoiceNumber"
-              label="N° Factura de Movento SAC"
-              defaultValue={sale.thirdInvoiceNumber}
-            />
-            <DateInput
-              size="sm"
-              className="md:col-span-1"
-              label="Fecha Factura de cliente"
-              name="thirdInvoiceDate"
-              defaultValue={convertToCalendarDateTime(sale.thirdInvoiceDate)}
-            />
-          </div>
+          <>
+            <div className="grid md:grid-cols-5 gap-2">
+              <Input
+                size="sm"
+                className="md:col-span-5"
+                type="text"
+                name="supplierOrder2"
+                defaultValue={sale.supplierOrder2}
+                label="N° OC a Proveedor No 2"
+              />
+            </div>
+            <div className="grid md:grid-cols-5 gap-2">
+              <Input
+                size="sm"
+                className="md:col-span-1"
+                type="number"
+                name="advanceValueUsd2"
+                defaultValue={formatNumber(advanceValueUsd2)}
+                onChange={(e) => setAdvanceValueUsd2(Number(e.target.value))}
+                label="Valor Adelanto USD (con IGV)"
+              />
+              <Input
+                size="sm"
+                className="md:col-span-1"
+                type="number"
+                name="advanceValuePen2"
+                defaultValue={formatNumber(advanceValuePen2)}
+                onChange={(e) => setAdvanceValuePen2(Number(e.target.value))}
+                label="Valor Adelanto en S/. (con IGV)"
+              />
+              <DateInput
+                size="sm"
+                className="md:col-span-1"
+                label="Fecha de Adelanto"
+                name="advanceDate2"
+                defaultValue={convertToCalendarDateTime(sale.advanceDate2)}
+              />
+              <Input
+                size="sm"
+                className="md:col-span-1"
+                type="text"
+                name="supplierInvoice2"
+                defaultValue={sale.supplierInvoice2}
+                label="N° Factura de Proveedor"
+              />
+              <DateInput
+                size="sm"
+                className="md:col-span-1"
+                label="Fecha de Factura"
+                name="invoiceDate2"
+                defaultValue={convertToCalendarDateTime(sale.invoiceDate2)}
+              />
+            </div>
+            <div className="grid md:grid-cols-5 gap-2">
+              <Input
+                size="sm"
+                className="md:col-span-1"
+                type="number"
+                name="balanceValueUsd2"
+                defaultValue={formatNumber(balanceValueUsd2)}
+                onChange={(e) => setBalanceValueUsd2(Number(e.target.value))}
+                label="Valor Saldo en USD (con IGV)"
+              />
+              <Input
+                size="sm"
+                className="md:col-span-1"
+                type="number"
+                name="balanceValuePen2"
+                defaultValue={formatNumber(balanceValuePen2)}
+                onChange={(e) => setBalanceValuePen2(Number(e.target.value))}
+                label="Valor Saldo en S/. (con IGV)"
+              />
+              <DateInput
+                size="sm"
+                className="md:col-span-1"
+                label="Fecha de Saldo"
+                name="balanceDate2"
+                defaultValue={convertToCalendarDateTime(sale.balanceDate2)}
+              />
+              <Input
+                size="sm"
+                className="md:col-span-1"
+                type="text"
+                name="balanceInvoice2"
+                label="N° Factura de Proveedor"
+                defaultValue={sale.balanceInvoice2}
+              />
+              <DateInput
+                size="sm"
+                className="md:col-span-1"
+                label="Fecha de Factura"
+                name="balanceInvoiceDate2"
+                defaultValue={convertToCalendarDateTime(
+                  sale.balanceInvoiceDate2
+                )}
+              />
+            </div>
+            <div className="grid md:grid-cols-5 gap-2">
+              <Input
+                size="sm"
+                className="md:col-span-1"
+                type="number"
+                name="totalCostUsd2"
+                value={formatNumber(totalCostUsd2)}
+                label="Costo Total en USD (con IGV)"
+              />
+              <Input
+                size="sm"
+                className="md:col-span-1"
+                type="number"
+                name="totalCostPen2"
+                value={formatNumber(totalCostPen2)}
+                label="Costo Total en S/. (con IGV)"
+              />
+              <Input
+                size="sm"
+                className="md:col-span-2"
+                type="text"
+                name="supplierShipment2"
+                label="N° Guía de Remisión del Proveedor"
+                defaultValue={sale.supplierShipment2}
+              />
+              <DateInput
+                size="sm"
+                className="md:col-span-1"
+                label="Fecha de GR"
+                name="shipmentDate2"
+                defaultValue={convertToCalendarDateTime(sale.shipmentDate2)}
+              />
+            </div>
+          </>
+          <hr />
+          <>
+            <div className="grid md:grid-cols-5 gap-2">
+              <Input
+                size="sm"
+                className="md:col-span-5"
+                type="text"
+                name="supplierOrder3"
+                defaultValue={sale.supplierOrder3}
+                label="N° OC a Proveedor No 3"
+              />
+            </div>
+            <div className="grid md:grid-cols-5 gap-2">
+              <Input
+                size="sm"
+                className="md:col-span-1"
+                type="number"
+                name="advanceValueUsd3"
+                defaultValue={formatNumber(advanceValueUsd3)}
+                onChange={(e) => setAdvanceValueUsd3(Number(e.target.value))}
+                label="Valor Adelanto USD (con IGV)"
+              />
+              <Input
+                size="sm"
+                className="md:col-span-1"
+                type="number"
+                name="advanceValuePen3"
+                defaultValue={formatNumber(advanceValuePen3)}
+                onChange={(e) => setAdvanceValuePen3(Number(e.target.value))}
+                label="Valor Adelanto en S/. (con IGV)"
+              />
+              <DateInput
+                size="sm"
+                className="md:col-span-1"
+                label="Fecha de Adelanto"
+                name="advanceDate3"
+                defaultValue={convertToCalendarDateTime(sale.advanceDate3)}
+              />
+              <Input
+                size="sm"
+                className="md:col-span-1"
+                type="text"
+                name="supplierInvoice3"
+                defaultValue={sale.supplierInvoice3}
+                label="N° Factura de Proveedor"
+              />
+              <DateInput
+                size="sm"
+                className="md:col-span-1"
+                label="Fecha de Factura"
+                name="invoiceDate3"
+                defaultValue={convertToCalendarDateTime(sale.invoiceDate3)}
+              />
+            </div>
+            <div className="grid md:grid-cols-5 gap-2">
+              <Input
+                size="sm"
+                className="md:col-span-1"
+                type="number"
+                name="balanceValueUsd3"
+                defaultValue={formatNumber(balanceValueUsd3)}
+                onChange={(e) => setBalanceValueUsd3(Number(e.target.value))}
+                label="Valor Saldo en USD (con IGV)"
+              />
+              <Input
+                size="sm"
+                className="md:col-span-1"
+                type="number"
+                name="balanceValuePen3"
+                defaultValue={formatNumber(balanceValuePen3)}
+                onChange={(e) => setBalanceValuePen3(Number(e.target.value))}
+                label="Valor Saldo en S/. (con IGV)"
+              />
+              <DateInput
+                size="sm"
+                className="md:col-span-1"
+                label="Fecha de Saldo"
+                name="balanceDate3"
+                defaultValue={convertToCalendarDateTime(sale.balanceDate3)}
+              />
+              <Input
+                size="sm"
+                className="md:col-span-1"
+                type="text"
+                name="balanceInvoice3"
+                label="N° Factura de Proveedor"
+                defaultValue={sale.balanceInvoice3}
+              />
+              <DateInput
+                size="sm"
+                className="md:col-span-1"
+                label="Fecha de Factura"
+                name="balanceInvoiceDate3"
+                defaultValue={convertToCalendarDateTime(
+                  sale.balanceInvoiceDate3
+                )}
+              />
+            </div>
+            <div className="grid md:grid-cols-5 gap-2">
+              <Input
+                size="sm"
+                className="md:col-span-1"
+                type="number"
+                name="totalCostUsd3"
+                value={formatNumber(totalCostUsd3)}
+                label="Costo Total en USD (con IGV)"
+              />
+              <Input
+                size="sm"
+                className="md:col-span-1"
+                type="number"
+                name="totalCostPen3"
+                value={formatNumber(totalCostPen3)}
+                label="Costo Total en S/. (con IGV)"
+              />
+              <Input
+                size="sm"
+                className="md:col-span-2"
+                type="text"
+                name="supplierShipment3"
+                label="N° Guía de Remisión del Proveedor"
+                defaultValue={sale.supplierShipment3}
+              />
+              <DateInput
+                size="sm"
+                className="md:col-span-1"
+                label="Fecha de GR"
+                name="shipmentDate3"
+                defaultValue={convertToCalendarDateTime(sale.shipmentDate3)}
+              />
+            </div>
+          </>
           <hr />
           <div className="grid md:grid-cols-6 gap-2">
             <Input
               size="sm"
               className="md:col-span-2"
               type="number"
-              name="totalSaleUsd"
-              label="Precio de Venta Total en USD (con IGV)"
-              value={formatNumber(totalSaleUsd)}
+              name="totalSaleCostUsd"
+              value={formatNumber(totalSaleCostUsd)}
+              label="Costo Total de Venta en USD (con IGV)"
             />
             <Input
               size="sm"
               className="md:col-span-2"
               type="number"
-              name="totalSalePen"
-              label="Precio de Venta Total en S/. (con IGV)"
-              value={formatNumber(totalSalePen)}
+              name="totalSaleCostPen"
+              value={formatNumber(totalSaleCostPen)}
+              label="Costo Total de Venta en S/. (con IGV)"
             />
             <div className="md:col-span-2"></div>
           </div>
-        </>
-      </div>
-      <div className="flex justify-between mt-4">
-        <h1 className="font-medium text-slate-600">
-          Cuentas por Pagar - Proveedor
-        </h1>
-      </div>
-      <hr />
-      <div className="w-full grid gap-y-2 mt-4">
-        <>
-          <div className="grid md:grid-cols-5 gap-2">
-            <Input
-              size="sm"
-              className="md:col-span-5"
-              type="text"
-              name="supplierOrder1"
-              defaultValue={sale.supplierOrder1}
-              label="N° OC a Proveedor No 1"
-            />
-          </div>
-          <div className="grid md:grid-cols-5 gap-2">
-            <Input
-              size="sm"
-              className="md:col-span-1"
-              type="number"
-              name="advanceValueUsd1"
-              defaultValue={formatNumber(advanceValueUsd1)}
-              onChange={(e) => setAdvanceValueUsd1(Number(e.target.value))}
-              label="Valor Adelanto USD (con IGV)"
-            />
-            <Input
-              size="sm"
-              className="md:col-span-1"
-              type="number"
-              name="advanceValuePen1"
-              defaultValue={formatNumber(advanceValuePen1)}
-              onChange={(e) => setAdvanceValuePen1(Number(e.target.value))}
-              label="Valor Adelanto en S/. (con IGV)"
-            />
-            <DateInput
-              size="sm"
-              className="md:col-span-1"
-              label="Fecha de Adelanto"
-              name="advanceDate1"
-              defaultValue={convertToCalendarDateTime(sale.advanceDate1)}
-            />
-            <Input
-              size="sm"
-              className="md:col-span-1"
-              type="text"
-              name="supplierInvoice1"
-              defaultValue={sale.supplierInvoice1}
-              label="N° Factura de Proveedor"
-            />
-            <DateInput
-              size="sm"
-              className="md:col-span-1"
-              label="Fecha de Factura"
-              name="invoiceDate1"
-              defaultValue={convertToCalendarDateTime(sale.invoiceDate1)}
-            />
-          </div>
-          <div className="grid md:grid-cols-5 gap-2">
-            <Input
-              size="sm"
-              className="md:col-span-1"
-              type="number"
-              name="balanceValueUsd1"
-              defaultValue={formatNumber(balanceValueUsd1)}
-              onChange={(e) => setBalanceValueUsd1(Number(e.target.value))}
-              label="Valor Saldo en USD (con IGV)"
-            />
-            <Input
-              size="sm"
-              className="md:col-span-1"
-              type="number"
-              name="balanceValuePen1"
-              defaultValue={formatNumber(balanceValuePen1)}
-              onChange={(e) => setBalanceValuePen1(Number(e.target.value))}
-              label="Valor Saldo en S/. (con IGV)"
-            />
-            <DateInput
-              size="sm"
-              className="md:col-span-1"
-              label="Fecha de Saldo"
-              name="balanceDate1"
-              defaultValue={convertToCalendarDateTime(sale.balanceDate1)}
-            />
-            <Input
-              size="sm"
-              className="md:col-span-1"
-              type="text"
-              name="balanceInvoice1"
-              label="N° Factura de Proveedor"
-              defaultValue={sale.balanceInvoice1}
-            />
-            <DateInput
-              size="sm"
-              className="md:col-span-1"
-              label="Fecha de Factura"
-              name="balanceInvoiceDate1"
-              defaultValue={convertToCalendarDateTime(sale.balanceInvoiceDate1)}
-            />
-          </div>
-          <div className="grid md:grid-cols-5 gap-2">
-            <Input
-              size="sm"
-              className="md:col-span-1"
-              type="number"
-              name="totalCostUsd1"
-              value={formatNumber(totalCostUsd1)}
-              label="Costo Total en USD (con IGV)"
-            />
-            <Input
-              size="sm"
-              className="md:col-span-1"
-              type="number"
-              name="totalCostPen1"
-              value={formatNumber(totalCostPen1)}
-              label="Costo Total en S/. (con IGV)"
-            />
-            <Input
-              size="sm"
-              className="md:col-span-2"
-              type="text"
-              name="supplierShipment1"
-              label="N° Guía de Remisión del Proveedor"
-              defaultValue={sale.supplierShipment1}
-            />
-            <DateInput
-              size="sm"
-              className="md:col-span-1"
-              label="Fecha de GR"
-              name="shipmentDate1"
-              defaultValue={convertToCalendarDateTime(sale.shipmentDate1)}
-            />
-          </div>
-        </>
-        <hr />
-        <>
-          <div className="grid md:grid-cols-5 gap-2">
-            <Input
-              size="sm"
-              className="md:col-span-5"
-              type="text"
-              name="supplierOrder2"
-              defaultValue={sale.supplierOrder2}
-              label="N° OC a Proveedor No 2"
-            />
-          </div>
-          <div className="grid md:grid-cols-5 gap-2">
-            <Input
-              size="sm"
-              className="md:col-span-1"
-              type="number"
-              name="advanceValueUsd2"
-              defaultValue={formatNumber(advanceValueUsd2)}
-              onChange={(e) => setAdvanceValueUsd2(Number(e.target.value))}
-              label="Valor Adelanto USD (con IGV)"
-            />
-            <Input
-              size="sm"
-              className="md:col-span-1"
-              type="number"
-              name="advanceValuePen2"
-              defaultValue={formatNumber(advanceValuePen2)}
-              onChange={(e) => setAdvanceValuePen2(Number(e.target.value))}
-              label="Valor Adelanto en S/. (con IGV)"
-            />
-            <DateInput
-              size="sm"
-              className="md:col-span-1"
-              label="Fecha de Adelanto"
-              name="advanceDate2"
-              defaultValue={convertToCalendarDateTime(sale.advanceDate2)}
-            />
-            <Input
-              size="sm"
-              className="md:col-span-1"
-              type="text"
-              name="supplierInvoice2"
-              defaultValue={sale.supplierInvoice2}
-              label="N° Factura de Proveedor"
-            />
-            <DateInput
-              size="sm"
-              className="md:col-span-1"
-              label="Fecha de Factura"
-              name="invoiceDate2"
-              defaultValue={convertToCalendarDateTime(sale.invoiceDate2)}
-            />
-          </div>
-          <div className="grid md:grid-cols-5 gap-2">
-            <Input
-              size="sm"
-              className="md:col-span-1"
-              type="number"
-              name="balanceValueUsd2"
-              defaultValue={formatNumber(balanceValueUsd2)}
-              onChange={(e) => setBalanceValueUsd2(Number(e.target.value))}
-              label="Valor Saldo en USD (con IGV)"
-            />
-            <Input
-              size="sm"
-              className="md:col-span-1"
-              type="number"
-              name="balanceValuePen2"
-              defaultValue={formatNumber(balanceValuePen2)}
-              onChange={(e) => setBalanceValuePen2(Number(e.target.value))}
-              label="Valor Saldo en S/. (con IGV)"
-            />
-            <DateInput
-              size="sm"
-              className="md:col-span-1"
-              label="Fecha de Saldo"
-              name="balanceDate2"
-              defaultValue={convertToCalendarDateTime(sale.balanceDate2)}
-            />
-            <Input
-              size="sm"
-              className="md:col-span-1"
-              type="text"
-              name="balanceInvoice2"
-              label="N° Factura de Proveedor"
-              defaultValue={sale.balanceInvoice2}
-            />
-            <DateInput
-              size="sm"
-              className="md:col-span-1"
-              label="Fecha de Factura"
-              name="balanceInvoiceDate2"
-              defaultValue={convertToCalendarDateTime(sale.balanceInvoiceDate2)}
-            />
-          </div>
-          <div className="grid md:grid-cols-5 gap-2">
-            <Input
-              size="sm"
-              className="md:col-span-1"
-              type="number"
-              name="totalCostUsd2"
-              value={formatNumber(totalCostUsd2)}
-              label="Costo Total en USD (con IGV)"
-            />
-            <Input
-              size="sm"
-              className="md:col-span-1"
-              type="number"
-              name="totalCostPen2"
-              value={formatNumber(totalCostPen2)}
-              label="Costo Total en S/. (con IGV)"
-            />
-            <Input
-              size="sm"
-              className="md:col-span-2"
-              type="text"
-              name="supplierShipment2"
-              label="N° Guía de Remisión del Proveedor"
-              defaultValue={sale.supplierShipment2}
-            />
-            <DateInput
-              size="sm"
-              className="md:col-span-1"
-              label="Fecha de GR"
-              name="shipmentDate2"
-              defaultValue={convertToCalendarDateTime(sale.shipmentDate2)}
-            />
-          </div>
-        </>
-        <hr />
-        <>
-          <div className="grid md:grid-cols-5 gap-2">
-            <Input
-              size="sm"
-              className="md:col-span-5"
-              type="text"
-              name="supplierOrder3"
-              defaultValue={sale.supplierOrder3}
-              label="N° OC a Proveedor No 3"
-            />
-          </div>
-          <div className="grid md:grid-cols-5 gap-2">
-            <Input
-              size="sm"
-              className="md:col-span-1"
-              type="number"
-              name="advanceValueUsd3"
-              defaultValue={formatNumber(advanceValueUsd3)}
-              onChange={(e) => setAdvanceValueUsd3(Number(e.target.value))}
-              label="Valor Adelanto USD (con IGV)"
-            />
-            <Input
-              size="sm"
-              className="md:col-span-1"
-              type="number"
-              name="advanceValuePen3"
-              defaultValue={formatNumber(advanceValuePen3)}
-              onChange={(e) => setAdvanceValuePen3(Number(e.target.value))}
-              label="Valor Adelanto en S/. (con IGV)"
-            />
-            <DateInput
-              size="sm"
-              className="md:col-span-1"
-              label="Fecha de Adelanto"
-              name="advanceDate3"
-              defaultValue={convertToCalendarDateTime(sale.advanceDate3)}
-            />
-            <Input
-              size="sm"
-              className="md:col-span-1"
-              type="text"
-              name="supplierInvoice3"
-              defaultValue={sale.supplierInvoice3}
-              label="N° Factura de Proveedor"
-            />
-            <DateInput
-              size="sm"
-              className="md:col-span-1"
-              label="Fecha de Factura"
-              name="invoiceDate3"
-              defaultValue={convertToCalendarDateTime(sale.invoiceDate3)}
-            />
-          </div>
-          <div className="grid md:grid-cols-5 gap-2">
-            <Input
-              size="sm"
-              className="md:col-span-1"
-              type="number"
-              name="balanceValueUsd3"
-              defaultValue={formatNumber(balanceValueUsd3)}
-              onChange={(e) => setBalanceValueUsd3(Number(e.target.value))}
-              label="Valor Saldo en USD (con IGV)"
-            />
-            <Input
-              size="sm"
-              className="md:col-span-1"
-              type="number"
-              name="balanceValuePen3"
-              defaultValue={formatNumber(balanceValuePen3)}
-              onChange={(e) => setBalanceValuePen3(Number(e.target.value))}
-              label="Valor Saldo en S/. (con IGV)"
-            />
-            <DateInput
-              size="sm"
-              className="md:col-span-1"
-              label="Fecha de Saldo"
-              name="balanceDate3"
-              defaultValue={convertToCalendarDateTime(sale.balanceDate3)}
-            />
-            <Input
-              size="sm"
-              className="md:col-span-1"
-              type="text"
-              name="balanceInvoice3"
-              label="N° Factura de Proveedor"
-              defaultValue={sale.balanceInvoice3}
-            />
-            <DateInput
-              size="sm"
-              className="md:col-span-1"
-              label="Fecha de Factura"
-              name="balanceInvoiceDate3"
-              defaultValue={convertToCalendarDateTime(sale.balanceInvoiceDate3)}
-            />
-          </div>
-          <div className="grid md:grid-cols-5 gap-2">
-            <Input
-              size="sm"
-              className="md:col-span-1"
-              type="number"
-              name="totalCostUsd3"
-              value={formatNumber(totalCostUsd3)}
-              label="Costo Total en USD (con IGV)"
-            />
-            <Input
-              size="sm"
-              className="md:col-span-1"
-              type="number"
-              name="totalCostPen3"
-              value={formatNumber(totalCostPen3)}
-              label="Costo Total en S/. (con IGV)"
-            />
-            <Input
-              size="sm"
-              className="md:col-span-2"
-              type="text"
-              name="supplierShipment3"
-              label="N° Guía de Remisión del Proveedor"
-              defaultValue={sale.supplierShipment3}
-            />
-            <DateInput
-              size="sm"
-              className="md:col-span-1"
-              label="Fecha de GR"
-              name="shipmentDate3"
-              defaultValue={convertToCalendarDateTime(sale.shipmentDate3)}
-            />
-          </div>
-        </>
-        <hr />
-        <div className="grid md:grid-cols-6 gap-2">
-          <Input
-            size="sm"
-            className="md:col-span-2"
-            type="number"
-            name="totalSaleCostUsd"
-            value={formatNumber(totalSaleCostUsd)}
-            label="Costo Total de Venta en USD (con IGV)"
-          />
-          <Input
-            size="sm"
-            className="md:col-span-2"
-            type="number"
-            name="totalSaleCostPen"
-            value={formatNumber(totalSaleCostPen)}
-            label="Costo Total de Venta en S/. (con IGV)"
-          />
-          <div className="md:col-span-2"></div>
         </div>
-      </div>
 
-      <div className="flex justify-between mt-4">
-        <h1 className="font-medium text-slate-600">Utilidad</h1>
-      </div>
-      <hr />
-      <div className="w-full grid gap-y-2 mt-4">
-        <div className="grid md:grid-cols-2 gap-2">
-          <Input
-            size="sm"
-            className="md:col-span-1"
-            type="number"
-            name="valueUsd"
-            value={formatNumber(valueUsd)}
-            label="Valor de la Utilidad en USD"
-          />
-          <Input
-            size="sm"
-            className="md:col-span-1"
-            type="number"
-            name="percentageUsd"
-            value={formatNumber(percentageUsd)}
-            label="Porcentaje (%)"
-          />
+        <div className="flex justify-between mt-4">
+          <h1 className="font-medium text-slate-600">Utilidad</h1>
         </div>
-        <div className="grid md:grid-cols-2 gap-2">
-          <Input
-            size="sm"
-            className="md:col-span-1"
-            type="number"
-            name="valuePen"
-            value={formatNumber(valuePen)}
-            label="Valor de la Utilidad en S/."
-          />
-          <Input
-            size="sm"
-            className="md:col-span-1"
-            type="number"
-            name="percentagePen"
-            value={formatNumber(percentagePen)}
-            label="Porcentaje (%)"
-          />
+        <hr />
+        <div className="w-full grid gap-y-2 mt-4">
+          <div className="grid md:grid-cols-2 gap-2">
+            <Input
+              size="sm"
+              className="md:col-span-1"
+              type="number"
+              name="valueUsd"
+              value={formatNumber(valueUsd)}
+              label="Valor de la Utilidad en USD"
+            />
+            <Input
+              size="sm"
+              className="md:col-span-1"
+              type="number"
+              name="percentageUsd"
+              value={formatNumber(percentageUsd)}
+              label="Porcentaje (%)"
+            />
+          </div>
+          <div className="grid md:grid-cols-2 gap-2">
+            <Input
+              size="sm"
+              className="md:col-span-1"
+              type="number"
+              name="valuePen"
+              value={formatNumber(valuePen)}
+              label="Valor de la Utilidad en S/."
+            />
+            <Input
+              size="sm"
+              className="md:col-span-1"
+              type="number"
+              name="percentagePen"
+              value={formatNumber(percentagePen)}
+              label="Porcentaje (%)"
+            />
+          </div>
         </div>
-      </div>
 
-      <div className="flex justify-end items-center gap-4 pt-4">
-        <Button color="danger" onClick={() => deleteSale(sale.id)}>
-          <FiTrash />
-          Eliminar venta
-        </Button>
-        <ButtonSubmit text="Actualizar Venta" />
-      </div>
-    </form>
+        <div className="flex justify-end items-center gap-4 pt-4">
+          <Button color="default" onClick={() => router.push("/sales")}>
+            Cancelar
+          </Button>
+          <Button color="danger" onClick={() => onOpenDelete()}>
+            <FiTrash />
+            Eliminar venta
+          </Button>
+
+          <ButtonSubmit text="Actualizar Venta" />
+        </div>
+      </form>
+    </>
   );
 }
 

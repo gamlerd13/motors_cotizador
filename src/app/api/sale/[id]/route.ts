@@ -1,7 +1,7 @@
 import prisma from "@/libs/db";
 import { SalePut } from "@/models/sale";
 import { NextRequest, NextResponse } from "next/server";
-
+import { SaleStatusV2 } from "@prisma/client";
 interface Params {
   params: { id: string };
 }
@@ -10,7 +10,6 @@ export async function PUT(req: NextRequest, { params }: Params) {
   try {
     const body: SalePut = await req.json();
     const id = params.id;
-
 
     const {
       customerOrderDate,
@@ -48,7 +47,7 @@ export async function PUT(req: NextRequest, { params }: Params) {
       // Total Venta
       totalSaleUsd,
       totalSalePen,
-      
+
       supplierOrder1,
       advanceValueUsd1,
       balanceValueUsd1,
@@ -63,7 +62,7 @@ export async function PUT(req: NextRequest, { params }: Params) {
       supplierShipment1,
       invoiceDate1,
       balanceInvoiceDate1,
-      shipmentDate1, 
+      shipmentDate1,
 
       supplierOrder2,
       advanceValueUsd2,
@@ -99,42 +98,66 @@ export async function PUT(req: NextRequest, { params }: Params) {
 
       totalSaleCostUsd,
       totalSaleCostPen,
-      
+
       valueUsd,
       percentageUsd,
       valuePen,
       percentagePen,
     } = body;
 
-    const customerOrderDateString = customerOrderDate ? new Date(customerOrderDate) : null;
+    const customerOrderDateString = customerOrderDate
+      ? new Date(customerOrderDate)
+      : null;
     const deliveryDateString = deliveryDate ? new Date(deliveryDate) : null;
 
-    const clientInvoiceDateString = clientInvoiceDate ? new Date(clientInvoiceDate) : null;
-    const clientInvoiceDueDateString = clientInvoiceDueDate ? new Date(clientInvoiceDueDate) : null;
-    const advancePaymentDateString = advancePaymentDate ? new Date(advancePaymentDate) : null;
-    const advanceInvoiceDateString = advanceInvoiceDate ? new Date(advanceInvoiceDate) : null;
-    const secondPaymentDateString = secondPaymentDate ? new Date(secondPaymentDate) : null;
-    const secondInvoiceDateString = secondInvoiceDate ? new Date(secondInvoiceDate) : null;
-    const thirdPaymentDateString = thirdPaymentDate ? new Date(thirdPaymentDate) : null;
-    const thirdInvoiceDateString = thirdInvoiceDate ? new Date(thirdInvoiceDate) : null;
-    
-    const advanceDate1String = advanceDate1 ? new Date(advanceDate1): null;
-    const balanceDate1String = balanceDate1 ? new Date(balanceDate1): null;
-    const invoiceDate1String = invoiceDate1 ? new Date(invoiceDate1): null;
-    const balanceInvoiceDate1String = balanceInvoiceDate1 ? new Date(balanceInvoiceDate1): null;
-    const shipmentDate1String = shipmentDate1 ? new Date(shipmentDate1): null;
+    const clientInvoiceDateString = clientInvoiceDate
+      ? new Date(clientInvoiceDate)
+      : null;
+    const clientInvoiceDueDateString = clientInvoiceDueDate
+      ? new Date(clientInvoiceDueDate)
+      : null;
+    const advancePaymentDateString = advancePaymentDate
+      ? new Date(advancePaymentDate)
+      : null;
+    const advanceInvoiceDateString = advanceInvoiceDate
+      ? new Date(advanceInvoiceDate)
+      : null;
+    const secondPaymentDateString = secondPaymentDate
+      ? new Date(secondPaymentDate)
+      : null;
+    const secondInvoiceDateString = secondInvoiceDate
+      ? new Date(secondInvoiceDate)
+      : null;
+    const thirdPaymentDateString = thirdPaymentDate
+      ? new Date(thirdPaymentDate)
+      : null;
+    const thirdInvoiceDateString = thirdInvoiceDate
+      ? new Date(thirdInvoiceDate)
+      : null;
 
-    const advanceDate2String = advanceDate2 ? new Date(advanceDate2): null;
-    const balanceDate2String = balanceDate2 ? new Date(balanceDate2): null;
-    const invoiceDate2String = invoiceDate2 ? new Date(invoiceDate2): null;
-    const balanceInvoiceDate2String = balanceInvoiceDate2 ? new Date(balanceInvoiceDate2): null;
-    const shipmentDate2String = shipmentDate2 ? new Date(shipmentDate2): null;
+    const advanceDate1String = advanceDate1 ? new Date(advanceDate1) : null;
+    const balanceDate1String = balanceDate1 ? new Date(balanceDate1) : null;
+    const invoiceDate1String = invoiceDate1 ? new Date(invoiceDate1) : null;
+    const balanceInvoiceDate1String = balanceInvoiceDate1
+      ? new Date(balanceInvoiceDate1)
+      : null;
+    const shipmentDate1String = shipmentDate1 ? new Date(shipmentDate1) : null;
 
-    const advanceDate3String = advanceDate3 ? new Date(advanceDate3): null;
-    const balanceDate3String = balanceDate3 ? new Date(balanceDate3): null;
-    const invoiceDate3String = invoiceDate3 ? new Date(invoiceDate3): null;
-    const balanceInvoiceDate3String = balanceInvoiceDate3 ? new Date(balanceInvoiceDate3): null;
-    const shipmentDate3String = shipmentDate3 ? new Date(shipmentDate3): null;
+    const advanceDate2String = advanceDate2 ? new Date(advanceDate2) : null;
+    const balanceDate2String = balanceDate2 ? new Date(balanceDate2) : null;
+    const invoiceDate2String = invoiceDate2 ? new Date(invoiceDate2) : null;
+    const balanceInvoiceDate2String = balanceInvoiceDate2
+      ? new Date(balanceInvoiceDate2)
+      : null;
+    const shipmentDate2String = shipmentDate2 ? new Date(shipmentDate2) : null;
+
+    const advanceDate3String = advanceDate3 ? new Date(advanceDate3) : null;
+    const balanceDate3String = balanceDate3 ? new Date(balanceDate3) : null;
+    const invoiceDate3String = invoiceDate3 ? new Date(invoiceDate3) : null;
+    const balanceInvoiceDate3String = balanceInvoiceDate3
+      ? new Date(balanceInvoiceDate3)
+      : null;
+    const shipmentDate3String = shipmentDate3 ? new Date(shipmentDate3) : null;
 
     const commonData = {
       customerOrderDate: customerOrderDateString,
@@ -146,29 +169,29 @@ export async function PUT(req: NextRequest, { params }: Params) {
       clientInvoiceNumber,
       clientInvoiceDate: clientInvoiceDateString,
       clientInvoiceDueDate: clientInvoiceDueDateString,
-      isPaidByClient: isPaidByClient === 'true',
-      isPaidByFactoring: isPaidByFactoring === 'true',
+      isPaidByClient: isPaidByClient === "true",
+      isPaidByFactoring: isPaidByFactoring === "true",
       factoringPaymentAmountUsd: parseFloat(factoringPaymentAmountUsd) || 0,
       factoringPaymentAmountPen: parseFloat(factoringPaymentAmountPen) || 0,
-      
+
       advanceValueUsdClient: parseFloat(advanceValueUsdClient) || 0,
       advanceValuePenClient: parseFloat(advanceValuePenClient) || 0,
       advancePaymentDate: advancePaymentDateString,
       advanceInvoiceNumber,
       advanceInvoiceDate: advanceInvoiceDateString,
-      
+
       secondPaymentUsdClient: parseFloat(secondPaymentUsdClient) || 0,
       secondPaymentPenClient: parseFloat(secondPaymentPenClient) || 0,
       secondPaymentDate: secondPaymentDateString,
       secondInvoiceNumber,
       secondInvoiceDate: secondInvoiceDateString,
-      
+
       thirdPaymentUsdClient: parseFloat(thirdPaymentUsdClient) || 0,
       thirdPaymentPenClient: parseFloat(thirdPaymentPenClient) || 0,
       thirdPaymentDate: thirdPaymentDateString,
       thirdInvoiceNumber,
       thirdInvoiceDate: thirdInvoiceDateString,
-      
+
       totalSaleUsd: parseFloat(totalSaleUsd) || 0,
       totalSalePen: parseFloat(totalSalePen) || 0,
 
@@ -186,7 +209,7 @@ export async function PUT(req: NextRequest, { params }: Params) {
       supplierShipment1,
       invoiceDate1: invoiceDate1String,
       balanceInvoiceDate1: balanceInvoiceDate1String,
-      shipmentDate1: shipmentDate1String, 
+      shipmentDate1: shipmentDate1String,
 
       supplierOrder2,
       advanceValueUsd2: parseFloat(advanceValueUsd2) || 0,
@@ -202,7 +225,7 @@ export async function PUT(req: NextRequest, { params }: Params) {
       supplierShipment2,
       invoiceDate2: invoiceDate2String,
       balanceInvoiceDate2: balanceInvoiceDate2String,
-      shipmentDate2: shipmentDate2String, 
+      shipmentDate2: shipmentDate2String,
 
       supplierOrder3,
       advanceValueUsd3: parseFloat(advanceValueUsd3) || 0,
@@ -218,7 +241,7 @@ export async function PUT(req: NextRequest, { params }: Params) {
       supplierShipment3,
       invoiceDate3: invoiceDate3String,
       balanceInvoiceDate3: balanceInvoiceDate3String,
-      shipmentDate3: shipmentDate3String, 
+      shipmentDate3: shipmentDate3String,
 
       totalSaleCostUsd: parseFloat(totalSaleCostUsd) || 0,
       totalSaleCostPen: parseFloat(totalSaleCostPen) || 0,
@@ -233,23 +256,27 @@ export async function PUT(req: NextRequest, { params }: Params) {
       where: {
         id: parseInt(id),
       },
-      data: commonData,
+      data: { ...commonData, status: SaleStatusV2.UPDATED },
     });
 
     return NextResponse.json(updatedSale, { status: 200 });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Error desconocido";
+    const message =
+      error instanceof Error ? error.message : "Error desconocido";
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
 
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(
+  req: Request,
+  { params }: { params: { id: string } }
+) {
   try {
     const saleId = parseInt(params.id);
 
     const sale = await prisma.sale.findUnique({
       where: { id: saleId },
-      select: { cotizacionId: true }
+      select: { cotizacionId: true },
     });
 
     if (!sale) {
@@ -268,7 +295,8 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
 
     return NextResponse.json(deletedSale);
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Error desconocido";
+    const message =
+      error instanceof Error ? error.message : "Error desconocido";
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
