@@ -7,13 +7,16 @@ interface Params {
 
 export async function PUT(req: NextRequest, { params }: Params) {
   try {
+    const body: SaleStatusV2 = await req.json();
+    const status = body;
+
     const id = params.id;
     const sale = await prisma.sale.update({
       where: {
         id: parseInt(id),
       },
       data: {
-        status: SaleStatusV2.FINISHED,
+        status: status,
       },
     });
 

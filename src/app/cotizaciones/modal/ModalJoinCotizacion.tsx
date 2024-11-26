@@ -156,7 +156,7 @@ export default function ModalJoinCotizacion({
                     file:mr-4 file:py-2 file:px-4
                     file:rounded-lg file:border-0
                     file:text-sm file:font-semibold
-                    file:bg-default 
+                    file:bg-default
                     hover:file:bg-gray-400"
                     name="extra_doc"
                     id="extra_doc"
@@ -180,7 +180,14 @@ export default function ModalJoinCotizacion({
               </div>
             </ModalBody>
             <ModalFooter>
-              <Button size="sm" color="success" onPress={() => joinPdfs()}>
+              <Button
+                size="sm"
+                color="success"
+                onPress={() => {
+                  joinPdfs();
+                  onClose();
+                }}
+              >
                 Descargar pdf
               </Button>
               <Button size="sm" color="default" onPress={onClose}>

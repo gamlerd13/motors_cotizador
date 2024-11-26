@@ -5,6 +5,7 @@ import { Input } from "@nextui-org/input";
 import { Button, Checkbox, DateInput, useDisclosure } from "@nextui-org/react";
 import { CalendarDate, DateValue } from "@internationalized/date";
 import { FiTrash } from "react-icons/fi";
+import { SaleStatusV2 } from "@prisma/client";
 
 import ButtonSubmit from "@/components/Button";
 import { ModalConfirmation } from "@/components/modal/ModalConfirmation";
@@ -12,6 +13,7 @@ import { useDeleteSale, usePutSale } from "../hooks/useSale";
 import { useRouter } from "next/navigation";
 
 import { SaleGet } from "@/models/sale";
+import { differenceInDays } from "date-fns";
 
 interface EditFormProps {
   sale: SaleGet;
@@ -38,6 +40,7 @@ function EditForm({ sale }: EditFormProps) {
   const { updateSale } = usePutSale();
   const { deleteSale } = useDeleteSale();
   const router = useRouter();
+
   const {
     isOpen: isOpenDelete,
     onOpen: onOpenDelete,
@@ -285,9 +288,10 @@ function EditForm({ sale }: EditFormProps) {
   useEffect(() => {
     const calculateDaysRemaining = () => {
       if (dueDate) {
-        const currentDate = new Date();
-        const timeDifference = dueDate.getTime() - currentDate.getTime();
-        const daysRemaining = Math.ceil(timeDifference / (1000 * 3600 * 24));
+        const daysRemaining = differenceInDays(new Date(), dueDate);
+        // const currentDate = new Date();
+        // const timeDifference = dueDate.getTime() - currentDate.getTime();
+        // const daysRemaining = Math.ceil(timeDifference / (1000 * 3600 * 24));
         setDaysUntilDue(daysRemaining);
       }
     };
@@ -316,7 +320,7 @@ function EditForm({ sale }: EditFormProps) {
         title="Eliminar venta"
         isOpen={isOpenDelete}
         onOpenChange={onOpenChangeDelete}
-        content="Esta seguro de eliminar la venta ?"
+        contentString="Esta seguro de eliminar la venta ?"
         onClick={() => deleteSale(sale.id)}
       />
       <form onSubmit={handleSubmit}>
@@ -1113,16 +1117,21 @@ function EditForm({ sale }: EditFormProps) {
           </div>
         </div>
 
-        <div className="flex justify-end items-center gap-4 pt-4">
+        <div className="flex justify-end items-center gap-2 pt-4">
           <Button color="default" onClick={() => router.push("/sales")}>
-            Cancelar
-          </Button>
-          <Button color="danger" onClick={() => onOpenDelete()}>
-            <FiTrash />
-            Eliminar venta
+            Ir a ventas
           </Button>
 
-          <ButtonSubmit text="Actualizar Venta" />
+          {sale.status != SaleStatusV2.FINISHED && (
+            <>
+              {/* <Button color="danger" onClick={() => onOpenDelete()}>
+                <FiTrash />
+                Eliminar venta
+              </Button> */}
+
+              <ButtonSubmit text="Actualizar Venta" />
+            </>
+          )}
         </div>
       </form>
     </>

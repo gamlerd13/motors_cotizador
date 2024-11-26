@@ -1,9 +1,10 @@
 "use client";
 import React, { useEffect } from "react";
-import { FaFilePdf, FaEdit } from "react-icons/fa";
+import { FaEdit } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import { SalesStatusLabel, SaleWithRelations } from "@/models/sale";
 import { differenceInDays } from "date-fns";
+import { SaleStatusV2 } from "@prisma/client";
 
 import {
   Table,
@@ -49,37 +50,6 @@ function SaleTable({
 
   const [isExporting, setIsExporting] = useState(false);
 
-  // const handleExportToExcel = async () => {
-  //   setIsExporting(true);
-  //   try {
-  //     const response = await axios.post("/api/exportSales", sales, {
-  //       responseType: "blob",
-  //     });
-
-  //     if (response.status !== 200) {
-  //       throw new Error("Failed to generate Excel file");
-  //     }
-
-  //     const blob = new Blob([response.data], {
-  //       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-  //     });
-  //     const url = window.URL.createObjectURL(blob);
-  //     const a = document.createElement("a");
-  //     a.href = url;
-  //     a.download = "Reporte_de_Ventas.xlsx";
-  //     document.body.appendChild(a);
-  //     a.click();
-  //     document.body.removeChild(a);
-  //     window.URL.revokeObjectURL(url);
-
-  //     toast.success("Reporte de ventas exportado exitosamente");
-  //   } catch (error) {
-  //     console.error("Error exporting to Excel:", error);
-  //     toast.error("Error al exportar el reporte de ventas");
-  //   } finally {
-  //     setIsExporting(false);
-  //   }
-  // };
   const handleExportToExcel = () => {
     generateExcel(sales);
   };
@@ -87,18 +57,19 @@ function SaleTable({
     setSaleSelectedId(saleId);
     onOpenEnd();
   };
-  const handleSaleFinish = async () => {
+  const handleChangeStatus = async (status: SaleStatusV2) => {
     try {
       if (saleSelectedId) {
         const response = await axios.put(
-          `/api/sale/${saleSelectedId}/completed`
+          `/api/sale/${saleSelectedId}/status`,
+          JSON.stringify(status)
         );
         console.log(response);
         if (response.status == 200) {
           fetchSales(seeAll);
-          toast.success("Se finalizó la venta");
+          toast.success("Estado de venta cambiado");
         } else {
-          toast.error("Hubo un error al finalizar la venta");
+          toast.error("Hubo un error al cambiar el estado de venta");
         }
       }
     } catch (e) {
@@ -106,16 +77,50 @@ function SaleTable({
     }
   };
 
+  const daysRemainingColor = (dueDate: Date | undefined | null) => {
+    if (dueDate) {
+      const days = differenceInDays(new Date(dueDate), new Date());
+      return days <= 0 ? "danger" : "success";
+    }
+    return "default";
+  };
+
+  const SaleStatus = () => {
+    return (
+      <div className="flex justify-around">
+        <Button
+          onClick={() => {
+            handleChangeStatus(SaleStatusV2.UPDATED);
+            onOpenChangeEnd();
+          }}
+          color="primary"
+          size="sm"
+        >
+          Actualizar
+        </Button>
+        <Button
+          onClick={() => {
+            handleChangeStatus(SaleStatusV2.FINISHED);
+            onOpenChangeEnd();
+          }}
+          size="sm"
+          color="success"
+        >
+          Finalizar
+        </Button>
+      </div>
+    );
+  };
+
   if (!sales) return null;
 
   return (
     <>
       <ModalConfirmation
-        title="Finalizar venta"
+        title="Cambiar Estado de venta"
         isOpen={isOpenEnd}
         onOpenChange={onOpenChangeEnd}
-        content="Esta seguro de Finalizar la venta ?"
-        onClick={() => handleSaleFinish()}
+        contentComponent={<SaleStatus />}
       />
       <div className="flex justify-end p-2 gap-x-2">
         <div className="flex items-center">
@@ -165,11 +170,18 @@ function SaleTable({
               </TableCell>
 
               <TableCell>
-                {sale.clientInvoiceDueDate &&
-                  differenceInDays(
-                    new Date(sale.clientInvoiceDueDate),
-                    new Date()
-                  )}
+                <Chip
+                  className="min-w-[60px] text-center"
+                  radius="sm"
+                  color={daysRemainingColor(sale.clientInvoiceDueDate)}
+                >
+                  {sale.clientInvoiceDueDate
+                    ? differenceInDays(
+                        new Date(sale.clientInvoiceDueDate),
+                        new Date()
+                      )
+                    : "---"}
+                </Chip>
               </TableCell>
 
               <TableCell>
@@ -195,13 +207,19 @@ function SaleTable({
                       router.push(`/sales/edit/${sale.cotizacionId}`)
                     }
                   >
-                    <span className="flex items-center justify-center  text-red-950">
-                      <FaEdit />
-                    </span>
-                    Editar
+                    {sale.status == SaleStatusV2.FINISHED ? (
+                      "Ver venta"
+                    ) : (
+                      <>
+                        <span className="flex items-center justify-center  text-red-950">
+                          <FaEdit />
+                        </span>
+                        Editar
+                      </>
+                    )}
                   </Button>
                   <Button size="sm" onClick={() => handleOpenModal(sale.id)}>
-                    Finalizar
+                    Cambiar estado
                   </Button>
                 </div>
               </TableCell>

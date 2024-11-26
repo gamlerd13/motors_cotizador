@@ -7,18 +7,21 @@ import {
   Button,
   useDisclosure,
 } from "@nextui-org/react";
+import { ReactNode } from "react";
 
 interface CustomModalProps {
   title: string;
-  content: string;
+  contentString?: string;
+  contentComponent?: React.JSX.Element;
   isOpen: boolean;
-  onClick: () => void;
+  onClick?: () => void;
   onOpenChange: () => void;
 }
 
 export const ModalConfirmation: React.FC<CustomModalProps> = ({
   title,
-  content,
+  contentString,
+  contentComponent,
   isOpen,
   onOpenChange,
   onClick,
@@ -31,25 +34,30 @@ export const ModalConfirmation: React.FC<CustomModalProps> = ({
             <>
               <ModalHeader className="flex flex-col gap-1">{title}</ModalHeader>
               <ModalBody>
-                <div className="text-center">{content}</div>
+                <div className="text-center text-sm">{contentString}</div>
+                {contentComponent && contentComponent}
               </ModalBody>
               <ModalFooter>
                 <Button
                   color="default"
+                  size="sm"
                   variant="faded"
                   onPress={() => onClose()}
                 >
                   cerrar
                 </Button>
-                <Button
-                  color="default"
-                  onPress={() => {
-                    onClick();
-                    onClose();
-                  }}
-                >
-                  Aceptar
-                </Button>
+                {onClick && (
+                  <Button
+                    size="sm"
+                    color="default"
+                    onPress={() => {
+                      onClick();
+                      onClose();
+                    }}
+                  >
+                    Aceptar
+                  </Button>
+                )}
               </ModalFooter>
             </>
           )}

@@ -198,6 +198,7 @@ export interface SaleGet {
   percentageUsd: number;
   valuePen: number;
   percentagePen: number;
+  status: SaleStatusV2;
 }
 
 export interface SalePut {

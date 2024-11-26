@@ -48,7 +48,9 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
   endLogo: {
-    flexDirection: "row",
+    flex: 3,
+    flexDirection: "column",
+    alignItems: "flex-end",
     justifyContent: "flex-end",
   },
   date: {
@@ -100,9 +102,18 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
   },
-  cellClientInfo: {
+  cellClientInfoLeft: {
+    flex: 2,
+    paddingLeft: 5,
+  },
+  cellClientInfoRight: {
     flex: 1,
     paddingLeft: 5,
+    flexDirection: "row",
+    justifyContent: "flex-end",
+  },
+  termsInfoSection: {
+    flexDirection: "row",
   },
   termsInfoContainer: {
     fontSize: 10,
@@ -117,12 +128,9 @@ const styles = StyleSheet.create({
   },
   termsInfo: {
     paddingLeft: 5,
-    flexDirection: "row",
-    flexWrap: "wrap",
+    flexDirection: "column",
   },
-  paymentCondition: {
-    flex: 1,
-  },
+
   totalPrice: {
     flexDirection: "row",
     paddingRight: 15,
@@ -249,13 +257,13 @@ const ReactPdfComponent = ({ cotizacion }: { cotizacion: CotizacionGet }) => {
         <View style={styles.clientInfoContainer}>
           <Text style={styles.clientInfoHeader}>CLIENTE:</Text>
           <View style={styles.clientInfo}>
-            <View style={styles.cellClientInfo}>
+            <View style={styles.cellClientInfoLeft}>
               <Text>Razón social: {client?.name}</Text>
               <Text>Contacto: {client?.contact}</Text>
               <Text>Referencia: {client?.reference}</Text>
             </View>
-            <View style={styles.cellClientInfo}>
-              <Text>Ruc: {client?.ruc}</Text>
+            <View style={styles.cellClientInfoRight}>
+              <Text>RUC: {client?.ruc}</Text>
             </View>
           </View>
         </View>
@@ -317,30 +325,34 @@ const ReactPdfComponent = ({ cotizacion }: { cotizacion: CotizacionGet }) => {
           <Text>TIEMPO DE ENTREGA: </Text>
           <Text>{deliverTime}</Text>
         </View>
-
         <View style={styles.termsInfoContainer}>
           <Text style={styles.termsInfoHeader}>CONDICIONES COMERCIALES:</Text>
-          <View style={styles.termsInfo}>
-            <Text style={styles.boldText}>CONDICIÓN DE PAGO: </Text>
-            <Text style={styles.paymentCondition}>
-              {paymentCondition || "A tratar"}.
-            </Text>
+          <View style={styles.termsInfoSection}>
+            <View style={{ flex: 9 }}>
+              <View style={styles.termsInfo}>
+                <Text style={styles.boldText}>CONDICIÓN DE PAGO: </Text>
+                <Text>{paymentCondition || "A tratar"}.</Text>
+              </View>
+              <View style={styles.termsInfo}>
+                <Text style={styles.boldText}>VALIDEZ DE LA OFERTA: </Text>
+                <Text>{offerValidity}</Text>
+              </View>
+              <View style={styles.termsInfo}>
+                <Text style={styles.boldText}>GARANTIA: </Text>
+                <Text>{warranty}</Text>
+              </View>
+              <Text style={[styles.termsInfo, styles.boldText]}>
+                No CUENTA BANCARIA DE MOVENTO S.A.C.
+              </Text>
+              <Text style={styles.termsInfo}>{bankAccountNumber}</Text>
+            </View>
+            <View style={styles.endLogo}>
+              <Image
+                src="/logo_movento_drives.png"
+                style={{ width: 90, height: 115 }}
+              />
+            </View>
           </View>
-          <View style={styles.termsInfo}>
-            <Text style={styles.boldText}>VALIDEZ DE LA OFERTA: </Text>
-            <Text>{offerValidity}</Text>
-          </View>
-          <View style={styles.termsInfo}>
-            <Text style={styles.boldText}>GARANTIA: </Text>
-            <Text>{warranty}</Text>
-          </View>
-          <Text style={[styles.termsInfo, styles.boldText]}>
-            No CUENTA BANCARIA DE MOVENTO S.A.C.
-          </Text>
-          <Text style={styles.termsInfo}>{bankAccountNumber}</Text>
-        </View>
-        <View style={styles.endLogo}>
-          <Image src="/logo_movento_drives.png" style={{ width: 100 }} />
         </View>
       </Page>
     </Document>

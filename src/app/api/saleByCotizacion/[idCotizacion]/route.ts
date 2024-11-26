@@ -1,11 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/libs/db";
 
-export async function GET(req: NextRequest, { params }: { params: { idCotizacion: string } }) {
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { idCotizacion: string } }
+) {
   try {
     const cotizacionId = params.idCotizacion;
     if (!cotizacionId) {
-      return NextResponse.json({ error: "idCotizacion es requerido" }, { status: 400 });
+      return NextResponse.json(
+        { error: "idCotizacion es requerido" },
+        { status: 400 }
+      );
     }
 
     const sale = await prisma.sale.findMany({
@@ -22,7 +28,10 @@ export async function GET(req: NextRequest, { params }: { params: { idCotizacion
     });
 
     if (!sale.length) {
-      return NextResponse.json({ error: "No se encontraron ventas" }, { status: 404 });
+      return NextResponse.json(
+        { error: "No se encontraron ventas" },
+        { status: 404 }
+      );
     }
 
     const saleCotizacion = sale.map((saleItem) => ({
@@ -122,11 +131,15 @@ export async function GET(req: NextRequest, { params }: { params: { idCotizacion
       percentageUsd: saleItem.percentageUsd,
       valuePen: saleItem.valuePen,
       percentagePen: saleItem.percentagePen,
+      status: saleItem.status,
     }));
-    
+
     return NextResponse.json(saleCotizacion, { status: 200 });
   } catch (error) {
     console.error("Error fetching data:", error);
-    return NextResponse.json({ error: "Error interno del servidor" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Error interno del servidor" },
+      { status: 500 }
+    );
   }
 }

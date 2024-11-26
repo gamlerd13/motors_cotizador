@@ -9,6 +9,7 @@ import { useDateTime } from "@/app/hooks/common/useDateTime";
 import { CotizacionGet } from "@/models/cotizacion";
 import useSale from "../hooks/useSale";
 import { useRouter } from "next/navigation";
+import { differenceInDays } from "date-fns";
 
 function CreateForm({
   cotizacion,
@@ -221,10 +222,10 @@ function CreateForm({
 
   useEffect(() => {
     if (dueDate) {
-      const currentDate = new Date();
-      const timeDifference = dueDate.getTime() - currentDate.getTime();
-      const daysRemaining = Math.ceil(timeDifference / (1000 * 3600 * 24));
-
+      const daysRemaining = differenceInDays(new Date(), dueDate);
+      // const currentDate = new Date();
+      // const timeDifference = dueDate.getTime() - currentDate.getTime();
+      // const daysRemaining = Math.ceil(timeDifference / (1000 * 3600 * 24));
       setDaysUntilDue(daysRemaining);
     }
   }, [dueDate]);
@@ -987,7 +988,7 @@ function CreateForm({
           </div>
         </>
       </div>
-      <div className="flex justify-end pt-4">
+      <div className="flex justify-end pt-4 gap-2">
         <Button color="default" onClick={() => router.push("/cotizaciones")}>
           Cancelar
         </Button>
