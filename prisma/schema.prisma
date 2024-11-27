@@ -10,7 +10,7 @@ generator client {
 //   url      = env("DATABASE_URL")
 // }
 
-// vercel deployment (postgres de vercel)
+//vercel deployment (postgres de vercel)
 datasource db {
   provider  = "postgresql"
   url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
@@ -214,4 +214,11 @@ model LastCodeCotizacion {
 model CodeCotizacion {
   id       Int @id @default(autoincrement())
   nextCode Int
+}
+
+model DefaulFormValues {
+  id                Int    @id @default(autoincrement())
+  companyPhone      String @default("")
+  companyEmail      String @default("")
+  bankAccountNumber String @default("")
 }

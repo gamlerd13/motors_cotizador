@@ -16,6 +16,7 @@ import {
 import { CotizacionGet, ProductItemType } from "@/models/cotizacion";
 import { useDateTime } from "@/app/hooks/common/useDateTime";
 import { useLastCodeCotizacion } from "@/app/hooks/cotizacion/useLastCodeCotizacion";
+import useDefaultValuesStore from "@/store/defaultFormValuesStorage";
 
 interface ClientForm {
   clientName: string;
@@ -31,6 +32,7 @@ function CotizarForm({ cotizacion }: { cotizacion: CotizacionGet }) {
   const { clientList } = useGetClientList();
   const { currentDateTime } = useDateTime();
   const { lastCodeCotizacion } = useLastCodeCotizacion(cotizacion.id);
+  const { createUpdateDefaultValues } = useDefaultValuesStore();
 
   const { updateCotizacion } = usePutCotizacion();
 
@@ -56,7 +58,19 @@ function CotizarForm({ cotizacion }: { cotizacion: CotizacionGet }) {
     const form = e.target as HTMLFormElement;
     const formData = new FormData(form);
 
-    if (cotizacion.id) await updateCotizacion(cotizacion.id, formData);
+    const companyPhone = formData.get("companyPhone")?.toString() || "";
+    const companyEmail = formData.get("companyEmail")?.toString() || "";
+    const bankAccountNumber =
+      formData.get("bankAccountNumber")?.toString() || "";
+
+    if (cotizacion.id) {
+      await createUpdateDefaultValues({
+        companyPhone,
+        companyEmail,
+        bankAccountNumber,
+      });
+      await updateCotizacion(cotizacion.id, formData);
+    }
 
     //Guardar y generar pdf
     console.log(formData);

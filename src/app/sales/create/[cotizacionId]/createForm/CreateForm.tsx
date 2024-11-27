@@ -25,6 +25,7 @@ function CreateForm({
   const [isPaidByClient, setIsPaidByClient] = useState(false);
   const [isPaidByFactoring, setIsPaidByFactoring] = useState(false);
 
+  //CON ANTICIPO
   const [factoringPaymentAmountUsd, setFactoringPaymentAmountUsd] =
     useState<number>(0);
   const [advanceValueUsdClient, setAdvanceValueUsdClient] = useState<number>(0);
@@ -222,7 +223,7 @@ function CreateForm({
 
   useEffect(() => {
     if (dueDate) {
-      const daysRemaining = differenceInDays(new Date(), dueDate);
+      const daysRemaining = differenceInDays(new Date(dueDate), new Date());
       // const currentDate = new Date();
       // const timeDifference = dueDate.getTime() - currentDate.getTime();
       // const daysRemaining = Math.ceil(timeDifference / (1000 * 3600 * 24));

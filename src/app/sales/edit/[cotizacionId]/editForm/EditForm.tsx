@@ -288,7 +288,7 @@ function EditForm({ sale }: EditFormProps) {
   useEffect(() => {
     const calculateDaysRemaining = () => {
       if (dueDate) {
-        const daysRemaining = differenceInDays(new Date(), dueDate);
+        const daysRemaining = differenceInDays(new Date(dueDate), new Date());
         // const currentDate = new Date();
         // const timeDifference = dueDate.getTime() - currentDate.getTime();
         // const daysRemaining = Math.ceil(timeDifference / (1000 * 3600 * 24));

@@ -13,6 +13,7 @@ import { usePostCotizacion } from "@/app/hooks/cotizacion/useCotizacion";
 import { ProductItemType } from "@/models/cotizacion";
 import { useCodeCotizacion } from "@/app/hooks/cotizacion/useCodeCotizacion";
 import { useDateTime } from "@/app/hooks/common/useDateTime";
+import useDefaultValuesStore from "@/store/defaultFormValuesStorage";
 
 interface ClientForm {
   clientName: string;
@@ -27,6 +28,7 @@ function CotizarForm() {
   const { clientList, isLoading: isLoadingClient } = useGetClientList();
   const { currentDateTime } = useDateTime();
   const { lastCodeCotizacion } = useCodeCotizacion();
+  const { createUpdateDefaultValues, defaultValues } = useDefaultValuesStore();
 
   const { responseNewCotizacion, addNewCotizacion } = usePostCotizacion();
 
@@ -37,8 +39,12 @@ function CotizarForm() {
   };
   const [clientValues, setClientValues] = useState<ClientForm | null>(null);
 
-  const [companyPhone, setCompanyPhone] = useState("902196904");
-  const [companyEmail, setCompanyEmail] = useState("ventas@moventodrives.com");
+  const [companyPhone, setCompanyPhone] = useState(
+    defaultValues.companyPhone || "902196904"
+  );
+  const [companyEmail, setCompanyEmail] = useState(
+    defaultValues.companyEmail || "ventas@moventodrives.com"
+  );
   const [currencyType, setCurrencyType] = React.useState<"SOLES" | "DOLARES">(
     "SOLES"
   );
@@ -47,23 +53,36 @@ function CotizarForm() {
     "La garantía es por 6 meses luego de la puesta en servicio."
   );
   const [bankAccountNumber, setBankAccountNumber] = useState(
-    "BANCO BCP\n" +
-      "SOLES: 1936929215069 / CCI SOLES: 00219300692921506910\n" +
-      "DÓLARES:  1936929236191 / CCI DÓLARES: 00219300692923619117\n" +
-      "BANCO INTERBANK\n" +
-      "SOLES: 200-3005630612 / CCI SOLES: 003-200-003005630612-36\n" +
-      "DÓLARES: 200-003005630620 / CCI DOLARES: 003-200-003005630620-39\n" +
-      "BANCO DE LA NACIÓN\n" +
-      "Cuenta detracción: Cuenta Corriente: 00-002-212722\n"
+    defaultValues.bankAccountNumber ||
+      "BANCO BCP\n" +
+        "SOLES: 1936929215069 / CCI SOLES: 00219300692921506910\n" +
+        "DÓLARES:  1936929236191 / CCI DÓLARES: 00219300692923619117\n" +
+        "BANCO INTERBANK\n" +
+        "SOLES: 200-3005630612 / CCI SOLES: 003-200-003005630612-36\n" +
+        "DÓLARES: 200-003005630620 / CCI DOLARES: 003-200-003005630620-39\n" +
+        "BANCO DE LA NACIÓN\n" +
+        "Cuenta detracción: Cuenta Corriente: 00-002-212722\n"
   );
 
   if (!lastCodeCotizacion) return;
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const form = e.target as HTMLFormElement;
     const formData = new FormData(form);
 
+    const companyPhone = formData.get("companyPhone")?.toString() || "";
+    const companyEmail = formData.get("companyEmail")?.toString() || "";
+    const bankAccountNumber =
+      formData.get("bankAccountNumber")?.toString() || "";
+
+    await createUpdateDefaultValues({
+      companyPhone,
+      companyEmail,
+      bankAccountNumber,
+    });
     await addNewCotizacion(formData);
+
     //Guardar y generar pdf
     console.log(formData);
   };
