@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Input, Textarea } from "@nextui-org/input";
 import { Button, DateInput } from "@nextui-org/react";
 import { CalendarDateTime } from "@internationalized/date";
@@ -28,41 +28,50 @@ function CotizarForm() {
   const { clientList, isLoading: isLoadingClient } = useGetClientList();
   const { currentDateTime } = useDateTime();
   const { lastCodeCotizacion } = useCodeCotizacion();
-  const { createUpdateDefaultValues, defaultValues } = useDefaultValuesStore();
+  const { createUpdateDefaultValues, defaultValues, fetchDefaultValues } =
+    useDefaultValuesStore();
 
   const { responseNewCotizacion, addNewCotizacion } = usePostCotizacion();
 
-  const initialClientValues = {
-    clientName: "",
-    clientContact: "",
-    clientReference: "",
-  };
   const [clientValues, setClientValues] = useState<ClientForm | null>(null);
 
-  const [companyPhone, setCompanyPhone] = useState(
-    defaultValues.companyPhone || "902196904"
-  );
-  const [companyEmail, setCompanyEmail] = useState(
-    defaultValues.companyEmail || "ventas@moventodrives.com"
-  );
+  const [companyPhone, setCompanyPhone] = useState("902196904");
+  const [companyEmail, setCompanyEmail] = useState("ventas@moventodrives.com");
   const [currencyType, setCurrencyType] = React.useState<"SOLES" | "DOLARES">(
     "SOLES"
   );
+  const [bankAccountNumber, setBankAccountNumber] = useState(
+    "BANCO BCP\n" +
+      "SOLES: 1936929215069 / CCI SOLES: 00219300692921506910\n" +
+      "DÓLARES:  1936929236191 / CCI DÓLARES: 00219300692923619117\n" +
+      "BANCO INTERBANK\n" +
+      "SOLES: 200-3005630612 / CCI SOLES: 003-200-003005630612-36\n" +
+      "DÓLARES: 200-003005630620 / CCI DOLARES: 003-200-003005630620-39\n" +
+      "Cuenta detracción del banco de la nación - Cuenta Corriente: 00-002-212722\n"
+  );
+
   const [offerValidity, setOfferValidity] = useState("30 DÍAS");
   const [warranty, setWarranty] = useState(
     "La garantía es por 6 meses luego de la puesta en servicio."
   );
-  const [bankAccountNumber, setBankAccountNumber] = useState(
-    defaultValues.bankAccountNumber ||
-      "BANCO BCP\n" +
-        "SOLES: 1936929215069 / CCI SOLES: 00219300692921506910\n" +
-        "DÓLARES:  1936929236191 / CCI DÓLARES: 00219300692923619117\n" +
-        "BANCO INTERBANK\n" +
-        "SOLES: 200-3005630612 / CCI SOLES: 003-200-003005630612-36\n" +
-        "DÓLARES: 200-003005630620 / CCI DOLARES: 003-200-003005630620-39\n" +
-        "BANCO DE LA NACIÓN\n" +
-        "Cuenta detracción: Cuenta Corriente: 00-002-212722\n"
-  );
+
+  useEffect(() => {
+    fetchDefaultValues();
+  }, []);
+
+  useEffect(() => {
+    if (defaultValues) {
+      if (defaultValues.bankAccountNumber) {
+        setBankAccountNumber(defaultValues.bankAccountNumber);
+      }
+      if (defaultValues.companyEmail) {
+        setCompanyEmail(defaultValues.companyEmail);
+      }
+      if (defaultValues.companyPhone) {
+        setCompanyPhone(defaultValues.companyPhone);
+      }
+    }
+  }, [defaultValues]);
 
   if (!lastCodeCotizacion) return;
 
@@ -84,7 +93,6 @@ function CotizarForm() {
     await addNewCotizacion(formData);
 
     //Guardar y generar pdf
-    console.log(formData);
   };
 
   const handleSelect = (e: string) => {

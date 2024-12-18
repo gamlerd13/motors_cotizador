@@ -73,7 +73,6 @@ function CotizarForm({ cotizacion }: { cotizacion: CotizacionGet }) {
     }
 
     //Guardar y generar pdf
-    console.log(formData);
   };
 
   const handleSelect = (e: string) => {

@@ -246,7 +246,15 @@ const ReactPdfComponent = ({ cotizacion }: { cotizacion: CotizacionGet }) => {
               Calle Parque San Martin 376 - Pueblo Libre
             </Text>
           </View>
-          <View style={styles.cellCompanyInfo}>
+          <View
+            style={[
+              styles.cellCompanyInfo,
+              {
+                justifyContent: "flex-end",
+                alignItems: "flex-end",
+              },
+            ]}
+          >
             <Text style={styles.companyInfo}>Telefono: {companyPhone}</Text>
             <Text style={styles.companyInfo}>
               Correo: <Text style={{ color: "#00109e" }}>{companyEmail}</Text>
@@ -296,7 +304,7 @@ const ReactPdfComponent = ({ cotizacion }: { cotizacion: CotizacionGet }) => {
                 ]}
               >
                 <Text style={styles.itemDescription}>{item.description}</Text>
-                <Text>{item.model}</Text>
+                <Text style={{ fontSize: 8.5 }}>{item.model}</Text>
               </View>
               <Text style={[styles.tableCell, styles.cellFlex, { flex: 1 }]}>
                 {item.amount}
@@ -344,7 +352,9 @@ const ReactPdfComponent = ({ cotizacion }: { cotizacion: CotizacionGet }) => {
               <Text style={[styles.termsInfo, styles.boldText]}>
                 No CUENTA BANCARIA DE MOVENTO S.A.C.
               </Text>
-              <Text style={styles.termsInfo}>{bankAccountNumber}</Text>
+              <Text style={[styles.termsInfo, { fontSize: 8 }]}>
+                {bankAccountNumber}
+              </Text>
             </View>
             <View style={styles.endLogo}>
               <Image
