@@ -72,15 +72,18 @@ const styles = StyleSheet.create({
   },
   companyInfoContainer: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "space-between", // Esto mantiene el espacio entre los subcontenedores
     marginBottom: 8,
     borderBottomWidth: 1,
     borderBottomColor: "#000",
     paddingBottom: 5,
   },
+
   cellCompanyInfo: {
-    flex: 1,
     paddingLeft: 5,
+    // El contenedor ajustará su tamaño al contenido
+    flexShrink: 1, // Permite que el contenedor se reduzca si es necesario
+    flexGrow: 0, // Evita que crezca para ocupar más espacio que el necesario
   },
   companyInfo: {
     fontSize: 10,
@@ -250,13 +253,13 @@ const ReactPdfComponent = ({ cotizacion }: { cotizacion: CotizacionGet }) => {
             style={[
               styles.cellCompanyInfo,
               {
-                justifyContent: "flex-end",
-                alignItems: "flex-end",
+                justifyContent: "flex-start",
+                alignItems: "flex-start",
               },
             ]}
           >
             <Text style={styles.companyInfo}>Telefono: {companyPhone}</Text>
-            <Text style={styles.companyInfo}>
+            <Text style={[styles.companyInfo]}>
               Correo: <Text style={{ color: "#00109e" }}>{companyEmail}</Text>
             </Text>
           </View>
