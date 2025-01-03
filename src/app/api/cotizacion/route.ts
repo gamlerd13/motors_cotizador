@@ -67,7 +67,9 @@ export async function POST(req: NextRequest, res: NextResponse) {
       });
 
     //  manejar el codigo aca
-    const prefix = "2024-";
+
+    const prefix = `${new Date().getFullYear().toString()}-`;
+
     let newNumber = 1; // Valor predeterminado si no hay registros
     const codeRecord = await prisma.codeCotizacion.findFirst();
     if (codeRecord) newNumber = codeRecord.nextCode + 1;
